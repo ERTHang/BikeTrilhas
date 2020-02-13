@@ -2,8 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:geodevmobile/login_page.dart';
 
-import 'map_class.dart';
-
 
 void main() => runApp(MyApp());
 
