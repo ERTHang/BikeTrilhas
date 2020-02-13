@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "115669332033",
+    "firebase_url": "https://biketrilhas-project.firebaseio.com",
+    "project_id": "biketrilhas-project",
+    "storage_bucket": "biketrilhas-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:115669332033:android:f3ba7d871f4511715216c0",
+        "android_client_info": {
+          "package_name": "com.example.geodevmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "115669332033-5m548l2diada1g203243hi5cadap731q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.geodevmobile",
+            "certificate_hash": "f579fe5e4233786dd5994213ea9d236984f885e6"
+          }
+        },
+        {
+          "client_id": "115669332033-sqpooankidh6m682mti9tn6i79m01q2p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAntIVRGjlCV7KDl9LyWyC-9IehpPTIEzM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "115669332033-sqpooankidh6m682mti9tn6i79m01q2p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
