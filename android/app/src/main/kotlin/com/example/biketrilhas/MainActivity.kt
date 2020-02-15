@@ -1,4 +1,4 @@
-package com.example.geodevmobile
+package com.example.biketrilhas
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

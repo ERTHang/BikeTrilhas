@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:115669332033:android:f3ba7d871f4511715216c0",
+        "mobilesdk_app_id": "1:115669332033:android:ed6d748ce37b716a5216c0",
         "android_client_info": {
-          "package_name": "com.example.geodevmobile"
+          "package_name": "com.example.biketrilhas"
         }
       },
       "oauth_client": [
         {
-          "client_id": "115669332033-5m548l2diada1g203243hi5cadap731q.apps.googleusercontent.com",
+          "client_id": "115669332033-h566jj5st596f5fvt6uhh3s1ba7v7khf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.geodevmobile",
+            "package_name": "com.example.biketrilhas",
             "certificate_hash": "f579fe5e4233786dd5994213ea9d236984f885e6"
           }
         },
@@ -38,6 +38,13 @@
             {
               "client_id": "115669332033-sqpooankidh6m682mti9tn6i79m01q2p.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "115669332033-bvmcn8s7bqg1e394ovemqnj18vj9t158.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.geodevmobile"
+              }
             }
           ]
         }

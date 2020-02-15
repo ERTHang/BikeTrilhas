@@ -1,4 +1,4 @@
-# BikeTrilhas
+# biketrilhas
 
 A new Flutter project.
 
