@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:geodevmobile/login_page.dart';
+import 'Pages/login_page.dart';
 
 
 void main() => runApp(MyApp());

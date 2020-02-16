@@ -3,8 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
 
-import 'map_class.dart';
+import 'map_page.dart';
 
+//dados do usuário
 String name;
 String email;
 String imageURL;
@@ -18,8 +19,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  //instância de login firebase, necessário para permitir à um usuário google ser nosso usuário
+  final FirebaseAuth _auth = FirebaseAuth.instance; 
+  
+  //criar um objeto para efetuar o login
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
 
@@ -44,16 +47,15 @@ class _LoginPageState extends State<LoginPage> {
     return OutlineButton(
       splashColor: Colors.grey,
       onPressed: () {
+        
+        //Quando o usuário apertar o botão de login, vai executar a função e logo após ir para a pagina do maps
         signInWithGoogle().whenComplete(() {
-          Navigator.of(context).pushAndRemoveUntil(
+          Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              settings: RouteSettings(
-                isInitialRoute: true,
-              ),
               builder: (context) {
                 return MapClass();
               }
-            ), ModalRoute.withName("/")
+            )
           );
         });
       },
@@ -84,21 +86,25 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<String> signInWithGoogle() async {
-    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn(); //obtém uma conta google
     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
+    // pega as credenciais do google para utilizar no firebase
     final AuthCredential credential = GoogleAuthProvider.getCredential(
       idToken: googleSignInAuthentication.idToken, 
       accessToken: googleSignInAuthentication.accessToken
-    );
+    ); 
 
+    // faz o login no firebase e pega um usuário
     final AuthResult authResult = await _auth.signInWithCredential(credential);
     final FirebaseUser user = authResult.user;
-
+    
+    //verifica se nenhum campo está vazio
     assert(user.email != null);
     assert(user.displayName != null);
     assert(user.photoUrl != null);
-
+    
+    //adiciona os dados do usuário às variáveis globais definidas no início
     name = user.displayName;
     email = user.email;
     imageURL = user.photoUrl;
@@ -119,10 +125,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void signOutGoogle() async {
-
+    //todo
     await googleSignIn.signOut();
-
-    print('User Sign Out');
 
   }
 }
