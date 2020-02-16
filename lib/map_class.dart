@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'login_page.dart';
+import 'Components/Drawer.dart';
 
 
 class MapClass extends StatefulWidget {
@@ -22,45 +22,11 @@ class _MapClassState extends State<MapClass> {
       _getCurrentLocation();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green[700],
+        backgroundColor: Colors.blue,
         title: Text('Bike Trilhas'),
         centerTitle: true,
       ),
-      drawer: new Drawer(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.green[700], Colors.green[800], Colors.green[900]]
-            ),
-
-          ),
-          child: ListView(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(90, 30, 90, 0),
-                child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  
-                  backgroundImage: NetworkImage(imageURL),
-                  radius: 60,
-                ),
-              ),
-              Text(
-                name, 
-                textAlign: TextAlign.center, 
-                style: TextStyle(
-                  height: 1.8,
-                  fontSize: 20,
-                  color: Colors.grey[300],
-                  fontWeight: FontWeight.bold
-                ),
-              )
-            ],
-          ),
-        )
-      ),
+      drawer: DrawerClass(),
       body: _map()
     );
   }
@@ -70,7 +36,8 @@ class _MapClassState extends State<MapClass> {
       return null;
     }
     return GoogleMap(
-          myLocationButtonEnabled: true,
+          myLocationButtonEnabled: false,
+          myLocationEnabled: true,
           mapType: MapType.normal,
           initialCameraPosition: _position,
           onMapCreated: (GoogleMapController controller) {
