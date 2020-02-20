@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "115669332033-rrsqmfih4icemsldbofc6j4bq7batft9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.biketrilhas",
+            "certificate_hash": "3e635d332a29ff4a2e6710cfe7da90fe17ec4d44"
+          }
+        },
+        {
+          "client_id": "115669332033-8qtbucu4orh6n89nbopcps2nldioi8oa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.biketrilhas",
+            "certificate_hash": "aafffcfb0bc3f96def2febc0e86e1d0666dc6712"
+          }
+        },
+        {
+          "client_id": "115669332033-nbceair1tfb7cgq74amva5m1s3sa92vu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.biketrilhas",
+            "certificate_hash": "2e861d91aa0de756ef48fd55e33dbc59fd7daa17"
+          }
+        },
+        {
           "client_id": "115669332033-h566jj5st596f5fvt6uhh3s1ba7v7khf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -38,13 +62,6 @@
             {
               "client_id": "115669332033-sqpooankidh6m682mti9tn6i79m01q2p.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "115669332033-bvmcn8s7bqg1e394ovemqnj18vj9t158.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.geodevmobile"
-              }
             }
           ]
         }
