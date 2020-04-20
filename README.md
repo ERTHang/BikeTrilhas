@@ -17,18 +17,3 @@ git clone https://github.com/ERTHang/BikeTrilhas.git
 * [VSCode](https://flutter.dev/docs/development/tools/vs-code)
 
 ## [Documentation](/lib)
-
-## Todos
-- [x] Maps funcionando para android e ios
-- [ ] Modificar logo
-- [ ] Links drawer
-- [ ] Funcionamento do mapa offline
-- [ ] Adicionar rotas de ciclovias disponíveis em Joinville
-- [ ] Sistema de busca de rotas
-- [ ] Permitir ao usuário criar nova trilha
-- [ ] Adicionar trilhas salvas pelo usuário ao banco
-- [ ] Indicadores (?)
-- [ ] Salvar usuários em um banco de dados
-- [ ] Permitir ao usuário tirar fotos locais
-- [ ] Permitir ao usuário salvar fotos no banco
-
