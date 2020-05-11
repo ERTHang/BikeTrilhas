@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class ErrorPage extends StatefulWidget {
   final String title;
@@ -15,7 +16,7 @@ class _ErrorPageState extends State<ErrorPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).pushReplacementNamed('/map');
+          Modular.to.pushReplacementNamed('/map');
         }, 
         label: Row(
           children: <Widget>[

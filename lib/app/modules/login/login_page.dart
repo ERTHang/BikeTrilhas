@@ -11,7 +11,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends ModularState<LoginPage, LoginController> {
-  //use 'controller' variable to access controller
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:biketrilhas_modular/app/modules/map/Components/Drawer.dart';
+import 'package:biketrilhas_modular/app/modules/map/Components/drawer/Drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
@@ -35,7 +35,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       return position;
     }).catchError(
       (e) {
-        Navigator.of(context).pushReplacementNamed('/error');
+        Modular.to.pushReplacementNamed('/map/error');
       },
     );
   }
@@ -81,7 +81,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   child: RaisedButton(
                     color: Colors.blue,
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/loader');
+                      Modular.to.pushNamed('/photo');
                     },
                     child: Icon(
                       Icons.camera_alt,

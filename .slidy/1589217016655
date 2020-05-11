@@ -1,0 +1,5 @@
+lib/app/modules/photo/Components/loader/loader_module.dart
+lib/app/modules/photo/Components/loader/loader_page.dart
+test/app/modules/photo/Components/loader/loader_page_test.dart
+lib/app/modules/photo/Components/loader/loader_controller.dart
+test/app/modules/photo/Components/loader/loader_controller_test.dart

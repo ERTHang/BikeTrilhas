@@ -1,21 +1,22 @@
 import 'dart:io';
 
+import 'package:biketrilhas_modular/app/modules/photo/photo_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
+import 'display_controller.dart';
 
 class DisplayPage extends StatefulWidget {
-  final String imagePath;
   final String title;
-  const DisplayPage({Key key, this.title = "Display", this.imagePath}) : super(key: key);
+  const DisplayPage({Key key, this.title = "Display"}) : super(key: key);
 
   @override
   _DisplayPageState createState() => _DisplayPageState();
 }
 
-class _DisplayPageState extends State<DisplayPage> {
-
+class _DisplayPageState extends ModularState<DisplayPage, DisplayController> {
+  
+  PhotoController photoController = Modular.get<PhotoController>();
   final TextEditingController nameController = TextEditingController();
 
   @override
@@ -23,7 +24,7 @@ class _DisplayPageState extends State<DisplayPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushReplacementNamed(context, 'map');
+          controller.savePicture();
         },
         backgroundColor: Colors.blue,
         child: Icon(Icons.send),
@@ -31,7 +32,7 @@ class _DisplayPageState extends State<DisplayPage> {
       body: Stack(
         children: <Widget>[
           PhotoView(
-            imageProvider: FileImage(File(widget.imagePath), scale: 1),
+            imageProvider: FileImage(File(photoController.path), scale: 1),
             minScale: PhotoViewComputedScale.contained,
           ),
           Positioned(
@@ -60,13 +61,5 @@ class _DisplayPageState extends State<DisplayPage> {
     );
   }
 
-  _savePicture() async {
-
-    final path = join(
-      (await getApplicationDocumentsDirectory()).path,
-      '${DateTime.now()}.png',
-    );
-
-    File(widget.imagePath).copy(path);    
-  }
+  
 }

@@ -9,31 +9,48 @@ part of 'photo_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$PhotoController on _PhotoControllerBase, Store {
-  final _$valueAtom = Atom(name: '_PhotoControllerBase.value');
+  final _$initializeControllerFutureAtom =
+      Atom(name: '_PhotoControllerBase.initializeControllerFuture');
 
   @override
-  int get value {
-    _$valueAtom.context.enforceReadPolicy(_$valueAtom);
-    _$valueAtom.reportObserved();
-    return super.value;
+  ObservableFuture<void> get initializeControllerFuture {
+    _$initializeControllerFutureAtom.context
+        .enforceReadPolicy(_$initializeControllerFutureAtom);
+    _$initializeControllerFutureAtom.reportObserved();
+    return super.initializeControllerFuture;
   }
 
   @override
-  set value(int value) {
-    _$valueAtom.context.conditionallyRunInAction(() {
-      super.value = value;
-      _$valueAtom.reportChanged();
-    }, _$valueAtom, name: '${_$valueAtom.name}_set');
+  set initializeControllerFuture(ObservableFuture<void> value) {
+    _$initializeControllerFutureAtom.context.conditionallyRunInAction(() {
+      super.initializeControllerFuture = value;
+      _$initializeControllerFutureAtom.reportChanged();
+    }, _$initializeControllerFutureAtom,
+        name: '${_$initializeControllerFutureAtom.name}_set');
+  }
+
+  final _$initAsyncAction = AsyncAction('init');
+
+  @override
+  Future init() {
+    return _$initAsyncAction.run(() => super.init());
+  }
+
+  final _$takeShotAsyncAction = AsyncAction('takeShot');
+
+  @override
+  Future takeShot() {
+    return _$takeShotAsyncAction.run(() => super.takeShot());
   }
 
   final _$_PhotoControllerBaseActionController =
       ActionController(name: '_PhotoControllerBase');
 
   @override
-  void increment() {
+  void dispose() {
     final _$actionInfo = _$_PhotoControllerBaseActionController.startAction();
     try {
-      return super.increment();
+      return super.dispose();
     } finally {
       _$_PhotoControllerBaseActionController.endAction(_$actionInfo);
     }
@@ -41,7 +58,8 @@ mixin _$PhotoController on _PhotoControllerBase, Store {
 
   @override
   String toString() {
-    final string = 'value: ${value.toString()}';
+    final string =
+        'initializeControllerFuture: ${initializeControllerFuture.toString()}';
     return '{$string}';
   }
 }

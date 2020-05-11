@@ -19,12 +19,12 @@ class DrawerClass extends StatelessWidget {
       child: ListView(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.fromLTRB(75, 30, 75, 0),
+            padding: const EdgeInsets.fromLTRB(80, 30, 80, 0),
             child: CircleAvatar(
               
               backgroundColor: Colors.transparent,
               backgroundImage: NetworkImage(auth.user.photoUrl),
-              radius: 75,
+              radius: 70,
             ),
           ),
           Text(
@@ -32,7 +32,7 @@ class DrawerClass extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
                 height: 1.5,
-                fontSize: 45,
+                fontSize: 25,
                 color: Colors.white,
                 fontWeight: FontWeight.bold),
           ),
@@ -40,13 +40,13 @@ class DrawerClass extends StatelessWidget {
             leading: Icon(
               Icons.map,
               color: Colors.black,
-              size: 50,
+              size: 40,
             ),
             title: Text(
               'Mapa',
               style: TextStyle(
                   height: 2.5,
-                  fontSize: 25,
+                  fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -56,13 +56,13 @@ class DrawerClass extends StatelessWidget {
             leading: Icon(
               Icons.search,
               color: Colors.black,
-              size: 50,
+              size: 40,
             ),
             title: Text(
               'Buscar Trilhas',
               style: TextStyle(
                   height: 2.5,
-                  fontSize: 25,
+                  fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -72,13 +72,13 @@ class DrawerClass extends StatelessWidget {
             leading: Icon(
               Icons.directions_bike,
               color: Colors.black,
-              size: 50,
+              size: 40,
             ),
             title: Text(
               'Suas Trilhas',
               style: TextStyle(
                   height: 2.5,
-                  fontSize: 25,
+                  fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -88,13 +88,13 @@ class DrawerClass extends StatelessWidget {
             leading: Icon(
               Icons.place,
               color: Colors.black,
-              size: 50,
+              size: 40,
             ),
             title: Text(
               'Sinalizações',
               style: TextStyle(
                   height: 2.5,
-                  fontSize: 25,
+                  fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -104,13 +104,13 @@ class DrawerClass extends StatelessWidget {
             leading: Icon(
               Icons.timeline,
               color: Colors.black,
-              size: 50,
+              size: 40,
             ),
             title: Text(
               'Indicadores',
               style: TextStyle(
                   height: 2.5,
-                  fontSize: 25,
+                  fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -120,13 +120,13 @@ class DrawerClass extends StatelessWidget {
             leading: Icon(
               Icons.portable_wifi_off,
               color: Colors.black,
-              size: 50,
+              size: 40,
             ),
             title: Text(
               'Modo Offline',
               style: TextStyle(
                   height: 2.5,
-                  fontSize: 25,
+                  fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
@@ -136,13 +136,13 @@ class DrawerClass extends StatelessWidget {
             leading: Icon(
               Icons.info,
               color: Colors.black,
-              size: 50,
+              size: 40,
             ),
             title: Text(
               'Sobre',
               style: TextStyle(
                   height: 2.5,
-                  fontSize: 25,
+                  fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
