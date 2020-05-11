@@ -30,4 +30,5 @@ git clone https://github.com/ERTHang/BikeTrilhas.git
 pub run build_runner watch
 ```
 ou instalar a extensão do vscode 'flutter_mobx' e clicar no botão build_runner watch no canto inferior direito
+
 6. (Opcional) Para o Modular Pattern foi utilizado o cli slidy, ele ajuda na hora de criar novos módulos e páginas, instalação e comandos estão neste [repositório](https://github.com/Flutterando/slidy)
