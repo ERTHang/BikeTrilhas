@@ -7,9 +7,4 @@ class MapController = _MapControllerBase with _$MapController;
 abstract class _MapControllerBase with Store {
   @observable
   int value = 0;
-
-  @action
-  void increment() {
-    value++;
-  }
 }

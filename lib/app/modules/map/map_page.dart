@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:biketrilhas_modular/app/modules/map/Components/drawer/Drawer.dart';
+import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
@@ -52,7 +52,9 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           title: Text('Bike Trilhas'),
           centerTitle: true,
         ),
-        drawer: DrawerClass(),
+        drawer: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: DrawerPage(),),
         body: Stack(
           alignment: Alignment.center,
           children: <Widget>[

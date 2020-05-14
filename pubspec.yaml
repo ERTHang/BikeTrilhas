@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  flappy_search_bar: ^1.7.2
   photo_view: ^0.9.2
   path: 
   path_provider: ^1.6.5
