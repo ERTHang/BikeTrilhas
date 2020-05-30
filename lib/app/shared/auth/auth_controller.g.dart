@@ -13,37 +13,34 @@ mixin _$AuthController on _AuthControllerBase, Store {
 
   @override
   AuthStatus get status {
-    _$statusAtom.context.enforceReadPolicy(_$statusAtom);
-    _$statusAtom.reportObserved();
+    _$statusAtom.reportRead();
     return super.status;
   }
 
   @override
   set status(AuthStatus value) {
-    _$statusAtom.context.conditionallyRunInAction(() {
+    _$statusAtom.reportWrite(value, super.status, () {
       super.status = value;
-      _$statusAtom.reportChanged();
-    }, _$statusAtom, name: '${_$statusAtom.name}_set');
+    });
   }
 
   final _$userAtom = Atom(name: '_AuthControllerBase.user');
 
   @override
   FirebaseUser get user {
-    _$userAtom.context.enforceReadPolicy(_$userAtom);
-    _$userAtom.reportObserved();
+    _$userAtom.reportRead();
     return super.user;
   }
 
   @override
   set user(FirebaseUser value) {
-    _$userAtom.context.conditionallyRunInAction(() {
+    _$userAtom.reportWrite(value, super.user, () {
       super.user = value;
-      _$userAtom.reportChanged();
-    }, _$userAtom, name: '${_$userAtom.name}_set');
+    });
   }
 
-  final _$loginWithGoogleAsyncAction = AsyncAction('loginWithGoogle');
+  final _$loginWithGoogleAsyncAction =
+      AsyncAction('_AuthControllerBase.loginWithGoogle');
 
   @override
   Future<dynamic> loginWithGoogle() {
@@ -55,7 +52,8 @@ mixin _$AuthController on _AuthControllerBase, Store {
 
   @override
   dynamic setUser(FirebaseUser value) {
-    final _$actionInfo = _$_AuthControllerBaseActionController.startAction();
+    final _$actionInfo = _$_AuthControllerBaseActionController.startAction(
+        name: '_AuthControllerBase.setUser');
     try {
       return super.setUser(value);
     } finally {
@@ -65,7 +63,9 @@ mixin _$AuthController on _AuthControllerBase, Store {
 
   @override
   String toString() {
-    final string = 'status: ${status.toString()},user: ${user.toString()}';
-    return '{$string}';
+    return '''
+status: ${status},
+user: ${user}
+    ''';
   }
 }

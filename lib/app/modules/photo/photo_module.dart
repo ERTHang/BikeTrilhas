@@ -9,9 +9,9 @@ import 'package:biketrilhas_modular/app/modules/photo/photo_page.dart';
 class PhotoModule extends ChildModule {
   @override
   List<Bind> get binds => [
-        Bind((i) => PhotoController()),
+        Bind((i) => PhotoController(i.get())),
         Bind((i) => LoaderController()),
-        Bind((i) => DisplayController()),
+        Bind((i) => DisplayController(i.get())),
       ];
 
   @override

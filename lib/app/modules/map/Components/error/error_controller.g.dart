@@ -11,7 +11,8 @@ part of 'error_controller.dart';
 mixin _$ErrorController on _ErrorControllerBase, Store {
   @override
   String toString() {
-    final string = '';
-    return '{$string}';
+    return '''
+
+    ''';
   }
 }

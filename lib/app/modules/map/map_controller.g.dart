@@ -9,26 +9,69 @@ part of 'map_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$MapController on _MapControllerBase, Store {
-  final _$valueAtom = Atom(name: '_MapControllerBase.value');
+  final _$trilhasAtom = Atom(name: '_MapControllerBase.trilhas');
 
   @override
-  int get value {
-    _$valueAtom.context.enforceReadPolicy(_$valueAtom);
-    _$valueAtom.reportObserved();
-    return super.value;
+  ObservableFuture<List<TrilhaModel>> get trilhas {
+    _$trilhasAtom.reportRead();
+    return super.trilhas;
   }
 
   @override
-  set value(int value) {
-    _$valueAtom.context.conditionallyRunInAction(() {
-      super.value = value;
-      _$valueAtom.reportChanged();
-    }, _$valueAtom, name: '${_$valueAtom.name}_set');
+  set trilhas(ObservableFuture<List<TrilhaModel>> value) {
+    _$trilhasAtom.reportWrite(value, super.trilhas, () {
+      super.trilhas = value;
+    });
+  }
+
+  final _$positionAtom = Atom(name: '_MapControllerBase.position');
+
+  @override
+  ObservableFuture<CameraPosition> get position {
+    _$positionAtom.reportRead();
+    return super.position;
+  }
+
+  @override
+  set position(ObservableFuture<CameraPosition> value) {
+    _$positionAtom.reportWrite(value, super.position, () {
+      super.position = value;
+    });
+  }
+
+  final _$initAsyncAction = AsyncAction('_MapControllerBase.init');
+
+  @override
+  Future init() {
+    return _$initAsyncAction.run(() => super.init());
+  }
+
+  final _$getUserPosAsyncAction = AsyncAction('_MapControllerBase.getUserPos');
+
+  @override
+  Future<CameraPosition> getUserPos() {
+    return _$getUserPosAsyncAction.run(() => super.getUserPos());
+  }
+
+  final _$_MapControllerBaseActionController =
+      ActionController(name: '_MapControllerBase');
+
+  @override
+  dynamic getPolylines() {
+    final _$actionInfo = _$_MapControllerBaseActionController.startAction(
+        name: '_MapControllerBase.getPolylines');
+    try {
+      return super.getPolylines();
+    } finally {
+      _$_MapControllerBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
   String toString() {
-    final string = 'value: ${value.toString()}';
-    return '{$string}';
+    return '''
+trilhas: ${trilhas},
+position: ${position}
+    ''';
   }
 }

@@ -14,7 +14,8 @@ mixin _$LoaderController on _LoaderControllerBase, Store {
 
   @override
   void startCameras() {
-    final _$actionInfo = _$_LoaderControllerBaseActionController.startAction();
+    final _$actionInfo = _$_LoaderControllerBaseActionController.startAction(
+        name: '_LoaderControllerBase.startCameras');
     try {
       return super.startCameras();
     } finally {
@@ -24,7 +25,8 @@ mixin _$LoaderController on _LoaderControllerBase, Store {
 
   @override
   String toString() {
-    final string = '';
-    return '{$string}';
+    return '''
+
+    ''';
   }
 }

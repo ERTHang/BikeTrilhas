@@ -13,22 +13,21 @@ mixin _$DrawerClassController on _DrawerControllerBase, Store {
 
   @override
   int get value {
-    _$valueAtom.context.enforceReadPolicy(_$valueAtom);
-    _$valueAtom.reportObserved();
+    _$valueAtom.reportRead();
     return super.value;
   }
 
   @override
   set value(int value) {
-    _$valueAtom.context.conditionallyRunInAction(() {
+    _$valueAtom.reportWrite(value, super.value, () {
       super.value = value;
-      _$valueAtom.reportChanged();
-    }, _$valueAtom, name: '${_$valueAtom.name}_set');
+    });
   }
 
   @override
   String toString() {
-    final string = 'value: ${value.toString()}';
-    return '{$string}';
+    return '''
+value: ${value}
+    ''';
   }
 }

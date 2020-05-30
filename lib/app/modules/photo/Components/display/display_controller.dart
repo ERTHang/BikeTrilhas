@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:biketrilhas_modular/app/modules/photo/photo_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 import 'package:path/path.dart';
@@ -11,7 +12,9 @@ part 'display_controller.g.dart';
 class DisplayController = _DisplayControllerBase with _$DisplayController;
 
 abstract class _DisplayControllerBase with Store {
-  PhotoController photoController = Modular.get<PhotoController>();
+  final PhotoController photoController;
+
+  _DisplayControllerBase(this.photoController);
 
   @action
   savePicture() async {
@@ -26,6 +29,6 @@ abstract class _DisplayControllerBase with Store {
 
     photoController.dispose();
 
-    Modular.to.pushReplacementNamed('/map');
+    Modular.to.popUntil(ModalRoute.withName('/map'));
   }
 }

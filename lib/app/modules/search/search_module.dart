@@ -5,7 +5,7 @@ import 'package:biketrilhas_modular/app/modules/search/search_page.dart';
 class SearchModule extends ChildModule {
   @override
   List<Bind> get binds => [
-        Bind((i) => SearchController()),
+        Bind((i) => SearchController(i.get())),
       ];
 
   @override

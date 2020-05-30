@@ -13,20 +13,19 @@ mixin _$LoginController on _LoginControllerBase, Store {
 
   @override
   bool get loading {
-    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
-    _$loadingAtom.reportObserved();
+    _$loadingAtom.reportRead();
     return super.loading;
   }
 
   @override
   set loading(bool value) {
-    _$loadingAtom.context.conditionallyRunInAction(() {
+    _$loadingAtom.reportWrite(value, super.loading, () {
       super.loading = value;
-      _$loadingAtom.reportChanged();
-    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+    });
   }
 
-  final _$loginWithGoogleAsyncAction = AsyncAction('loginWithGoogle');
+  final _$loginWithGoogleAsyncAction =
+      AsyncAction('_LoginControllerBase.loginWithGoogle');
 
   @override
   Future<dynamic> loginWithGoogle() {
@@ -35,7 +34,8 @@ mixin _$LoginController on _LoginControllerBase, Store {
 
   @override
   String toString() {
-    final string = 'loading: ${loading.toString()}';
-    return '{$string}';
+    return '''
+loading: ${loading}
+    ''';
   }
 }

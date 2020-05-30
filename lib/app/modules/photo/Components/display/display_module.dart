@@ -5,7 +5,7 @@ import 'package:biketrilhas_modular/app/modules/photo/Components/display/display
 class DisplayModule extends ChildModule {
   @override
   List<Bind> get binds => [
-        Bind((i) => DisplayController()),
+        Bind((i) => DisplayController(i.get())),
       ];
 
   @override

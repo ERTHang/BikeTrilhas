@@ -1,4 +1,3 @@
-import 'package:biketrilhas_modular/app/modules/photo/Components/display/display_controller.dart';
 import 'package:biketrilhas_modular/app/modules/photo/Components/loader/loader_controller.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -12,11 +11,14 @@ class PhotoController = _PhotoControllerBase with _$PhotoController;
 
 abstract class _PhotoControllerBase with Store {
   CameraController controller;
-  LoaderController loaderController = Modular.get<LoaderController>();
   String path;
+
+  final LoaderController loaderController;
+  _PhotoControllerBase(this.loaderController);
 
   @observable
   ObservableFuture<void> initializeControllerFuture;
+
 
   @action
   init() async {

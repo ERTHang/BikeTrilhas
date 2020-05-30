@@ -119,9 +119,7 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () {
               draw.value = 2;
-              final snackBar = SnackBar(content: Text("Servidor não encontrado"));
-              Scaffold.of(context).removeCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(snackBar);
+              Modular.to.pushNamed("/usertrail");
             },
           ),
           ListTile(
@@ -145,9 +143,7 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () {
               draw.value = 3;
-              final snackBar = SnackBar(content: Text("Servidor não encontrado"));
-              Scaffold.of(context).removeCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(snackBar);
+              Modular.to.pushNamed("/usertrail");
             },
           ),
           ListTile(
@@ -171,7 +167,7 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () {
               draw.value = 4;
-              final snackBar = SnackBar(content: Text("Servidor não encontrado"));
+              final snackBar = SnackBar(content: Text("Não implementado"));
               Scaffold.of(context).removeCurrentSnackBar();
               Scaffold.of(context).showSnackBar(snackBar);
             },

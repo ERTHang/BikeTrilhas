@@ -14,10 +14,10 @@ description: &#x27;A new Flutter project. Created by Slidy&#x27;
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
-  flappy_search_bar: ^1.7.2
+  flutter_polyline_points: ^0.2.1
   photo_view: ^0.9.2
   path: 
   path_provider: ^1.6.5

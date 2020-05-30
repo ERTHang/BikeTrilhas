@@ -14,29 +14,26 @@ mixin _$PhotoController on _PhotoControllerBase, Store {
 
   @override
   ObservableFuture<void> get initializeControllerFuture {
-    _$initializeControllerFutureAtom.context
-        .enforceReadPolicy(_$initializeControllerFutureAtom);
-    _$initializeControllerFutureAtom.reportObserved();
+    _$initializeControllerFutureAtom.reportRead();
     return super.initializeControllerFuture;
   }
 
   @override
   set initializeControllerFuture(ObservableFuture<void> value) {
-    _$initializeControllerFutureAtom.context.conditionallyRunInAction(() {
+    _$initializeControllerFutureAtom
+        .reportWrite(value, super.initializeControllerFuture, () {
       super.initializeControllerFuture = value;
-      _$initializeControllerFutureAtom.reportChanged();
-    }, _$initializeControllerFutureAtom,
-        name: '${_$initializeControllerFutureAtom.name}_set');
+    });
   }
 
-  final _$initAsyncAction = AsyncAction('init');
+  final _$initAsyncAction = AsyncAction('_PhotoControllerBase.init');
 
   @override
   Future init() {
     return _$initAsyncAction.run(() => super.init());
   }
 
-  final _$takeShotAsyncAction = AsyncAction('takeShot');
+  final _$takeShotAsyncAction = AsyncAction('_PhotoControllerBase.takeShot');
 
   @override
   Future takeShot() {
@@ -48,7 +45,8 @@ mixin _$PhotoController on _PhotoControllerBase, Store {
 
   @override
   void dispose() {
-    final _$actionInfo = _$_PhotoControllerBaseActionController.startAction();
+    final _$actionInfo = _$_PhotoControllerBaseActionController.startAction(
+        name: '_PhotoControllerBase.dispose');
     try {
       return super.dispose();
     } finally {
@@ -58,8 +56,8 @@ mixin _$PhotoController on _PhotoControllerBase, Store {
 
   @override
   String toString() {
-    final string =
-        'initializeControllerFuture: ${initializeControllerFuture.toString()}';
-    return '{$string}';
+    return '''
+initializeControllerFuture: ${initializeControllerFuture}
+    ''';
   }
 }
