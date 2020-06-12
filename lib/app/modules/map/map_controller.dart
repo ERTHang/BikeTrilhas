@@ -47,19 +47,10 @@ abstract class _MapControllerBase with Store {
         width: 3,
       );
       polylines.add(pol);
-    }
-  }
-
-  addPolyline(List<TrilhaModel> listTrilhas, bool clear) {
-    if(clear){polylines.clear();}
-    for (var trilha in listTrilhas) {
-      Polyline pol = Polyline(
-        polylineId: PolylineId(trilha.nome),
-        color: Colors.red,
-        points: trilha.polylineCoordinates,
-        width: 3,
-      );
-      polylines.add(pol);
+      for (var waypoint in trilha.waypoints){
+        Marker mar = Marker(markerId: MarkerId(waypoint.codigo.toString()), position: waypoint.posicao);
+        markers.add(mar);
+      }
     }
   }
 }

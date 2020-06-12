@@ -143,7 +143,7 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () {
               draw.value = 3;
-              Modular.to.pushNamed("/usertrail");
+              Modular.to.pushNamed("/waypoints");
             },
           ),
           ListTile(

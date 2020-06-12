@@ -1,5 +1,6 @@
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_module.dart';
+import 'package:biketrilhas_modular/app/modules/waypoints/waypoints_module.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/modules/photo/photo_module.dart';
 import 'package:biketrilhas_modular/app/app_controller.dart';
@@ -39,6 +40,7 @@ class AppModule extends MainModule {
         Router('/photo', module: PhotoModule()),
         Router('/search', module: SearchModule()),
         Router('/usertrail', module: UsertrailsModule()),
+        Router('/waypoint', module: WaypointsModule()),
       ];
 
   @override

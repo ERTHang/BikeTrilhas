@@ -112,6 +112,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       myLocationButtonEnabled: false,
       myLocationEnabled: true,
       polylines: controller.polylines,
+      markers: controller.markers,
       mapType: MapType.normal,
       initialCameraPosition: controller.position.value,
       onMapCreated: (GoogleMapController controller) {

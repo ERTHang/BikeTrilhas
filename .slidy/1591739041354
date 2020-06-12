@@ -1,0 +1,5 @@
+lib/app/modules/waypoints/waypoints_module.dart
+lib/app/modules/waypoints/waypoints_page.dart
+test/app/modules/waypoints/waypoints_page_test.dart
+lib/app/modules/waypoints/waypoints_controller.dart
+test/app/modules/waypoints/waypoints_controller_test.dart
