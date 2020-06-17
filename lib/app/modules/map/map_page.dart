@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -29,6 +30,26 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         backgroundColor: Colors.blue,
         title: Text('Bike Trilhas'),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                showSearch(
+                    context: context,
+                    delegate: CustomSearchDelegate(controller));
+              }),
+          Visibility(
+            child: IconButton(
+                icon: Icon(Icons.delete_sweep, color: Colors.red),
+                onPressed: () {
+                  setState(() {
+                    controller.trilhasFiltradas = [];
+                    controller.getPolylines();
+                  });
+                }),
+            visible: (controller.trilhasFiltradas.isNotEmpty),
+          )
+        ],
       ),
       drawer: Scaffold(
         backgroundColor: Colors.transparent,
@@ -109,6 +130,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       return Container();
     }
     return GoogleMap(
+      
       myLocationButtonEnabled: false,
       myLocationEnabled: true,
       polylines: controller.polylines,

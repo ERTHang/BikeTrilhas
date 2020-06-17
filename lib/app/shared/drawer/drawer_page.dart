@@ -82,7 +82,7 @@ class _DrawerPageState extends State<DrawerPage> {
               Color cor;
               cor = (draw.value == 1) ? Colors.white : Colors.black;
               return Text(
-                'Buscar Trilhas',
+                'Filtros',
                 style: TextStyle(
                     height: 1.8,
                     fontSize: 18,
@@ -94,7 +94,7 @@ class _DrawerPageState extends State<DrawerPage> {
             onTap: () {
               if (draw.value != 1) {
                 draw.value = 1;
-                Modular.to.pushNamed('/search');
+                Modular.to.pushNamed('/filter');
               }
             },
           ),
@@ -143,7 +143,7 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () {
               draw.value = 3;
-              Modular.to.pushNamed("/waypoints");
+              Modular.to.pushNamed("/waypoint");
             },
           ),
           ListTile(
