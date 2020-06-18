@@ -69,6 +69,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                 setState(() {
                   _data[0].modified = 2;
                   _data[0].value = value;
+                  _data[0].modifiedValue.clear();
+                  _data[0].modifiedValue.add(value);
                 });
               },
             ),
@@ -77,6 +79,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               setState(() {
                 _data[0].modified = 2;
                 _data[0].value = 'Ciclovia';
+                _data[0].modifiedValue.clear();
+                _data[0].modifiedValue.add(_data[0].value);
               });
             },
           ),
@@ -88,6 +92,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                 setState(() {
                   _data[0].modified = 1;
                   _data[0].value = value;
+                  _data[0].modifiedValue.clear();
+                  _data[0].modifiedValue.add(value);
                 });
               },
             ),
@@ -96,6 +102,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               setState(() {
                 _data[0].modified = 1;
                 _data[0].value = 'Trilha';
+                _data[0].modifiedValue.clear();
+                _data[0].modifiedValue.add(_data[0].value);
               });
             },
           ),
@@ -122,6 +130,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                 setState(() {
                   _data[1].modified = 1;
                   _data[1].value = value;
+                  _data[1].modifiedValue.clear();
+                  _data[1].modifiedValue.add(value);
                 });
               },
             ),
@@ -130,6 +140,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               setState(() {
                 _data[1].modified = 1;
                 _data[1].value = 'Fácil';
+                _data[1].modifiedValue.clear();
+                _data[1].modifiedValue.add(_data[1].value);
               });
             },
           ),
@@ -141,6 +153,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                 setState(() {
                   _data[1].modified = 2;
                   _data[1].value = value;
+                  _data[1].modifiedValue.clear();
+                _data[1].modifiedValue.add(_data[1].value);
                 });
               },
             ),
@@ -149,6 +163,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               setState(() {
                 _data[1].modified = 2;
                 _data[1].value = 'Médio';
+                _data[1].modifiedValue.clear();
+                _data[1].modifiedValue.add(_data[1].value);
               });
             },
           ),
@@ -160,6 +176,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                 setState(() {
                   _data[1].modified = 3;
                   _data[1].value = value;
+                  _data[1].modifiedValue.clear();
+                _data[1].modifiedValue.add(_data[1].value);
                 });
               },
             ),
@@ -168,6 +186,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               setState(() {
                 _data[1].modified = 3;
                 _data[1].value = 'Difícil';
+                _data[1].modifiedValue.clear();
+                _data[1].modifiedValue.add(_data[1].value);
               });
             },
           ),
@@ -179,6 +199,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                 setState(() {
                   _data[1].modified = 4;
                   _data[1].value = value;
+                  _data[1].modifiedValue.clear();
+                _data[1].modifiedValue.add(_data[1].value);
                 });
               },
             ),
@@ -187,6 +209,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               setState(() {
                 _data[1].modified = 4;
                 _data[1].value = 'Muito Difícil';
+                _data[1].modifiedValue.clear();
+                _data[1].modifiedValue.add(_data[1].value);
               });
             },
           ),
@@ -376,6 +400,11 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         setState(() {
           _data[bigindex].booleans[index] = value;
           _data[bigindex].modified += (value) ? -1 : 1;
+          if (value) {
+          _data[bigindex].modifiedValue.add(title);
+          }else{
+          _data[bigindex].modifiedValue.removeWhere((item) => item == title);
+          }
         });
       },
       title: Text(title),
@@ -388,6 +417,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
       leading: (item.modified == 0)
           ? Icon(Icons.filter_list)
           : IconButton(
+            padding: EdgeInsets.all(0),
+            constraints: BoxConstraints(maxWidth: 24, maxHeight: 24),
               icon: Icon(
                 Icons.clear,
                 color: Colors.red,
@@ -395,12 +426,19 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               onPressed: () {
                 setState(() {
                   item.modified = 0;
+                  item.modifiedValue.clear();
                   onTap(item);
                 });
               },
             ),
       selected: item.modified != 0,
-      subtitle: (item.modified != 0) ? Text('Modificado') : null,
+      subtitle: (item.modified != 0)
+          ? (item.modifiedValue.length == 1)
+              ? Text(item.modifiedValue.first)
+              // : Text(item.modifiedValue.fold(item.modifiedValue[0],
+              //     (previousValue, element) => '$previousValue, $element'))
+              : Text(item.modifiedValue.reduce((value, element) => '$value, $element'))
+          : null,
       onTap: () {
         setState(() {
           item.isExpanded = !item.isExpanded;
@@ -500,4 +538,5 @@ class Item {
   String expandedValue;
   List<bool> booleans;
   String value;
+  List<String> modifiedValue = [];
 }

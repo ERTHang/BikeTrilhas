@@ -130,7 +130,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       return Container();
     }
     return GoogleMap(
-      
+      mapToolbarEnabled: false,
       myLocationButtonEnabled: false,
       myLocationEnabled: true,
       polylines: controller.polylines,

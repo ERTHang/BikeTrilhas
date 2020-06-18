@@ -64,6 +64,9 @@ abstract class _MapControllerBase with Store {
         Marker mar = Marker(
           markerId: MarkerId(waypoint.codigo.toString()),
           position: waypoint.posicao,
+          onTap: () {
+            
+          },
           icon: markerIcon,
           anchor: Offset(0.5, 0.5),
           visible: (trilhasFiltradas.isEmpty)

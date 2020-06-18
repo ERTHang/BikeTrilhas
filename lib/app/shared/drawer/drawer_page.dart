@@ -98,132 +98,132 @@ class _DrawerPageState extends State<DrawerPage> {
               }
             },
           ),
-          ListTile(
-            leading: Icon(
-              Icons.directions_bike,
-              color: Colors.black,
-              size: 40,
-            ),
-            title: Observer(builder: (_) {
-              Color cor;
-              cor = (draw.value == 2) ? Colors.white : Colors.black;
-              return Text(
-                'Suas Trilhas',
-                style: TextStyle(
-                    height: 1.8,
-                    fontSize: 18,
-                    color: cor,
-                    fontWeight: FontWeight.bold),
-              );
-            }),
-            dense: true,
-            onTap: () {
-              draw.value = 2;
-              Modular.to.pushNamed("/usertrail");
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.place,
-              color: Colors.black,
-              size: 40,
-            ),
-            title: Observer(builder: (_) {
-              Color cor;
-              cor = (draw.value == 3) ? Colors.white : Colors.black;
-              return Text(
-                'Sinalizações',
-                style: TextStyle(
-                    height: 1.8,
-                    fontSize: 18,
-                    color: cor,
-                    fontWeight: FontWeight.bold),
-              );
-            }),
-            dense: true,
-            onTap: () {
-              draw.value = 3;
-              Modular.to.pushNamed("/waypoint");
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.timeline,
-              color: Colors.black,
-              size: 40,
-            ),
-            title: Observer(builder: (_) {
-              Color cor;
-              cor = (draw.value == 4) ? Colors.white : Colors.black;
-              return Text(
-                'Indicadores',
-                style: TextStyle(
-                    height: 1.8,
-                    fontSize: 18,
-                    color: cor,
-                    fontWeight: FontWeight.bold),
-              );
-            }),
-            dense: true,
-            onTap: () {
-              draw.value = 4;
-              final snackBar = SnackBar(content: Text("Não implementado"));
-              Scaffold.of(context).removeCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(snackBar);
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.portable_wifi_off,
-              color: Colors.black,
-              size: 40,
-            ),
-            title: Observer(builder: (_) {
-              Color cor;
-              cor = (draw.value == 5) ? Colors.white : Colors.black;
-              return Text(
-                'Modo Offline',
-                style: TextStyle(
-                    height: 1.8,
-                    fontSize: 18,
-                    color: cor,
-                    fontWeight: FontWeight.bold),
-              );
-            }),
-            dense: true,
-            onTap: () {
-              draw.value = 5;
-              final snackBar = SnackBar(content: Text("Não implementado"));
-              Scaffold.of(context).removeCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(snackBar);
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.info,
-              color: Colors.black,
-              size: 40,
-            ),
-            title: Observer(builder: (_) {
-              Color cor;
-              cor = (draw.value == 6) ? Colors.white : Colors.black;
-              return Text(
-                'Sobre',
-                style: TextStyle(
-                    height: 1.8,
-                    fontSize: 18,
-                    color: cor,
-                    fontWeight: FontWeight.bold),
-              );
-            }),
-            dense: true,
-            onTap: () {
-              draw.value = 6;
-              final snackBar = SnackBar(content: Text("Não implementado"));
-              Scaffold.of(context).removeCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(snackBar);
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(
+          //     Icons.directions_bike,
+          //     color: Colors.black,
+          //     size: 40,
+          //   ),
+          //   title: Observer(builder: (_) {
+          //     Color cor;
+          //     cor = (draw.value == 2) ? Colors.white : Colors.black;
+          //     return Text(
+          //       'Suas Trilhas',
+          //       style: TextStyle(
+          //           height: 1.8,
+          //           fontSize: 18,
+          //           color: cor,
+          //           fontWeight: FontWeight.bold),
+          //     );
+          //   }),
+          //   dense: true,
+          //   onTap: () {
+          //     draw.value = 2;
+          //     Modular.to.pushNamed("/usertrail");
+          //   },
+          // ),
+          // ListTile(
+          //   leading: Icon(
+          //     Icons.place,
+          //     color: Colors.black,
+          //     size: 40,
+          //   ),
+          //   title: Observer(builder: (_) {
+          //     Color cor;
+          //     cor = (draw.value == 3) ? Colors.white : Colors.black;
+          //     return Text(
+          //       'Sinalizações',
+          //       style: TextStyle(
+          //           height: 1.8,
+          //           fontSize: 18,
+          //           color: cor,
+          //           fontWeight: FontWeight.bold),
+          //     );
+          //   }),
+          //   dense: true,
+          //   onTap: () {
+          //     draw.value = 3;
+          //     Modular.to.pushNamed("/waypoint");
+          //   },
+          // ),
+          // ListTile(
+          //   leading: Icon(
+          //     Icons.timeline,
+          //     color: Colors.black,
+          //     size: 40,
+          //   ),
+          //   title: Observer(builder: (_) {
+          //     Color cor;
+          //     cor = (draw.value == 4) ? Colors.white : Colors.black;
+          //     return Text(
+          //       'Indicadores',
+          //       style: TextStyle(
+          //           height: 1.8,
+          //           fontSize: 18,
+          //           color: cor,
+          //           fontWeight: FontWeight.bold),
+          //     );
+          //   }),
+          //   dense: true,
+          //   onTap: () {
+          //     draw.value = 4;
+          //     final snackBar = SnackBar(content: Text("Não implementado"));
+          //     Scaffold.of(context).removeCurrentSnackBar();
+          //     Scaffold.of(context).showSnackBar(snackBar);
+          //   },
+          // ),
+          // ListTile(
+          //   leading: Icon(
+          //     Icons.portable_wifi_off,
+          //     color: Colors.black,
+          //     size: 40,
+          //   ),
+          //   title: Observer(builder: (_) {
+          //     Color cor;
+          //     cor = (draw.value == 5) ? Colors.white : Colors.black;
+          //     return Text(
+          //       'Modo Offline',
+          //       style: TextStyle(
+          //           height: 1.8,
+          //           fontSize: 18,
+          //           color: cor,
+          //           fontWeight: FontWeight.bold),
+          //     );
+          //   }),
+          //   dense: true,
+          //   onTap: () {
+          //     draw.value = 5;
+          //     final snackBar = SnackBar(content: Text("Não implementado"));
+          //     Scaffold.of(context).removeCurrentSnackBar();
+          //     Scaffold.of(context).showSnackBar(snackBar);
+          //   },
+          // ),
+          // ListTile(
+          //   leading: Icon(
+          //     Icons.info,
+          //     color: Colors.black,
+          //     size: 40,
+          //   ),
+          //   title: Observer(builder: (_) {
+          //     Color cor;
+          //     cor = (draw.value == 6) ? Colors.white : Colors.black;
+          //     return Text(
+          //       'Sobre',
+          //       style: TextStyle(
+          //           height: 1.8,
+          //           fontSize: 18,
+          //           color: cor,
+          //           fontWeight: FontWeight.bold),
+          //     );
+          //   }),
+          //   dense: true,
+          //   onTap: () {
+          //     draw.value = 6;
+          //     final snackBar = SnackBar(content: Text("Não implementado"));
+          //     Scaffold.of(context).removeCurrentSnackBar();
+          //     Scaffold.of(context).showSnackBar(snackBar);
+          //   },
+          // ),
         ],
       ),
     ));
