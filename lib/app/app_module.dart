@@ -1,3 +1,4 @@
+import 'package:biketrilhas_modular/app/modules/filter/filter_module.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_module.dart';
 import 'package:biketrilhas_modular/app/modules/waypoints/waypoints_module.dart';
@@ -6,11 +7,11 @@ import 'package:biketrilhas_modular/app/modules/photo/photo_module.dart';
 import 'package:biketrilhas_modular/app/app_controller.dart';
 import 'package:biketrilhas_modular/app/modules/login/login_module.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_module.dart';
-import 'package:biketrilhas_modular/app/modules/search/search_module.dart';
 import 'package:biketrilhas_modular/app/pages/splash/splash_page.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository.dart';
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
+import 'package:biketrilhas_modular/app/shared/filter/filter_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:dio/dio.dart';
@@ -27,6 +28,7 @@ class AppModule extends MainModule {
         Bind<IAuthRepository>((i) => AuthRepository()),
         Bind((i) => AuthController()),
         Bind((i) => TrilhaRepository(i.get<Dio>())),
+        Bind((i) => FilterRepository(i.get<Dio>())),
         Bind((i) => Dio(BaseOptions(baseUrl: URL_BASE)))
       ];
 
@@ -38,9 +40,9 @@ class AppModule extends MainModule {
         Router('/map',
             module: MapModule(), transition: TransitionType.noTransition),
         Router('/photo', module: PhotoModule()),
-        Router('/search', module: SearchModule()),
         Router('/usertrail', module: UsertrailsModule()),
         Router('/waypoint', module: WaypointsModule()),
+        Router('/filter', module: FilterModule())
       ];
 
   @override
