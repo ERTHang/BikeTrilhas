@@ -6,8 +6,6 @@ class CustomSearchDelegate extends SearchDelegate<TrilhaModel> {
 
   final MapController mapController;
 
-  final List<TrilhaModel> recentSearch = [];
-
   CustomSearchDelegate(this.mapController);
 
   @override
@@ -37,9 +35,12 @@ class CustomSearchDelegate extends SearchDelegate<TrilhaModel> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final trilhas = mapController.trilhas.value;
+    var trilhas = mapController.trilhas.value;
+    if (mapController.typeFilter.isNotEmpty) {
+      trilhas = trilhas.where((element) => mapController.typeFilter.contains(element.codt)).toList();
+    }
     final List<TrilhaModel> list = query.isEmpty
-        ? recentSearch
+        ? trilhas
         : trilhas.where((p) => p.nome.toLowerCase().startsWith(query));
 
     return ListView.builder(
@@ -49,7 +50,6 @@ class CustomSearchDelegate extends SearchDelegate<TrilhaModel> {
           leading: Icon(Icons.directions_bike),
           title: Text(list[index].nome),
           onTap: () {
-            recentSearch.add(list[index]);
             close(context, list[index]);
           },
         );
@@ -59,7 +59,10 @@ class CustomSearchDelegate extends SearchDelegate<TrilhaModel> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final trilhas = mapController.trilhas.value;
+    var trilhas = mapController.trilhas.value;
+    if (mapController.typeFilter.isNotEmpty) {
+      trilhas = trilhas.where((element) => mapController.typeFilter.contains(element.codt)).toList();
+    }
     final trilhalist = query.isEmpty
         ? trilhas
         : trilhas.where((p) => p.nome.toLowerCase().startsWith(query.toLowerCase()));
@@ -71,7 +74,6 @@ class CustomSearchDelegate extends SearchDelegate<TrilhaModel> {
           leading: Icon(Icons.directions_bike),
           title: Text(trilhalist.elementAt(index).nome),
           onTap: () {
-            recentSearch.add(trilhalist.elementAt(index));
             close(context, trilhalist.elementAt(index));
           },
         );

@@ -15,14 +15,16 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Colors.blue[700],
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            FlutterLogo(size: 150),
-            SizedBox(height: 50),
+            Image.asset('images/icon.png'),
+            SizedBox(height: 10),
+            Image.asset('images/bike_logo_actionbar.png'),
+            SizedBox(height: 100),
             _signInButton(),
           ],
         ),
@@ -38,7 +40,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       highlightElevation: 0,
-      borderSide: BorderSide(color: Colors.grey),
+      borderSide: BorderSide(color: Colors.white),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
         child: Row(
@@ -51,7 +53,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
               child: Text('Sign in with Google',
                   style: TextStyle(
                     fontSize: 20,
-                    color: Colors.grey,
+                    color: Colors.white,
                   )),
             ),
           ],

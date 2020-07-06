@@ -1,12 +1,49 @@
+import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TrilhaRepository {
   final Dio dio;
 
   TrilhaRepository(this.dio);
+
+  int n = 10000;
+
+  Future<TrilhaModel> getRoute(LatLng origem, LatLng destino) async {
+    final auth = Modular.get<AuthController>();
+    var codt = (await dio.get('/server/route', queryParameters: {
+      "lat_orig": origem.latitude,
+      "lon_orig": origem.longitude,
+      "lat_dest": destino.latitude,
+      "lon_dest": destino.longitude
+    }))
+        .data;
+
+    var response = (await dio.get('/server/temp/$codt'));
+    var point = response.data;
+    var username = auth.user.displayName.toLowerCase();
+    n++;
+    TrilhaModel model = TrilhaModel(codt + n, 'Rota gerada por $username');
+    var lat = point["latitudeTrilha"];
+    var lon = point["longitudeTrilha"];
+    for (var i = 0; i < (lat as List).length; i++) {
+      model.polylineCoordinates.add(LatLng(lat[i], lon[i]));
+    }
+    model.waypoints.addAll([
+      WaypointModel(
+        codigo: codt + n,
+        posicao: origem,
+      ),
+      WaypointModel(
+        codigo: 2 * (codt + n),
+        posicao: destino,
+      )
+    ]);
+    return model;
+  }
 
   Future<List<TrilhaModel>> getAllTrilhas() async {
     var cods = await dio.get("/server/cods");
@@ -18,20 +55,9 @@ class TrilhaRepository {
 
     for (var json in (response.data as List)) {
       TrilhaModel model = TrilhaModel(
-          json['codt'],
-          json['nome'],
-          json['descricao'],
-          json['tipCod']['tipCod'],
-          json['difCod']['difCod']);
-      for (var regiao in json['regiaoList']) {
-        model.regiaoList.add(regiao['regNome']);
-      }
-      for (var superficie in json['superficieList']) {
-        model.superficieList.add(superficie['supNome']);
-      }
-      for (var bairros in json['bairrosList']) {
-        model.bairrosList.add(bairros['baiNome']);
-      }
+        json['codt'],
+        json['nome'],
+      );
       var point = layers.data[layercod];
       var lat = point["latitudeTrilha"];
       var lon = point["longitudeTrilha"];

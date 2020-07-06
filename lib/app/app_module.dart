@@ -1,4 +1,5 @@
 import 'package:biketrilhas_modular/app/modules/filter/filter_module.dart';
+import 'package:biketrilhas_modular/app/modules/info/info_module.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_module.dart';
 import 'package:biketrilhas_modular/app/modules/waypoints/waypoints_module.dart';
@@ -12,6 +13,7 @@ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository.dart';
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/filter/filter_repository.dart';
+import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:dio/dio.dart';
@@ -24,9 +26,10 @@ class AppModule extends MainModule {
   List<Bind> get binds => [
         Bind((i) => DrawerClassController()),
         Bind((i) => AppController()),
-        Bind((i) => MapController(i.get())),
+        Bind((i) => MapController(i.get(), i.get(), i.get())),
         Bind<IAuthRepository>((i) => AuthRepository()),
         Bind((i) => AuthController()),
+        Bind((i) => InfoRepository(i.get<Dio>())),
         Bind((i) => TrilhaRepository(i.get<Dio>())),
         Bind((i) => FilterRepository(i.get<Dio>())),
         Bind((i) => Dio(BaseOptions(baseUrl: URL_BASE)))
@@ -42,7 +45,8 @@ class AppModule extends MainModule {
         Router('/photo', module: PhotoModule()),
         Router('/usertrail', module: UsertrailsModule()),
         Router('/waypoint', module: WaypointsModule()),
-        Router('/filter', module: FilterModule())
+        Router('/filter', module: FilterModule()),
+        Router('/info', module: InfoModule())
       ];
 
   @override

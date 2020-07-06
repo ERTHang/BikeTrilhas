@@ -25,7 +25,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
-              controller.filtrar(_data, controller);
+              controller.filtrar(_data, controller, context);
             },
             label: Text('Filtrar')),
         body: SingleChildScrollView(
@@ -57,6 +57,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[0], onTap: (Item item) {
           item.value = null;
+          controller.value = 0;
         });
       },
       body: Column(
@@ -67,6 +68,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               value: 'Ciclovia',
               onChanged: (value) {
                 setState(() {
+                  controller.value = 2;
                   _data[0].modified = 2;
                   _data[0].value = value;
                   _data[0].modifiedValue.clear();
@@ -77,6 +79,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
             title: Text('Ciclovia'),
             onTap: () {
               setState(() {
+                controller.value = 2;
                 _data[0].modified = 2;
                 _data[0].value = 'Ciclovia';
                 _data[0].modifiedValue.clear();
@@ -90,6 +93,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               value: 'Trilha',
               onChanged: (value) {
                 setState(() {
+                  controller.value = 1;
                   _data[0].modified = 1;
                   _data[0].value = value;
                   _data[0].modifiedValue.clear();
@@ -100,6 +104,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
             title: Text('Trilha'),
             onTap: () {
               setState(() {
+                controller.value = 1;
                 _data[0].modified = 1;
                 _data[0].value = 'Trilha';
                 _data[0].modifiedValue.clear();
@@ -154,7 +159,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                   _data[1].modified = 2;
                   _data[1].value = value;
                   _data[1].modifiedValue.clear();
-                _data[1].modifiedValue.add(_data[1].value);
+                  _data[1].modifiedValue.add(_data[1].value);
                 });
               },
             ),
@@ -177,7 +182,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                   _data[1].modified = 3;
                   _data[1].value = value;
                   _data[1].modifiedValue.clear();
-                _data[1].modifiedValue.add(_data[1].value);
+                  _data[1].modifiedValue.add(_data[1].value);
                 });
               },
             ),
@@ -200,7 +205,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                   _data[1].modified = 4;
                   _data[1].value = value;
                   _data[1].modifiedValue.clear();
-                _data[1].modifiedValue.add(_data[1].value);
+                  _data[1].modifiedValue.add(_data[1].value);
                 });
               },
             ),
@@ -401,9 +406,9 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
           _data[bigindex].booleans[index] = value;
           _data[bigindex].modified += (value) ? -1 : 1;
           if (value) {
-          _data[bigindex].modifiedValue.add(title);
-          }else{
-          _data[bigindex].modifiedValue.removeWhere((item) => item == title);
+            _data[bigindex].modifiedValue.add(title);
+          } else {
+            _data[bigindex].modifiedValue.removeWhere((item) => item == title);
           }
         });
       },
@@ -417,8 +422,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
       leading: (item.modified == 0)
           ? Icon(Icons.filter_list)
           : IconButton(
-            padding: EdgeInsets.all(0),
-            constraints: BoxConstraints(maxWidth: 24, maxHeight: 24),
+              padding: EdgeInsets.all(0),
+              constraints: BoxConstraints(maxWidth: 24),
               icon: Icon(
                 Icons.clear,
                 color: Colors.red,
@@ -427,17 +432,19 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
                 setState(() {
                   item.modified = 0;
                   item.modifiedValue.clear();
+                  item.isExpanded = false;
                   onTap(item);
                 });
               },
             ),
-      selected: item.modified != 0,
+      selected: item.modified != 0 && item.expandedValue != 'Tipo',
       subtitle: (item.modified != 0)
           ? (item.modifiedValue.length == 1)
               ? Text(item.modifiedValue.first)
               // : Text(item.modifiedValue.fold(item.modifiedValue[0],
               //     (previousValue, element) => '$previousValue, $element'))
-              : Text(item.modifiedValue.reduce((value, element) => '$value, $element'))
+              : Text(item.modifiedValue
+                  .reduce((value, element) => '$value, $element'))
           : null,
       onTap: () {
         setState(() {
@@ -449,13 +456,18 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
 }
 
 List<Item> generateItems() {
+  FilterController controller = Modular.get<FilterController>();
   return <Item>[
-    Item(expandedValue: 'Tipo'),
-    Item(expandedValue: 'Dificuldade'),
     Item(
-        expandedValue: 'Regiões',
+        expandedValue: 'Tipo',
+        value: (controller.value == 1) ? 'Trilha' : (controller.value == 2) ? 'Ciclovia' : '',
+        modified: controller.value,
+        modifiedValue: [(controller.value == 1) ? 'Trilha' : 'Ciclovia']),
+    Item(expandedValue: 'Dificuldade', modifiedValue: []),
+    Item(
+        expandedValue: 'Regiões', modifiedValue: [],
         booleans: [false, false, false, false, false]),
-    Item(expandedValue: 'Bairros', booleans: [
+    Item(expandedValue: 'Bairros', modifiedValue: [], booleans: [
       false,
       false,
       false,
@@ -500,9 +512,9 @@ List<Item> generateItems() {
       false
     ]),
     Item(
-        expandedValue: 'Superfícies',
+        expandedValue: 'Superfícies', modifiedValue: [],
         booleans: [false, false, false, false, false, false]),
-    Item(expandedValue: 'Categorias', booleans: [
+    Item(expandedValue: 'Categorias', modifiedValue: [], booleans: [
       false,
       false,
       false,
@@ -529,6 +541,7 @@ class Item {
     this.expandedValue,
     this.booleans,
     this.value,
+    this.modifiedValue,
     this.modified = 0,
     this.isExpanded = false,
   });
@@ -538,5 +551,5 @@ class Item {
   String expandedValue;
   List<bool> booleans;
   String value;
-  List<String> modifiedValue = [];
+  List<String> modifiedValue;
 }

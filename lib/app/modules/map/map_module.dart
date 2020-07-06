@@ -7,7 +7,7 @@ import 'package:biketrilhas_modular/app/modules/map/map_page.dart';
 class MapModule extends ChildModule {
   @override
   List<Bind> get binds => [
-        Bind((i) => MapController(i.get<TrilhaRepository>())),
+        Bind((i) => MapController(i.get<TrilhaRepository>(), i.get(), i.get()))
       ];
 
   @override

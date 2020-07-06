@@ -198,32 +198,32 @@ class _DrawerPageState extends State<DrawerPage> {
           //     Scaffold.of(context).showSnackBar(snackBar);
           //   },
           // ),
-          // ListTile(
-          //   leading: Icon(
-          //     Icons.info,
-          //     color: Colors.black,
-          //     size: 40,
-          //   ),
-          //   title: Observer(builder: (_) {
-          //     Color cor;
-          //     cor = (draw.value == 6) ? Colors.white : Colors.black;
-          //     return Text(
-          //       'Sobre',
-          //       style: TextStyle(
-          //           height: 1.8,
-          //           fontSize: 18,
-          //           color: cor,
-          //           fontWeight: FontWeight.bold),
-          //     );
-          //   }),
-          //   dense: true,
-          //   onTap: () {
-          //     draw.value = 6;
-          //     final snackBar = SnackBar(content: Text("Não implementado"));
-          //     Scaffold.of(context).removeCurrentSnackBar();
-          //     Scaffold.of(context).showSnackBar(snackBar);
-          //   },
-          // ),
+          ListTile(
+            leading: Icon(
+              Icons.info,
+              color: Colors.black,
+              size: 40,
+            ),
+            title: Observer(builder: (_) {
+              Color cor;
+              cor = (draw.value == 6) ? Colors.white : Colors.black;
+              return Text(
+                'Sobre',
+                style: TextStyle(
+                    height: 1.8,
+                    fontSize: 18,
+                    color: cor,
+                    fontWeight: FontWeight.bold),
+              );
+            }),
+            dense: true,
+            onTap: () {
+              if (draw.value != 6) {
+                draw.value = 6;
+                Modular.to.pushNamed('/info');
+              }
+            },
+          ),
         ],
       ),
     ));

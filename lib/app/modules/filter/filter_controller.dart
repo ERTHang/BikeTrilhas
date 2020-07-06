@@ -14,10 +14,15 @@ abstract class _FilterControllerBase with Store {
   final FilterRepository filterRepository;
   final MapController mapController;
   final DrawerClassController drawerClassController;
+  int value;
 
-  _FilterControllerBase(this.filterRepository, this.mapController, this.drawerClassController);
+  _FilterControllerBase(
+      this.filterRepository, this.mapController, this.drawerClassController) {
+    value = mapController.typeNum;
+  }
 
-  filtrar(List<Item> _data, FilterController controller) async {
+  filtrar(List<Item> _data, FilterController controller,
+      BuildContext context) async {
     final List<int> regiao = [];
     final List<int> bairro = [];
     final List<int> superficie = [];
@@ -46,11 +51,21 @@ abstract class _FilterControllerBase with Store {
         categoria.add(i + 1);
       }
     }
-    var filtros = await filterRepository.getFiltered([_data[0].modified], [_data[1].modified],
-        regiao, bairro, superficie, categoria);
+    var filtros = await filterRepository.getFiltered([_data[0].modified],
+        [_data[1].modified], regiao, bairro, superficie, categoria);
+    if (superficie.isNotEmpty ||
+        bairro.isNotEmpty ||
+        categoria.isNotEmpty ||
+        regiao.isNotEmpty ||
+        _data[1].modified != 0) {
+      mapController.filtrar(
+          filtros, false, value != mapController.typeNum, value);
+    } else {
+      mapController.filtrar(
+          filtros, true, value != mapController.typeNum, value);
+    }
 
     mapController.getPolylines();
-    mapController.filtrar(filtros);
 
     Modular.to.popUntil(ModalRoute.withName('/map'));
     drawerClassController.value = 0;

@@ -1,0 +1,5 @@
+lib/app/modules/info/info_module.dart
+lib/app/modules/info/info_page.dart
+test/app/modules/info/info_page_test.dart
+lib/app/modules/info/info_controller.dart
+test/app/modules/info/info_controller_test.dart
