@@ -1,4 +1,5 @@
-import 'package:biketrilhas_modular/app/modules/map/Components/error/error_page.dart';
+import 'package:biketrilhas_modular/app/modules/map/Components/edicao_rotas.dart';
+import 'package:biketrilhas_modular/app/modules/map/Components/edicao_waypoints.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -13,7 +14,8 @@ class MapModule extends ChildModule {
   @override
   List<Router> get routers => [
         Router(Modular.initialRoute, child: (_, args) => MapPage()),
-        Router('/error', child: (_, args) => ErrorPage()),
+        Router('editor', child: (_, args) => EdicaoRotas()),
+        Router('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
       ];
 
   static Inject get to => Inject<MapModule>.of();

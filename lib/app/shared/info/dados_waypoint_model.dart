@@ -1,9 +1,11 @@
 class DadosWaypointModel {
-  final int codwp;
-  final String nome;
-  final String descricao;
-  final int numImagens;
+  int codwp;
+  int codt;
+  String nome;
+  String descricao;
+  int numImagens;
+  List<String> categorias = [];
   List<String> imagens = []; 
 
-  DadosWaypointModel(this.codwp, this.nome, this.descricao, this.numImagens);
+  DadosWaypointModel(this.codwp, this.codt, this.nome, this.descricao, this.numImagens);
 }

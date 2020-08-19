@@ -60,6 +60,4 @@ class _DisplayPageState extends ModularState<DisplayPage, DisplayController> {
       ),
     );
   }
-
-  
 }

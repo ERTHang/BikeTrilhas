@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   controller.getPolylines();
                   setState(() {
                     controller.tappedTrilha = value.codt;
-                    controller.bottomSheetTrilha(value.codt);
+                    bottomSheetTrilha(value.codt);
                   });
                   mapController.animateCamera(
                       CameraUpdate.newLatLng(value.polylineCoordinates[0]));
@@ -187,7 +188,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 size: 40,
               ),
             ),
-          )
+          ),
           // Positioned(
           //   bottom: 30,
           //   left: 30,

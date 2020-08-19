@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
@@ -14,6 +16,7 @@ class TrilhaRepository {
 
   Future<TrilhaModel> getRoute(LatLng origem, LatLng destino) async {
     final auth = Modular.get<AuthController>();
+    bool reversed;
     var codt = (await dio.get('/server/route', queryParameters: {
       "lat_orig": origem.latitude,
       "lon_orig": origem.longitude,
@@ -29,8 +32,26 @@ class TrilhaRepository {
     TrilhaModel model = TrilhaModel(codt + n, 'Rota gerada por $username');
     var lat = point["latitudeTrilha"];
     var lon = point["longitudeTrilha"];
+    if ((lat as List).isNotEmpty &&
+        sqrt(pow(lat[0] - origem.latitude, 2) +
+                pow(lon[0] - origem.longitude, 2)) <
+            sqrt(pow(lat[0] - destino.latitude, 2) +
+                pow(lon[0] - destino.longitude, 2))){
+                  model.polylineCoordinates.add(origem);
+                  reversed = false;
+                }
+                else{
+                  model.polylineCoordinates.add(destino);
+                  reversed = true;
+                }
     for (var i = 0; i < (lat as List).length; i++) {
       model.polylineCoordinates.add(LatLng(lat[i], lon[i]));
+    }
+    if (reversed) {
+      model.polylineCoordinates.add(origem);
+    }
+    else{
+      model.polylineCoordinates.add(destino);
     }
     model.waypoints.addAll([
       WaypointModel(

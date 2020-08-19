@@ -8,6 +8,26 @@ class InfoRepository {
 
   InfoRepository(this.dio);
 
+  Future<List<String>> getCategorias() async {
+    List<String> list = [];
+    var result = await dio.get('/server/categoria');
+    for (var json in (result.data as List)) {
+      list.add(json['catNome']);
+    }
+    return list;
+  }
+
+  Future<List<String>> getCategoria(cods) async {
+    List<String> list = [];
+    var result = await dio.get('/server/categoria');
+    for (var json in (result.data as List)) {
+      if (cods.contains(json['catCod'])) {
+        list.add(json['catNome']);
+      }
+    }
+    return list;
+  }
+
   Future<List<String>> getRegiao(cods) async {
     List<String> list = [];
     var result = await dio.get('/server/regiao');
@@ -52,6 +72,58 @@ class InfoRepository {
     return dif;
   }
 
+  Future<bool> updateDadosWaypoint(int codwp, int codt, String descricao, String nome, List<String> categorias) async {
+    List<int> catInt = [];
+    final catList = await getCategorias();
+    for (var i = 1; i <= catList.length; i++) {
+      if (categorias.contains(catList[i-1])) {
+        catInt.add(i);
+      }
+    }
+    return (await dio.put('/server/waypoint/$codwp', data: {
+      "codwp": codwp,
+      "codt": codt,
+      "descricao": descricao,
+      "nome": nome,
+      "categoriasList": catInt,
+    })).data;
+  }
+
+  Future<bool> updateDadosTrilha(int codt, String nome, String descricao,
+      String tipo, String dif, List<String> superficies) async {
+    int tipCod, difCod;
+    List<int> supInt = [];
+    tipCod = (tipo == 'Ciclovia') ? 2 : 1;
+    final difList = ['Facil', 'Medio', 'Dificil', 'Muito Dificil'];
+    for (var i = 1; i <= difList.length; i++) {
+      if (dif == difList[i - 1]) {
+        difCod = i;
+      }
+    }
+    final supList = [
+      'Asfalto',
+      'Cimento',
+      'Chão Batido',
+      'Areia',
+      'Cascalho',
+      'Single Track'
+    ];
+    for (var i = 1; i <= supList.length; i++) {
+      if (superficies.contains(supList[i-1])) {
+        supInt.add(i);
+      }
+    }
+    return (await dio.put('/server/dados/$codt', data: {
+      "codt": codt,
+      "nome": nome,
+      "descricao": descricao,
+      "tipo": tipCod,
+      "difCod": difCod,
+      "superficies": supInt,
+    }))
+        .data;
+  }
+
   Future<DadosTrilhaModel> getDadosTrilha(int codt) async {
     var result = (await dio.get('/server/naogeografico',
             queryParameters: {"tipo": "trilha", "cod": codt}))
@@ -60,9 +132,9 @@ class InfoRepository {
         codt,
         result['nome'],
         result['descricao'],
-        (((result['comprimento'] as double)*100).floor())/100,
-        (((result['desnivel'] as double)*100).floor())/100,
-        (result['tipo'] == 1) ? 'Trilha' : 'Ciclovia');
+        (((result['comprimento'] as double) * 100).floor()) / 100,
+        (((result['desnivel'] as double) * 100).floor()) / 100,
+        (result['tip_cod'] == 1) ? 'Trilha' : 'Ciclovia');
     model.regioes = await getRegiao(result['regioes']);
     model.superficies = await getSuperficie(result['superficies']);
     model.bairros = await getBairro(result['bairros']);
@@ -71,14 +143,16 @@ class InfoRepository {
     return model;
   }
 
-  Future<DadosWaypointModel> getDadosWaypoint(int codt) async {
+  Future<DadosWaypointModel> getDadosWaypoint(int codwp) async {
     var result = (await dio.get('/server/naogeografico',
-            queryParameters: {"tipo": "waypoint", "cod": codt}))
+            queryParameters: {"tipo": "waypoint", "cod": codwp}))
         .data[0];
-    DadosWaypointModel model = DadosWaypointModel(codt, result['nome'], result['descricao'], result['numeroDeImagens']);
+    DadosWaypointModel model = DadosWaypointModel(
+        codwp, result['cod'] , result['nome'], result['descricao'], result['numeroDeImagens']);
     for (var i = 1; i <= model.numImagens; i++) {
-      model.imagens.add(URL_BASE + '/server/byteimage/$i/$codt');
+      model.imagens.add(URL_BASE + '/server/byteimage/$i/$codwp');
     }
+    model.categorias = await getCategoria(result['categoriaWaypoint']);
 
     return model;
   }

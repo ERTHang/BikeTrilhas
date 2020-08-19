@@ -48,7 +48,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
           regiao(),
           bairro(),
           superficie(),
-          //categoria()
+          categoria()
         ]);
   }
 
