@@ -30,6 +30,7 @@ class TrilhaRepository {
     var username = auth.user.displayName.toLowerCase();
     n++;
     TrilhaModel model = TrilhaModel(codt + n, 'Rota gerada por $username');
+    List<LatLng> rota = [];
     var lat = point["latitudeTrilha"];
     var lon = point["longitudeTrilha"];
     if ((lat as List).isNotEmpty &&
@@ -37,21 +38,21 @@ class TrilhaRepository {
                 pow(lon[0] - origem.longitude, 2)) <
             sqrt(pow(lat[0] - destino.latitude, 2) +
                 pow(lon[0] - destino.longitude, 2))){
-                  model.polylineCoordinates.add(origem);
+                  rota.add(origem);
                   reversed = false;
                 }
                 else{
-                  model.polylineCoordinates.add(destino);
+                  rota.add(destino);
                   reversed = true;
                 }
     for (var i = 0; i < (lat as List).length; i++) {
-      model.polylineCoordinates.add(LatLng(lat[i], lon[i]));
+      rota.add(LatLng(lat[i], lon[i]));
     }
     if (reversed) {
-      model.polylineCoordinates.add(origem);
+      rota.add(origem);
     }
     else{
-      model.polylineCoordinates.add(destino);
+      rota.add(destino);
     }
     model.waypoints.addAll([
       WaypointModel(
@@ -63,6 +64,7 @@ class TrilhaRepository {
         posicao: destino,
       )
     ]);
+    model.polylineCoordinates.add(rota);
     return model;
   }
 
@@ -75,6 +77,7 @@ class TrilhaRepository {
         await dio.put("/server/layer", data: {"codt": (cods.data as List)});
 
     for (var json in (response.data as List)) {
+      List<List<LatLng>> line = [];
       TrilhaModel model = TrilhaModel(
         json['codt'],
         json['nome'],
@@ -83,8 +86,14 @@ class TrilhaRepository {
       var lat = point["latitudeTrilha"];
       var lon = point["longitudeTrilha"];
       for (var i = 0; i < (lat as List).length; i++) {
-        model.polylineCoordinates.add(LatLng(lat[i], lon[i]));
+        if (lat[i] == 0.0) {
+          line.add([]);
+        }
+        else{
+          line.last.add(LatLng(lat[i], lon[i]));
+        }
       }
+      model.polylineCoordinates = line;
       var cods = point["codwp"];
       var latwp = point["latitudeWaypoint"];
       var lonwp = point["longitudeWaypoint"];

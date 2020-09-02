@@ -50,6 +50,15 @@ class InfoRepository {
     return list;
   }
 
+  Future<List<String>> getBairros() async {
+    List<String> list = [];
+    var result = await dio.get('/server/bairro');
+    for (var json in (result.data as List)) {
+      list.add(json['baiNome']);
+    }
+    return list;
+  }
+
   Future<List<String>> getBairro(cods) async {
     List<String> list = [];
     var result = await dio.get('/server/bairro');
@@ -93,7 +102,7 @@ class InfoRepository {
       String tipo, String dif, List<String> superficies) async {
     int tipCod, difCod;
     List<int> supInt = [];
-    tipCod = (tipo == 'Ciclovia') ? 2 : 1;
+    tipCod = (tipo == 'Ciclovia') ? 2 : (tipo == 'Trilha') ? 1 : 3;
     final difList = ['Facil', 'Medio', 'Dificil', 'Muito Dificil'];
     for (var i = 1; i <= difList.length; i++) {
       if (dif == difList[i - 1]) {
@@ -134,7 +143,7 @@ class InfoRepository {
         result['descricao'],
         (((result['comprimento'] as double) * 100).floor()) / 100,
         (((result['desnivel'] as double) * 100).floor()) / 100,
-        (result['tip_cod'] == 1) ? 'Trilha' : 'Ciclovia');
+        (result['tip_cod'] == 1) ? 'Trilha' : (result['tip_cod'] == 2) ? 'Ciclovia' : 'Cicloturismo');
     model.regioes = await getRegiao(result['regioes']);
     model.superficies = await getSuperficie(result['superficies']);
     model.bairros = await getBairro(result['bairros']);

@@ -138,7 +138,7 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
                         _mapController.modelTrilha.tipo = newValue;
                       });
                     },
-                    items: <String>['Ciclovia', 'Trilha']
+                    items: <String>['Ciclovia', 'Trilha', 'Cicloturismo']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,

@@ -112,6 +112,31 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               });
             },
           ),
+          ListTile(
+            leading: Radio(
+              groupValue: _data[0].value,
+              value: 'Cicloturismo',
+              onChanged: (value) {
+                setState(() {
+                  controller.value = 3;
+                  _data[0].modified = 3;
+                  _data[0].value = value;
+                  _data[0].modifiedValue.clear();
+                  _data[0].modifiedValue.add(value);
+                });
+              },
+            ),
+            title: Text('Cicloturismo'),
+            onTap: () {
+              setState(() {
+                controller.value = 3;
+                _data[0].modified = 3;
+                _data[0].value = 'Cicloturismo';
+                _data[0].modifiedValue.clear();
+                _data[0].modifiedValue.add(_data[0].value);
+              });
+            },
+          ),
         ],
       ),
       isExpanded: _data[0].isExpanded,
@@ -460,9 +485,9 @@ List<Item> generateItems() {
   return <Item>[
     Item(
         expandedValue: 'Tipo',
-        value: (controller.value == 1) ? 'Trilha' : (controller.value == 2) ? 'Ciclovia' : '',
+        value: (controller.value == 1) ? 'Trilha' : (controller.value == 2) ? 'Ciclovia' : (controller.value == 3) ? 'Cicloturismo' : '',
         modified: controller.value,
-        modifiedValue: [(controller.value == 1) ? 'Trilha' : 'Ciclovia']),
+        modifiedValue: [(controller.value == 1) ? 'Trilha' : (controller.value == 2) ? 'Ciclovia' : 'Cicloturismo']),
     Item(expandedValue: 'Dificuldade', modifiedValue: []),
     Item(
         expandedValue: 'Regiões', modifiedValue: [],

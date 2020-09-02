@@ -51,7 +51,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     bottomSheetTrilha(value.codt);
                   });
                   mapController.animateCamera(
-                      CameraUpdate.newLatLng(value.polylineCoordinates[0]));
+                      CameraUpdate.newLatLng(value.polylineCoordinates[0][0]));
                 });
               }),
           Visibility(

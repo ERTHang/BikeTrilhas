@@ -103,7 +103,7 @@ abstract class _MapControllerBase with Store {
           state();
           bottomSheetTempTrail(trilha);
         },
-        points: trilha.polylineCoordinates,
+        points: trilha.polylineCoordinates.first,
         width: 3,
         visible: (trilhasFiltradas != [0]),
       );
@@ -122,28 +122,30 @@ abstract class _MapControllerBase with Store {
       ]);
     }
     for (var trilha in trilhas.value) {
-      Polyline pol = Polyline(
-        zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-        consumeTapEvents: (trilhasFiltradas.isEmpty)
-            ? true
-            : (trilhasFiltradas.contains(trilha.codt) ||
-                tappedTrilha == trilha.codt),
-        polylineId: PolylineId(trilha.codt.toString()),
-        color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
-        onTap: () {
-          tappedWaypoint = null;
-          tappedTrilha = trilha.codt;
-          state();
-          bottomSheetTrilha(trilha.codt);
-        },
-        points: trilha.polylineCoordinates,
-        width: 3,
-        visible: (trilhasFiltradas.isEmpty)
-            ? true
-            : (trilhasFiltradas.contains(trilha.codt) ||
-                tappedTrilha == trilha.codt),
-      );
-      polylines.add(pol);
+      for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
+        Polyline pol = Polyline(
+          zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
+          consumeTapEvents: (trilhasFiltradas.isEmpty)
+              ? true
+              : (trilhasFiltradas.contains(trilha.codt) ||
+                  tappedTrilha == trilha.codt),
+          polylineId: PolylineId((trilha.codt + i*10000).toString()),
+          color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
+          onTap: () {
+            tappedWaypoint = null;
+            tappedTrilha = trilha.codt;
+            state();
+            bottomSheetTrilha(trilha.codt);
+          },
+          points: trilha.polylineCoordinates[i],
+          width: 3,
+          visible: (trilhasFiltradas.isEmpty)
+              ? true
+              : (trilhasFiltradas.contains(trilha.codt) ||
+                  tappedTrilha == trilha.codt),
+        );
+        polylines.add(pol);
+      }
       for (var waypoint in trilha.waypoints) {
         Marker mar = Marker(
           zIndex: (tappedWaypoint == waypoint.codigo) ? 2 : 1,
