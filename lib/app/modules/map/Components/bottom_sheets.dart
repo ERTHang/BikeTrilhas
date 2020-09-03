@@ -1,7 +1,9 @@
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -21,6 +23,7 @@ Future<DadosWaypointModel> getDataWaypoint(int codt) async {
 }
 
 bottomSheetTrilha(int codt) async {
+  final AuthController auth = Modular.get();
   controller.sheet = controller.scaffoldState.currentState.showBottomSheet(
     (context) {
       return FutureBuilder(
@@ -210,7 +213,9 @@ bottomSheetTrilha(int codt) async {
                       });
                     },
                   )),
-              Positioned(
+              Visibility(
+                visible: ADMIN.contains(auth.user.email),
+                child: Positioned(
                   bottom: 44,
                   right: 10,
                   child: IconButton(
@@ -220,7 +225,9 @@ bottomSheetTrilha(int codt) async {
                       Navigator.pop(context);
                       Modular.to.pushNamed('/map/editor');
                     },
-                  ))
+                  ),
+                ),
+              ),
             ]);
           } else {
             wid = Container(
@@ -253,10 +260,12 @@ bottomSheetWaypoint(int codt) async {
         builder: (context, snapshot) {
           Widget wid;
           if (snapshot.hasData) {
-            String categorias='';
+            String categorias = '';
             if (controller.modelWaypoint.categorias.isNotEmpty) {
               categorias = controller.modelWaypoint.categorias[0];
-              for (var i = 1; i < controller.modelWaypoint.categorias.length; i++) {
+              for (var i = 1;
+                  i < controller.modelWaypoint.categorias.length;
+                  i++) {
                 categorias += ', ' + controller.modelWaypoint.categorias[i];
               }
             }
@@ -430,7 +439,7 @@ bottomSheetWaypoint(int codt) async {
                       });
                     },
                   )),
-                Positioned(
+              Positioned(
                   bottom: 44,
                   right: 10,
                   child: IconButton(

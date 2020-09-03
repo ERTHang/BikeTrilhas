@@ -28,6 +28,15 @@ class InfoRepository {
     return list;
   }
 
+  Future<List<String>> getRegioes() async {
+    List<String> list = [];
+    var result = await dio.get('/server/regiao');
+    for (var json in (result.data as List)) {
+      list.add(json['regNome']);
+    }
+    return list;
+  }
+
   Future<List<String>> getRegiao(cods) async {
     List<String> list = [];
     var result = await dio.get('/server/regiao');
@@ -99,9 +108,11 @@ class InfoRepository {
   }
 
   Future<bool> updateDadosTrilha(int codt, String nome, String descricao,
-      String tipo, String dif, List<String> superficies) async {
+      String tipo, String dif, List<String> superficies, List<String> bairros, List<String> regioes) async {
     int tipCod, difCod;
     List<int> supInt = [];
+    List<int> baiInt = [];
+    List<int> regInt = [];
     tipCod = (tipo == 'Ciclovia') ? 2 : (tipo == 'Trilha') ? 1 : 3;
     final difList = ['Facil', 'Medio', 'Dificil', 'Muito Dificil'];
     for (var i = 1; i <= difList.length; i++) {
@@ -122,6 +133,21 @@ class InfoRepository {
         supInt.add(i);
       }
     }
+
+    final baiList = await getBairros();
+    for (var i = 1; i <= baiList.length; i++) {
+      if (bairros.contains(baiList[i-1])) {
+        baiInt.add(i);
+      }
+    }
+
+    final regList = await getRegioes();
+    for (var i = 1; i <= regList.length; i++) {
+      if (regioes.contains(regList[i-1])) {
+        regInt.add(i);
+      }
+    }
+
     return (await dio.put('/server/dados/$codt', data: {
       "codt": codt,
       "nome": nome,
@@ -129,6 +155,8 @@ class InfoRepository {
       "tipo": tipCod,
       "difCod": difCod,
       "superficies": supInt,
+      "bairros": baiInt,
+      "regioes": regInt
     }))
         .data;
   }

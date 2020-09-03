@@ -14,9 +14,13 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
   TextEditingController _nameController;
   TextEditingController _descController;
   TextEditingController _supController;
+  TextEditingController _baiController;
+  TextEditingController _regController;
   String _tipoValue = '';
   String _difValue = '';
   var _superficies = '';
+  var _bairros = '';
+  var _regioes = '';
   final _mapController = Modular.get<MapController>();
   final _infoRepository = Modular.get<InfoRepository>();
 
@@ -30,10 +34,12 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
     _tipoValue = _mapController.modelTrilha.tipo;
     _difValue = _mapController.modelTrilha.dificuldade;
     _supController = TextEditingController();
+    _baiController = TextEditingController();
+    _regController = TextEditingController();
   }
 
   exit(DadosTrilhaModel m) async {
-    await _infoRepository.updateDadosTrilha(m.codt, m.nome, m.descricao, m.tipo, m.dificuldade, m.superficies);
+    await _infoRepository.updateDadosTrilha(m.codt, m.nome, m.descricao, m.tipo, m.dificuldade, m.superficies, m.bairros, m.regioes);
     bottomSheetTrilha(m.codt);
     Modular.to.pop();
   }
@@ -48,6 +54,26 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
         _superficies = '$_superficies, $element';
       }
       _supController.text = _superficies;
+    });
+
+    _bairros = '';
+    _mapController.modelTrilha.bairros.forEach((element) {
+      if (_bairros == '') {
+        _bairros = element;
+      } else {
+        _bairros = '$_bairros, $element';
+      }
+      _baiController.text = _bairros;
+    });
+
+     _regioes = '';
+    _mapController.modelTrilha.regioes.forEach((element) {
+      if (_regioes == '') {
+        _regioes = element;
+      } else {
+        _regioes = '$_regioes, $element';
+      }
+      _regController.text = _regioes;
     });
 
     return Scaffold(
@@ -113,6 +139,36 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
                 readOnly: true,
                 decoration: InputDecoration(
                   labelText: 'Superfícies',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+              TextField(
+                controller: _baiController,
+                minLines: 1,
+                maxLines: 3,
+                onTap: () {
+                  _showBaiDialog();
+                },
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Bairros',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+              TextField(
+                controller: _regController,
+                minLines: 1,
+                maxLines: 3,
+                onTap: () {
+                  _showRegDialog();
+                },
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Regioes',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -191,7 +247,61 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
         return AlertDialog(
           title: Text('Superfícies'),
           content: SingleChildScrollView(
-            child: DialogContent(
+            child: SupContent(
+              mapController: _mapController,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Salvar'),
+              onPressed: () {
+                setState(() {
+                  Navigator.of(context).pop();
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<List<String>> _showBaiDialog() async {
+    return showDialog<List<String>>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Bairros'),
+          content: SingleChildScrollView(
+            child: BaiContent(
+              mapController: _mapController,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Salvar'),
+              onPressed: () {
+                setState(() {
+                  Navigator.of(context).pop();
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<List<String>> _showRegDialog() async {
+    return showDialog<List<String>>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Regioes'),
+          content: SingleChildScrollView(
+            child: RegContent(
               mapController: _mapController,
             ),
           ),
@@ -211,16 +321,16 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
   }
 }
 
-class DialogContent extends StatefulWidget {
+class SupContent extends StatefulWidget {
   final MapController mapController;
 
-  const DialogContent({Key key, this.mapController}) : super(key: key);
+  const SupContent({Key key, this.mapController}) : super(key: key);
 
   @override
-  _DialogContentState createState() => _DialogContentState();
+  _SupContentState createState() => _SupContentState();
 }
 
-class _DialogContentState extends State<DialogContent> {
+class _SupContentState extends State<SupContent> {
   @override
   Widget build(BuildContext context) {
     return ListBody(
@@ -256,3 +366,111 @@ class _DialogContentState extends State<DialogContent> {
     );
   }
 }
+
+class BaiContent extends StatefulWidget {
+  final MapController mapController;
+
+  const BaiContent({Key key, this.mapController}) : super(key: key);
+
+  @override
+  _BaiContentState createState() => _BaiContentState();
+}
+
+class _BaiContentState extends State<BaiContent> {
+  final InfoRepository infoRepository = Modular.get();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: infoRepository.getBairros(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListBody(
+            children: List<Widget>.generate(
+                (snapshot.data as List<String>).length,
+                (index) => tile((snapshot.data as List<String>)[index])),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+    },); 
+  }
+
+  CheckboxListTile tile(String title) {
+    bool bvalue = widget.mapController.modelTrilha.bairros.contains(title);
+    return CheckboxListTile(
+      title: Text(title),
+      value: bvalue,
+      onChanged: (value) {
+        if (value) {
+          setState(() {
+            widget.mapController.modelTrilha.bairros.add(title);
+            bvalue = value;
+          });
+        } else {
+          setState(() {
+            widget.mapController.modelTrilha.bairros.remove(title);
+            bvalue = value;
+          });
+        }
+      },
+    );
+  }
+}
+
+class RegContent extends StatefulWidget {
+  final MapController mapController;
+
+  const RegContent({Key key, this.mapController}) : super(key: key);
+
+  @override
+  _RegContentState createState() => _RegContentState();
+}
+
+class _RegContentState extends State<RegContent> {
+  final InfoRepository infoRepository = Modular.get();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: infoRepository.getRegioes(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListBody(
+            children: List<Widget>.generate(
+                (snapshot.data as List<String>).length,
+                (index) => tile((snapshot.data as List<String>)[index])),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+    },); 
+  }
+
+  CheckboxListTile tile(String title) {
+    bool bvalue = widget.mapController.modelTrilha.regioes.contains(title);
+    return CheckboxListTile(
+      title: Text(title),
+      value: bvalue,
+      onChanged: (value) {
+        if (value) {
+          setState(() {
+            widget.mapController.modelTrilha.regioes.add(title);
+            bvalue = value;
+          });
+        } else {
+          setState(() {
+            widget.mapController.modelTrilha.regioes.remove(title);
+            bvalue = value;
+          });
+        }
+      },
+    );
+  }
+}
+
+

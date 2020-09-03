@@ -7,7 +7,6 @@ part 'login_controller.g.dart';
 class LoginController = _LoginControllerBase with _$LoginController;
 
 abstract class _LoginControllerBase with Store {
-  AuthController auth = Modular.get();
 
   @observable
   bool loading = false;
@@ -15,6 +14,7 @@ abstract class _LoginControllerBase with Store {
   @action
   Future loginWithGoogle() async {
     try {
+      final auth = Modular.get<AuthController>();
       loading = true;
       await auth.loginWithGoogle();
       Modular.to.pushReplacementNamed('/map');
