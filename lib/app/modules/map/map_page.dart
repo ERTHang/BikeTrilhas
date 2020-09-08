@@ -35,7 +35,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       key: controller.scaffoldState,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text('Bike Trilhas'),
+        title: Text('Bike Trilhas', style: TextStyle(fontFamily: 'Rancho', fontSize: 25),),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
