@@ -25,6 +25,8 @@ abstract class _MapControllerBase with Store {
   DadosTrilhaModel modelTrilha;
   DadosWaypointModel modelWaypoint;
   @observable
+  ObservableFuture<bool> dataReady;
+  @observable
   ObservableFuture<List<TrilhaModel>> trilhas;
   @observable
   ObservableFuture<CameraPosition> position;
@@ -51,6 +53,7 @@ abstract class _MapControllerBase with Store {
   @action
   _MapControllerBase(
       this.trilhaRepository, this.filterRepository, this.infoRepository) {
+    dataReady = infoRepository.getModels().asObservable();
     trilhas = trilhaRepository.getAllTrilhas().asObservable();
     position = getUserPos().asObservable();
   }
@@ -113,11 +116,23 @@ abstract class _MapControllerBase with Store {
           markerId: MarkerId(trilha.waypoints[0].codigo.toString()),
           visible: trilhasFiltradas != [0],
           position: trilha.waypoints[0].posicao,
+          onTap: () {
+            tappedWaypoint = null;
+            bottomSheetTempTrail(trilha);
+            tappedTrilha = trilha.codt;
+            state();
+          },
         ),
         Marker(
           markerId: MarkerId(trilha.waypoints[1].codigo.toString()),
           visible: trilhasFiltradas != [0],
           position: trilha.waypoints[1].posicao,
+          onTap: () {
+            tappedWaypoint = null;
+            bottomSheetTempTrail(trilha);
+            tappedTrilha = trilha.codt;
+            state();
+          },
         )
       ]);
     }

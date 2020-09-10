@@ -131,6 +131,21 @@ bottomSheetTrilha(int codt) async {
                                 text: controller.modelTrilha.tipo,
                                 style: TextStyle(fontWeight: FontWeight.normal))
                           ])),
+                      Visibility(
+                        visible: controller.modelTrilha.subtipo.isNotEmpty,
+                        child: RichText(
+                            text: TextSpan(
+                                text: 'Subtipo: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: controller.modelTrilha.subtipo,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                      ),
                       RichText(
                           text: TextSpan(
                               text: 'Dificuldade: ',

@@ -87,6 +87,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   child: Text("error getting trilhas"),
                 );
               }
+              if (controller.dataReady.error != null) {
+                return Center(
+                  child: Text("error getting data"),
+                );
+              }
               if (controller.position.value == null) {
                 return Center(
                   child: Column(
@@ -107,6 +112,18 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     children: <Widget>[
                       CircularProgressIndicator(),
                       Text("Obtendo trilhas salvas")
+                    ],
+                  ),
+                );
+              }
+              if (controller.dataReady.value == null) {
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      Text("Obtendo informações necessárias")
                     ],
                   ),
                 );

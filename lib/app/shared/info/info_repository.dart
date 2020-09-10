@@ -1,5 +1,6 @@
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
+import 'package:biketrilhas_modular/app/shared/info/models.dart';
 import 'package:dio/dio.dart';
 import '../utils/constants.dart';
 
@@ -8,93 +9,133 @@ class InfoRepository {
 
   InfoRepository(this.dio);
 
-  Future<List<String>> getCategorias() async {
-    List<String> list = [];
-    var result = await dio.get('/server/categoria');
+  List<Bairro> bairros = [];
+  List<Categoria> categorias = [];
+  List<Subtipo> subtipos = [];
+  List<Regiao> regioes = [];
+  List<Superficie> superficies = [];
+  List<Dificuldade> dificuldades = [];
+
+  Future<bool> getModels() async {
+    var result;
+    if (bairros.isNotEmpty || categorias.isNotEmpty || subtipos.isNotEmpty || regioes.isNotEmpty || superficies.isNotEmpty || dificuldades.isNotEmpty) {
+      return false;
+    }
+    result = await dio.get('/server/bairro');
     for (var json in (result.data as List)) {
-      list.add(json['catNome']);
+      bairros.add(Bairro(json["baiCod"], json["baiNome"]));
+    }
+    result = await dio.get('/server/categoria');
+    for (var json in (result.data as List)) {
+      categorias.add(Categoria(json["catCod"], json["catNome"]));
+    }
+    result = await dio.get('/server/regiao');
+    for (var json in (result.data as List)) {
+      regioes.add(Regiao(json['regCod'], json['regNome']));
+    }
+    result = await dio.get('/server/subtipo');
+    for (var json in (result.data as List)) {
+      subtipos.add(Subtipo(json["subtip_cod"], json["subtip_nome"]));
+    }
+    result = await dio.get('/server/superficie');
+    for (var json in (result.data as List)) {
+      superficies.add(Superficie(json["supCod"], json["supNome"]));
+    }
+    result = await dio.get('/server/dificuldade');
+    for (var json in (result.data as List)) {
+      dificuldades.add(Dificuldade(json["difCod"], json["difNome"]));
+    }
+    return true;
+  }
+
+  List<String> getCategorias() {
+    List<String> list = [];
+    for (var cat in categorias) {
+      list.add(cat.cat_nome);
     }
     return list;
   }
 
-  Future<List<String>> getCategoria(cods) async {
+  List<String> getCategoria(cods) {
     List<String> list = [];
-    var result = await dio.get('/server/categoria');
-    for (var json in (result.data as List)) {
-      if (cods.contains(json['catCod'])) {
-        list.add(json['catNome']);
+    for (var cat in categorias) {
+      if (cods.contains(cat.cat_cod)) {
+        list.add(cat.cat_nome);
       }
     }
     return list;
   }
 
-  Future<List<String>> getRegioes() async {
+  List<String> getRegioes() {
     List<String> list = [];
-    var result = await dio.get('/server/regiao');
-    for (var json in (result.data as List)) {
-      list.add(json['regNome']);
+    for (var reg in regioes) {
+      list.add(reg.reg_nome);
     }
     return list;
   }
 
-  Future<List<String>> getRegiao(cods) async {
+  List<String> getRegiao(cods) {
     List<String> list = [];
-    var result = await dio.get('/server/regiao');
-    for (var json in (result.data as List)) {
-      if (cods.contains(json['regCod'])) {
-        list.add(json['regNome']);
+    for (var reg in regioes) {
+      if (cods.contains(reg.reg_cod)) {
+        list.add(reg.reg_nome);
       }
     }
     return list;
   }
 
-  Future<List<String>> getSuperficie(cods) async {
+  String getSubtipo(cod) {
+    for (var subtipo in subtipos) {
+      if (cod == subtipo.subtip_cod) {
+        return subtipo.subtip_nome;
+      }
+    }
+    return '';
+  }
+
+  List<String> getSuperficie(cods) {
     List<String> list = [];
-    var result = await dio.get('/server/superficie');
-    for (var json in (result.data as List)) {
-      if (cods.contains(json['supCod'])) {
-        list.add(json['supNome']);
+    for (var sup in superficies) {
+      if (cods.contains(sup.sup_cod)) {
+        list.add(sup.sup_nome);
       }
     }
     return list;
   }
 
-  Future<List<String>> getBairros() async {
+  List<String> getBairros() {
     List<String> list = [];
-    var result = await dio.get('/server/bairro');
-    for (var json in (result.data as List)) {
-      list.add(json['baiNome']);
+    for (var bai in bairros) {
+      list.add(bai.bai_nome);
     }
     return list;
   }
 
-  Future<List<String>> getBairro(cods) async {
+  List<String> getBairro(cods) {
     List<String> list = [];
-    var result = await dio.get('/server/bairro');
-    for (var json in (result.data as List)) {
-      if (cods.contains(json['baiCod'])) {
-        list.add(json['baiNome']);
+    for (var bai in bairros) {
+      if (cods.contains(bai.bai_cod)) {
+        list.add(bai.bai_nome);
       }
     }
     return list;
   }
 
-  Future<String> getDificuldade(cod) async {
-    String dif;
-    var result = await dio.get('/server/dificuldade');
-    for (var json in (result.data as List)) {
-      if (cod == json['difCod']) {
-        dif = json['difNome'];
+  String getDificuldade(cod) {
+    for (var dif in dificuldades) {
+      if (cod == dif.dif_cod) {
+        return dif.dif_nome;
       }
     }
-    return dif;
+    return '';
   }
 
-  Future<bool> updateDadosWaypoint(int codwp, int codt, String descricao, String nome, List<String> categorias) async {
+  Future<bool> updateDadosWaypoint(int codwp, int codt, String descricao,
+      String nome, List<String> categorias) async {
     List<int> catInt = [];
-    final catList = await getCategorias();
+    final catList = getCategorias();
     for (var i = 1; i <= catList.length; i++) {
-      if (categorias.contains(catList[i-1])) {
+      if (categorias.contains(catList[i - 1])) {
         catInt.add(i);
       }
     }
@@ -104,47 +145,54 @@ class InfoRepository {
       "descricao": descricao,
       "nome": nome,
       "categoriasList": catInt,
-    })).data;
+    }))
+        .data;
   }
 
-  Future<bool> updateDadosTrilha(int codt, String nome, String descricao,
-      String tipo, String dif, List<String> superficies, List<String> bairros, List<String> regioes) async {
-    int tipCod, difCod;
+  Future<bool> updateDadosTrilha(
+      int codt,
+      String nome,
+      String descricao,
+      String tipo,
+      String dif,
+      List<String> superficies,
+      List<String> bairros,
+      List<String> regioes,
+      String subtipo) async {
+    int tipCod, difCod, subtipInt;
     List<int> supInt = [];
     List<int> baiInt = [];
     List<int> regInt = [];
     tipCod = (tipo == 'Ciclovia') ? 2 : (tipo == 'Trilha') ? 1 : 3;
-    final difList = ['Facil', 'Medio', 'Dificil', 'Muito Dificil'];
-    for (var i = 1; i <= difList.length; i++) {
-      if (dif == difList[i - 1]) {
+    
+    for (var i = 1; i <= this.dificuldades.length; i++) {
+      if (dif == this.dificuldades[i - 1].dif_nome) {
         difCod = i;
       }
-    }
-    final supList = [
-      'Asfalto',
-      'Cimento',
-      'Chão Batido',
-      'Areia',
-      'Cascalho',
-      'Single Track'
-    ];
-    for (var i = 1; i <= supList.length; i++) {
-      if (superficies.contains(supList[i-1])) {
+    };
+
+    for (var i = 1; i <= this.superficies.length; i++) {
+      if (superficies.contains(this.superficies[i - 1].sup_nome)) {
         supInt.add(i);
       }
     }
 
-    final baiList = await getBairros();
-    for (var i = 1; i <= baiList.length; i++) {
-      if (bairros.contains(baiList[i-1])) {
+    for (var i = 1; i <= this.bairros.length; i++) {
+      if (bairros.contains(this.bairros[i - 1].bai_nome)) {
         baiInt.add(i);
       }
     }
 
-    final regList = await getRegioes();
-    for (var i = 1; i <= regList.length; i++) {
-      if (regioes.contains(regList[i-1])) {
+    for (var i = 1; i <= this.regioes.length; i++) {
+      if (regioes.contains(this.regioes[i - 1].reg_nome)) {
         regInt.add(i);
+      }
+    }
+
+    for (var i = 1; i <= this.subtipos.length; i++) {
+      if (subtipo == subtipos[i-1].subtip_nome) {
+        subtipInt = i;
+        break;
       }
     }
 
@@ -156,7 +204,8 @@ class InfoRepository {
       "difCod": difCod,
       "superficies": supInt,
       "bairros": baiInt,
-      "regioes": regInt
+      "regioes": regInt,
+      "subtip_cod": subtipInt
     }))
         .data;
   }
@@ -171,11 +220,14 @@ class InfoRepository {
         result['descricao'],
         (((result['comprimento'] as double) * 100).floor()) / 100,
         (((result['desnivel'] as double) * 100).floor()) / 100,
-        (result['tip_cod'] == 1) ? 'Trilha' : (result['tip_cod'] == 2) ? 'Ciclovia' : 'Cicloturismo');
-    model.regioes = await getRegiao(result['regioes']);
-    model.superficies = await getSuperficie(result['superficies']);
-    model.bairros = await getBairro(result['bairros']);
-    model.dificuldade = await getDificuldade(result['dif_cod']);
+        (result['tip_cod'] == 1)
+            ? 'Trilha'
+            : (result['tip_cod'] == 2) ? 'Ciclovia' : 'Cicloturismo');
+    model.regioes = getRegiao(result['regioes']);
+    model.superficies = getSuperficie(result['superficies']);
+    model.bairros = getBairro(result['bairros']);
+    model.dificuldade = getDificuldade(result['dif_cod']);
+    model.subtipo = getSubtipo(result['subtip_cod']);
 
     return model;
   }
@@ -184,12 +236,12 @@ class InfoRepository {
     var result = (await dio.get('/server/naogeografico',
             queryParameters: {"tipo": "waypoint", "cod": codwp}))
         .data[0];
-    DadosWaypointModel model = DadosWaypointModel(
-        codwp, result['cod'] , result['nome'], result['descricao'], result['numeroDeImagens']);
+    DadosWaypointModel model = DadosWaypointModel(codwp, result['cod'],
+        result['nome'], result['descricao'], result['numeroDeImagens']);
     for (var i = 1; i <= model.numImagens; i++) {
       model.imagens.add(URL_BASE + '/server/byteimage/$i/$codwp');
     }
-    model.categorias = await getCategoria(result['categoriaWaypoint']);
+    model.categorias = getCategoria(result['categoriaWaypoint']);
 
     return model;
   }

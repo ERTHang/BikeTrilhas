@@ -9,6 +9,7 @@ class DadosTrilhaModel {
   List<String> bairros;
   List<String> regioes;
   List<String> superficies;
+  String subtipo;
 
   DadosTrilhaModel(this.codt, this.nome, this.descricao, this.comprimento, this.desnivel, this.tipo);
 }

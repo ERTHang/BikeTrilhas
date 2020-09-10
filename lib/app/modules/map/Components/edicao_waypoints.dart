@@ -165,23 +165,12 @@ class DialogContent extends StatefulWidget {
 class _DialogContentState extends State<DialogContent> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: widget.infoRepository.getCategorias(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
           return ListBody(
             children: List<Widget>.generate(
-                (snapshot.data as List<String>).length,
-                (index) => tile((snapshot.data as List<String>)[index])),
-          );
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+                (widget.infoRepository.categorias.length),
+                (index) => tile((widget.infoRepository.categorias[index].cat_nome)),
+          ));
         }
-      },
-    );
-  }
 
   CheckboxListTile tile(String title) {
     bool bvalue =
