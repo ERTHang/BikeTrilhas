@@ -236,34 +236,38 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
                       ),
                     ],
                   ),
-                  Center(
+                  Visibility(
+                    child: Center(
                       child: DropdownButton<String>(
-                    value: _subtipoValue,
-                    icon: Icon(Icons.arrow_downward),
-                    iconSize: 24,
-                    elevation: 16,
-                    style: TextStyle(color: Colors.blue),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.blue,
+                        value: _subtipoValue,
+                        icon: Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: TextStyle(color: Colors.blue),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.blue,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _subtipoValue = newValue;
+                            _mapController.modelTrilha.subtipo = newValue;
+                          });
+                        },
+                        items: List.generate(
+                                _infoRepository.subtipos.length,
+                                (index) =>
+                                    _infoRepository.subtipos[index].subtip_nome)
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        _subtipoValue = newValue;
-                        _mapController.modelTrilha.subtipo = newValue;
-                      });
-                    },
-                    items: List.generate(
-                            _infoRepository.subtipos.length,
-                            (index) =>
-                                _infoRepository.subtipos[index].subtip_nome)
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ))
+                    visible: _subtipoValue.isNotEmpty,
+                  ),
                 ],
               ),
             ),

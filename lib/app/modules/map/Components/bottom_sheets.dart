@@ -55,14 +55,14 @@ bottomSheetTrilha(int codt) async {
                 superficies += ', ' + controller.modelTrilha.superficies[i];
               }
             }
-            wid = Stack(children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Container(
-                  width: MediaQuery.of(controller.scaffoldState.currentContext)
-                          .size
-                          .width *
-                      0.8,
+            wid = ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              child: Stack(children: <Widget>[
+                Container(
+                  color: Colors.white,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,68 +194,74 @@ bottomSheetTrilha(int codt) async {
                     ],
                   ),
                 ),
-              ),
-              Positioned(
-                  bottom: 10,
-                  right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.arrow_downward),
-                    onPressed: () {
-                      controller.sheet = null;
-                      Navigator.pop(context);
-                      controller.nameSheet = controller
-                          .scaffoldState.currentState
-                          .showBottomSheet((context) {
-                        return Container(
-                          width: MediaQuery.of(
-                                      controller.scaffoldState.currentContext)
-                                  .size
-                                  .width *
-                              0.8,
-                          child: ListTile(
-                            title: Text(controller.modelTrilha.nome),
-                            trailing: Icon(
-                              Icons.arrow_upward,
-                              color: Colors.blue,
-                            ),
-                            onTap: () {
-                              controller.nameSheet = null;
-                              bottomSheetTrilha(codt);
-                            },
-                          ),
-                        );
-                      });
-                    },
-                  )),
-              Visibility(
-                visible: ADMIN.contains(auth.user.email),
-                child: Positioned(
-                  bottom: 44,
-                  right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Modular.to.pushNamed('/map/editor');
-                    },
+                Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: IconButton(
+                      color: Colors.blue,
+                      icon: Icon(Icons.arrow_downward),
+                      onPressed: () {
+                        controller.sheet = null;
+                        Navigator.pop(context);
+                        controller.nameSheet = controller
+                            .scaffoldState.currentState
+                            .showBottomSheet((context) {
+                          return ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20)),
+                              child: Container(
+                                color: Colors.white,
+                                width: MediaQuery.of(controller
+                                            .scaffoldState.currentContext)
+                                        .size
+                                        .width *
+                                    0.8,
+                                child: ListTile(
+                                  title: Text(controller.modelTrilha.nome),
+                                  trailing: Icon(
+                                    Icons.arrow_upward,
+                                    color: Colors.blue,
+                                  ),
+                                  onTap: () {
+                                    controller.nameSheet = null;
+                                    bottomSheetTrilha(codt);
+                                  },
+                                ),
+                              ));
+                        }, backgroundColor: Colors.transparent);
+                      },
+                    )),
+                Visibility(
+                  visible: ADMIN.contains(auth.user.email),
+                  child: Positioned(
+                    bottom: 44,
+                    right: 10,
+                    child: IconButton(
+                      color: Colors.blue,
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Modular.to.pushNamed('/map/editor');
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ]);
+              ]),
+            );
           } else {
-            wid = Container(
-              width: MediaQuery.of(controller.scaffoldState.currentContext)
-                      .size
-                      .width *
-                  0.8,
-              height: MediaQuery.of(controller.scaffoldState.currentContext)
-                      .size
-                      .height *
-                  0.2,
-              child: Center(
-                child: CircularProgressIndicator(),
+            wid = ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+              child: Container(
+                color: Colors.white,
+                height: MediaQuery.of(controller.scaffoldState.currentContext)
+                        .size
+                        .height *
+                    0.2,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             );
           }
@@ -263,35 +269,50 @@ bottomSheetTrilha(int codt) async {
         },
       );
     },
+    backgroundColor: Colors.transparent,
   );
+  final auxSheet = controller.sheet;
+  final auxNameSheet = controller.nameSheet;
+  if (auxSheet != null) {
+    auxSheet.closed.whenComplete(() {
+      controller.tappedTrilha = null;
+      controller.sheet = null;
+    });
+  }
+  if (auxNameSheet != null) {
+    auxNameSheet.closed.whenComplete(() {
+      controller.tappedTrilha = null;
+      controller.nameSheet = null;
+    });
+  }
 }
 
 bottomSheetWaypoint(int codt) async {
   controller.modelTrilha = null;
-  controller.sheet = controller.scaffoldState.currentState.showBottomSheet(
-    (context) {
-      return FutureBuilder(
-        future: getDataWaypoint(codt),
-        builder: (context, snapshot) {
-          Widget wid;
-          if (snapshot.hasData) {
-            String categorias = '';
-            if (controller.modelWaypoint.categorias.isNotEmpty) {
-              categorias = controller.modelWaypoint.categorias[0];
-              for (var i = 1;
-                  i < controller.modelWaypoint.categorias.length;
-                  i++) {
-                categorias += ', ' + controller.modelWaypoint.categorias[i];
-              }
+  controller.sheet =
+      controller.scaffoldState.currentState.showBottomSheet((context) {
+    return FutureBuilder(
+      future: getDataWaypoint(codt),
+      builder: (context, snapshot) {
+        Widget wid;
+        if (snapshot.hasData) {
+          String categorias = '';
+          if (controller.modelWaypoint.categorias.isNotEmpty) {
+            categorias = controller.modelWaypoint.categorias[0];
+            for (var i = 1;
+                i < controller.modelWaypoint.categorias.length;
+                i++) {
+              categorias += ', ' + controller.modelWaypoint.categorias[i];
             }
-            wid = Stack(children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Container(
-                  width: MediaQuery.of(controller.scaffoldState.currentContext)
-                          .size
-                          .width *
-                      0.8,
+          }
+          wid = ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              child: Stack(children: <Widget>[
+                Container(
+                  color: Colors.white,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,68 +445,85 @@ bottomSheetWaypoint(int codt) async {
                     ],
                   ),
                 ),
-              ),
-              Positioned(
-                  bottom: 10,
-                  right: 10,
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_downward),
-                    color: Colors.blue,
-                    onPressed: () {
-                      controller.sheet = null;
-                      Navigator.pop(context);
-                      controller.nameSheet = controller
-                          .scaffoldState.currentState
-                          .showBottomSheet((context) {
-                        return Container(
-                          width: MediaQuery.of(
-                                      controller.scaffoldState.currentContext)
-                                  .size
-                                  .width *
-                              0.8,
-                          child: ListTile(
-                            title: Text(controller.modelWaypoint.nome),
-                            onTap: () {
-                              controller.nameSheet = null;
-                              bottomSheetWaypoint(codt);
-                            },
-                          ),
-                        );
-                      });
-                    },
-                  )),
-              Positioned(
-                  bottom: 44,
-                  right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Modular.to.pushNamed('/map/editorwaypoint');
-                    },
-                  ))
-            ]);
-          } else {
-            wid = Container(
-              width: MediaQuery.of(controller.scaffoldState.currentContext)
-                      .size
-                      .width *
-                  0.8,
-              height: MediaQuery.of(controller.scaffoldState.currentContext)
-                      .size
-                      .height *
-                  0.2,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-          return wid;
-        },
-      );
-    },
-  );
+                Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_downward),
+                      color: Colors.blue,
+                      onPressed: () {
+                        controller.sheet = null;
+                        Navigator.pop(context);
+                        controller.nameSheet = controller
+                            .scaffoldState.currentState
+                            .showBottomSheet((context) {
+                          return ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20)),
+                              child: Container(
+                                color: Colors.white,
+                                width: MediaQuery.of(controller
+                                            .scaffoldState.currentContext)
+                                        .size
+                                        .width *
+                                    0.8,
+                                child: ListTile(
+                                  title: Text(controller.modelWaypoint.nome),
+                                  onTap: () {
+                                    controller.nameSheet = null;
+                                    bottomSheetWaypoint(codt);
+                                  },
+                                ),
+                              ));
+                        });
+                      },
+                    )),
+                Positioned(
+                    bottom: 44,
+                    right: 10,
+                    child: IconButton(
+                      color: Colors.blue,
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Modular.to.pushNamed('/map/editorwaypoint');
+                      },
+                    ))
+              ]));
+        } else {
+          wid = ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+              child: Container(
+                color: Colors.white,
+                height: MediaQuery.of(controller.scaffoldState.currentContext)
+                        .size
+                        .height *
+                    0.1,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ));
+        }
+        return wid;
+      },
+    );
+  }, backgroundColor: Colors.transparent);
+  final auxSheet = controller.sheet;
+  final auxNameSheet = controller.nameSheet;
+  if (auxSheet != null) {
+    auxSheet.closed.whenComplete(() {
+      controller.tappedWaypoint = null;
+      controller.sheet = null;
+    });
+  }
+  if (auxNameSheet != null) {
+    auxNameSheet.closed.whenComplete(() {
+      controller.tappedWaypoint = null;
+      controller.nameSheet = null;
+    });
+  }
 }
 
 bottomSheetTempTrail(TrilhaModel trilha) {
@@ -493,84 +531,105 @@ bottomSheetTempTrail(TrilhaModel trilha) {
   controller.modelWaypoint = null;
   controller.sheet = controller.scaffoldState.currentState.showBottomSheet(
     (context) {
-      return Stack(children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(8),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: 80,
-            padding: EdgeInsets.fromLTRB(0, 28, 0, 0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                RichText(
-                  text: TextSpan(
-                    text: 'Nome: ',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black),
-                    children: <TextSpan>[
-                      TextSpan(
-                          text: trilha.nome,
-                          style: TextStyle(fontWeight: FontWeight.normal))
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 44,
-          right: 10,
-          child: IconButton(
-            icon: Icon(
-              Icons.delete,
-              color: Colors.red,
-            ),
-            onPressed: () {
-              controller.createdTrails.remove(trilha);
-              controller.getPolylines();
-              controller.sheet = null;
-              controller.state();
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        Positioned(
-            bottom: 10,
-            right: 10,
-            child: IconButton(
-              color: Colors.blue,
-              icon: Icon(Icons.arrow_downward),
-              onPressed: () {
-                controller.sheet = null;
-                Navigator.pop(context);
-                controller.nameSheet = controller.scaffoldState.currentState
-                    .showBottomSheet((context) {
-                  return Container(
-                    width:
-                        MediaQuery.of(controller.scaffoldState.currentContext)
-                                .size
-                                .width *
-                            0.8,
-                    child: ListTile(
-                      title: Text(trilha.nome),
-                      trailing: Icon(
-                        Icons.arrow_upward,
-                        color: Colors.blue,
-                      ),
-                      onTap: () {
-                        controller.nameSheet = null;
-                        bottomSheetTempTrail(trilha);
-                      },
+      return ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          child: Stack(children: <Widget>[
+            Container(
+              color: Colors.white,
+              width: MediaQuery.of(context).size.width,
+              height: 100,
+              padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  RichText(
+                    text: TextSpan(
+                      text: 'Nome: ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: trilha.nome,
+                            style: TextStyle(fontWeight: FontWeight.normal))
+                      ],
                     ),
-                  );
-                });
-              },
-            ))
-      ]);
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 44,
+              right: 10,
+              child: IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                ),
+                onPressed: () {
+                  controller.createdTrails.remove(trilha);
+                  controller.getPolylines();
+                  controller.sheet = null;
+                  controller.state();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            Positioned(
+                bottom: 10,
+                right: 10,
+                child: IconButton(
+                  color: Colors.blue,
+                  icon: Icon(Icons.arrow_downward),
+                  onPressed: () {
+                    controller.sheet = null;
+                    Navigator.pop(context);
+                    controller.nameSheet = controller.scaffoldState.currentState
+                        .showBottomSheet((context) {
+                      return ClipRRect(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
+                          child: Container(
+                            color: Colors.white,
+                            width: MediaQuery.of(
+                                        controller.scaffoldState.currentContext)
+                                    .size
+                                    .width *
+                                0.8,
+                            child: ListTile(
+                              title: Text(trilha.nome),
+                              trailing: Icon(
+                                Icons.arrow_upward,
+                                color: Colors.blue,
+                              ),
+                              onTap: () {
+                                controller.nameSheet = null;
+                                bottomSheetTempTrail(trilha);
+                              },
+                            ),
+                          ));
+                    });
+                  },
+                ))
+          ]));
     },
+    backgroundColor: Colors.transparent
   );
+  final auxSheet = controller.sheet;
+  final auxNameSheet = controller.nameSheet;
+  if (auxSheet != null) {
+    auxSheet.closed.whenComplete(() {
+      controller.tappedTrilha = null;
+      controller.sheet = null;
+    });
+  }
+  if (auxNameSheet != null) {
+    auxNameSheet.closed.whenComplete(() {
+      controller.tappedTrilha = null;
+      controller.nameSheet = null;
+    });
+  }
 }
