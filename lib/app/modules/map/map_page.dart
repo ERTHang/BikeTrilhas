@@ -25,6 +25,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
 
   List<int> temp = [];
   int routeState = 0;
+  int destinos = 0;
 
   GoogleMapController mapController;
   Completer<GoogleMapController> _controller = Completer();
@@ -35,7 +36,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       key: controller.scaffoldState,
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text('Bike Trilhas', style: TextStyle(fontFamily: 'Rancho', fontSize: 25),),
+        title: Text(
+          'Bike Trilhas',
+          style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+        ),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
@@ -132,47 +136,76 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               return _map();
             },
           ),
+          // Rota
           Visibility(
             child: Positioned(
               bottom: 5,
-              left: (MediaQuery.of(context).size.width / 2) - 50,
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 500),
-                height: (routeState == 0) ? 0 : 50,
-                // width: (routeState == 0) ? 0 : 100,
-                width: 100,
-                curve: Curves.easeIn,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  color: (routeState == 2) ? Colors.red : Colors.blue,
-                ),
-                child: Center(
-                  child: AnimatedCrossFade(
-                    firstChild: Text(
-                      (routeState == 0) ? '' : 'Origem',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    secondChild: Text(
-                      'Destino',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    crossFadeState: (routeState == 2)
-                        ? CrossFadeState.showSecond
-                        : CrossFadeState.showFirst,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  AnimatedContainer(
                     duration: Duration(milliseconds: 500),
+                    height: (routeState == 0) ? 0 : 50,
+                    // width: (routeState == 0) ? 0 : 100,
+                    width: 100,
+                    curve: Curves.easeIn,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      color: (routeState >= 2) ? Colors.red : Colors.blue,
+                    ),
+                    child: Center(
+                      child: AnimatedCrossFade(
+                        firstChild: Text(
+                          (routeState == 0) ? '' : 'Origem',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                        secondChild: Text(
+                          'Destino $destinos',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                        crossFadeState: (routeState >= 2)
+                            ? CrossFadeState.showSecond
+                            : CrossFadeState.showFirst,
+                        duration: Duration(milliseconds: 500),
+                      ),
+                    ),
                   ),
-                ),
+                  Visibility(
+                    child: RaisedButton(
+                      
+                      color: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24)
+                      ),
+                      child: Text("Criar", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                      onPressed: () {
+                        controller.getRoute();
+                        controller.trilhasFiltradas = temp;
+                        routeState = 0;
+                      },
+                    ),
+                    visible: routeState > 2,
+                    maintainSize: false,
+                    maintainSemantics: false,
+                    maintainInteractivity: false,
+                  )
+                ],
               ),
             ),
             maintainState: false,
           ),
+          //botao rota
           Positioned(
             top: 5,
             right: 5,
             child: IconButton(
               onPressed: () {
+                controller.routePoints.clear();
+                controller.routeMarkers.clear();
+                destinos = 0;
                 if (controller.sheet != null) {
                   controller.sheet.close();
                   controller.sheet = null;
@@ -256,17 +289,12 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             controller.tappedTrilha = null;
             controller.tappedWaypoint = null;
           }
-          if (routeState == 2) {
-            controller.routeMarkers.clear();
-            controller.routeDest = latlng;
-            controller.trilhasFiltradas = temp;
-            controller.getRoute();
-            routeState = 0;
-          }
-          if (routeState == 1) {
-            controller.routeMarkers.add(Marker(markerId: MarkerId('inicio'), position: latlng));
-            controller.routeOrig = latlng;
-            routeState = 2;
+          if (routeState != 0) {
+            controller.routeMarkers
+                .add(Marker(markerId: MarkerId('destino $routeState'), position: latlng));
+            controller.routePoints.add(latlng);
+            destinos++;
+            routeState++;
           }
         });
       },

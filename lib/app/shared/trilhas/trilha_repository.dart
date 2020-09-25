@@ -14,57 +14,54 @@ class TrilhaRepository {
 
   int n = 10000;
 
-  Future<TrilhaModel> getRoute(LatLng origem, LatLng destino) async {
+  Future<TrilhaModel> getRoute(List<LatLng> routePoints) async {
     final auth = Modular.get<AuthController>();
-    bool reversed;
-    var codt = (await dio.get('/server/route', queryParameters: {
-      "lat_orig": origem.latitude,
-      "lon_orig": origem.longitude,
-      "lat_dest": destino.latitude,
-      "lon_dest": destino.longitude
-    }))
-        .data;
-
-    var response = (await dio.get('/server/temp/$codt'));
-    var point = response.data;
+    List<List<LatLng>> rotaPolyline = [];
     var username = auth.user.displayName.toLowerCase();
-    n++;
-    TrilhaModel model = TrilhaModel(codt + n, 'Rota gerada por $username');
-    List<LatLng> rota = [];
-    var lat = point["latitudeTrilha"];
-    var lon = point["longitudeTrilha"];
-    if ((lat as List).isNotEmpty &&
-        sqrt(pow(lat[0] - origem.latitude, 2) +
-                pow(lon[0] - origem.longitude, 2)) <
-            sqrt(pow(lat[0] - destino.latitude, 2) +
-                pow(lon[0] - destino.longitude, 2))){
-                  rota.add(origem);
-                  reversed = false;
-                }
-                else{
-                  rota.add(destino);
-                  reversed = true;
-                }
-    for (var i = 0; i < (lat as List).length; i++) {
-      rota.add(LatLng(lat[i], lon[i]));
+    TrilhaModel model = TrilhaModel(n, 'Rota gerada por $username');
+
+    for (var i = 0; i < routePoints.length - 1; i++) {
+      rotaPolyline.add([]);
+      n++;
+      bool reversed;
+      var codt = (await dio.get('/server/route', queryParameters: {
+        "lat_orig": routePoints[i].latitude,
+        "lon_orig": routePoints[i].longitude,
+        "lat_dest": routePoints[i+1].latitude,
+        "lon_dest": routePoints[i+1].longitude
+      }))
+          .data;
+
+      var point = (await dio.get('/server/temp/$codt')).data;
+      var lat = point["latitudeTrilha"];
+      var lon = point["longitudeTrilha"];
+      if ((lat as List).isNotEmpty &&
+          sqrt(pow(lat[0] - routePoints[i].latitude, 2) +
+                  pow(lon[0] - routePoints[i].longitude, 2)) <
+              sqrt(pow(lat[0] - routePoints[i+1].latitude, 2) +
+                  pow(lon[0] - routePoints[i+1].longitude, 2))) {
+        rotaPolyline.last.add(routePoints[i]);
+        reversed = false;
+      } else {
+        rotaPolyline.last.add(routePoints[i+1]);
+        reversed = true;
+      }
+      for (var j = 0; j < (lat as List).length; j++) {
+        rotaPolyline.last.add(LatLng(lat[j], lon[j]));
+      }
+      rotaPolyline.last.add((reversed) ? routePoints[i] : routePoints[i+1]);
+      model.waypoints.addAll([
+        WaypointModel(
+          codigo: codt + n,
+          posicao: routePoints[i],
+        ),
+        WaypointModel(
+          codigo: 2 * (codt + n),
+          posicao: routePoints[i+1],
+        )
+      ]);
     }
-    if (reversed) {
-      rota.add(origem);
-    }
-    else{
-      rota.add(destino);
-    }
-    model.waypoints.addAll([
-      WaypointModel(
-        codigo: codt + n,
-        posicao: origem,
-      ),
-      WaypointModel(
-        codigo: 2 * (codt + n),
-        posicao: destino,
-      )
-    ]);
-    model.polylineCoordinates.add(rota);
+    model.polylineCoordinates = rotaPolyline;
     return model;
   }
 
@@ -88,8 +85,7 @@ class TrilhaRepository {
       for (var i = 0; i < (lat as List).length; i++) {
         if (lat[i] == 0.0) {
           line.add([]);
-        }
-        else{
+        } else {
           line.last.add(LatLng(lat[i], lon[i]));
         }
       }

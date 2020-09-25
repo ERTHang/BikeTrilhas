@@ -44,8 +44,7 @@ abstract class _MapControllerBase with Store {
   int tappedTrilha;
   int tappedWaypoint;
   List<TrilhaModel> createdTrails = [];
-  LatLng routeOrig;
-  LatLng routeDest;
+  List<LatLng> routePoints = [];
   Function state;
   PersistentBottomSheetController sheet;
   PersistentBottomSheetController nameSheet;
@@ -81,7 +80,10 @@ abstract class _MapControllerBase with Store {
   }
 
   getRoute() async {
-    var newTrail = await trilhaRepository.getRoute(routeOrig, routeDest);
+    TrilhaModel newTrail;
+    newTrail = await trilhaRepository.getRoute(routePoints);
+    routePoints.clear();
+    routeMarkers.clear();
     createdTrails.add(newTrail);
     bottomSheetTempTrail(newTrail);
     tappedWaypoint = null;
@@ -95,46 +97,40 @@ abstract class _MapControllerBase with Store {
     polylines.clear();
     markers.clear();
     for (var trilha in createdTrails) {
-      Polyline pol = Polyline(
-        zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-        consumeTapEvents: (trilhasFiltradas != [0]),
-        polylineId: PolylineId(trilha.codt.toString()),
-        color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
-        onTap: () {
-          tappedWaypoint = null;
-          tappedTrilha = trilha.codt;
-          state();
-          bottomSheetTempTrail(trilha);
-        },
-        points: trilha.polylineCoordinates.first,
-        width: 3,
-        visible: (trilhasFiltradas != [0]),
-      );
-      polylines.add(pol);
-      markers.addAll([
-        Marker(
-          markerId: MarkerId(trilha.waypoints[0].codigo.toString()),
-          visible: trilhasFiltradas != [0],
-          position: trilha.waypoints[0].posicao,
+      for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
+        Polyline pol = Polyline(
+          zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
+          consumeTapEvents: (trilhasFiltradas != [0]),
+          polylineId: PolylineId("rota $i " + trilha.codt.toString()),
+          color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
           onTap: () {
             tappedWaypoint = null;
-            bottomSheetTempTrail(trilha);
             tappedTrilha = trilha.codt;
             state();
-          },
-        ),
-        Marker(
-          markerId: MarkerId(trilha.waypoints[1].codigo.toString()),
-          visible: trilhasFiltradas != [0],
-          position: trilha.waypoints[1].posicao,
-          onTap: () {
-            tappedWaypoint = null;
             bottomSheetTempTrail(trilha);
-            tappedTrilha = trilha.codt;
-            state();
           },
-        )
-      ]);
+          points: trilha.polylineCoordinates[i],
+          width: 3,
+          visible: (!trilhasFiltradas.contains(0)),
+        );
+        polylines.add(pol);
+        markers.addAll(
+          List.generate(
+            trilha.waypoints.length,
+            (index) => Marker(
+              markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
+              visible: (!trilhasFiltradas.contains(0)),
+              position: trilha.waypoints[index].posicao,
+              onTap: () {
+                tappedWaypoint = null;
+                bottomSheetTempTrail(trilha);
+                tappedTrilha = trilha.codt;
+                state();
+              },
+            ),
+          ),
+        );
+      }
     }
     for (var trilha in trilhas.value) {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
@@ -144,7 +140,7 @@ abstract class _MapControllerBase with Store {
               ? true
               : (trilhasFiltradas.contains(trilha.codt) ||
                   tappedTrilha == trilha.codt),
-          polylineId: PolylineId((trilha.codt + i*10000).toString()),
+          polylineId: PolylineId("trilha " + (trilha.codt + i * 10000).toString()),
           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
           onTap: () {
             tappedWaypoint = null;
@@ -215,5 +211,4 @@ abstract class _MapControllerBase with Store {
         await filterRepository.getFiltered([typeValue], [], [], [], [], []);
     typeNum = typeValue;
   }
-
 }
