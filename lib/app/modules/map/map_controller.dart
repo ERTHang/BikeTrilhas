@@ -85,7 +85,7 @@ abstract class _MapControllerBase with Store {
     routePoints.clear();
     routeMarkers.clear();
     createdTrails.add(newTrail);
-    bottomSheetTempTrail(newTrail);
+    bottomSheetTempTrail(newTrail, scaffoldState);
     tappedWaypoint = null;
     tappedTrilha = newTrail.codt;
     getPolylines();
@@ -107,7 +107,7 @@ abstract class _MapControllerBase with Store {
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;
             state();
-            bottomSheetTempTrail(trilha);
+            bottomSheetTempTrail(trilha, scaffoldState);
           },
           points: trilha.polylineCoordinates[i],
           width: 3,
@@ -123,7 +123,7 @@ abstract class _MapControllerBase with Store {
               position: trilha.waypoints[index].posicao,
               onTap: () {
                 tappedWaypoint = null;
-                bottomSheetTempTrail(trilha);
+                bottomSheetTempTrail(trilha, scaffoldState);
                 tappedTrilha = trilha.codt;
                 state();
               },

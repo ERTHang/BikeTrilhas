@@ -139,19 +139,17 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           // Rota
           Visibility(
             child: Positioned(
-              bottom: 5,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
+              bottom: 0,
+              left: 0,
+              child: 
                   AnimatedContainer(
                     duration: Duration(milliseconds: 500),
-                    height: (routeState == 0) ? 0 : 50,
+                    height: (routeState == 0) ? 0 : 40,
                     // width: (routeState == 0) ? 0 : 100,
-                    width: 100,
+                    width: 90,
                     curve: Curves.easeIn,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(24)),
                       color: (routeState >= 2) ? Colors.red : Colors.blue,
                     ),
                     child: Center(
@@ -173,9 +171,13 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                       ),
                     ),
                   ),
-                  Visibility(
+              ),
+            maintainState: false,
+          ),
+          Positioned(
+            bottom: 0,
+            child: Visibility(
                     child: RaisedButton(
-                      
                       color: Colors.green,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24)
@@ -191,11 +193,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     maintainSize: false,
                     maintainSemantics: false,
                     maintainInteractivity: false,
-                  )
-                ],
-              ),
-            ),
-            maintainState: false,
+                  ),
           ),
           //botao rota
           Positioned(

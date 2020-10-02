@@ -20,7 +20,9 @@ class _UsertrailsPageState
 
   @override
   Widget build(BuildContext context) {
+    controller.state = _func;
     return Scaffold(
+      key: controller.scaffoldState,
       appBar: AppBar(
         title: Text('Suas Trilhas'),
         centerTitle: true,
@@ -30,8 +32,27 @@ class _UsertrailsPageState
         body: DrawerPage(),
       ),
       body: GoogleMap(
+        onTap: (latlng) {
+          setState(() {
+            if (controller.mapController.sheet != null) {
+              controller.mapController.sheet.close();
+              controller.mapController.sheet = null;
+              controller.mapController.tappedTrilha = null;
+              controller.mapController.tappedWaypoint = null;
+            }
+            if (controller.mapController.nameSheet != null) {
+              controller.mapController.nameSheet.close();
+              controller.mapController.nameSheet = null;
+              controller.mapController.tappedTrilha = null;
+              controller.mapController.tappedWaypoint = null;
+            }
+          });
+        },
+        mapToolbarEnabled: false,
         myLocationButtonEnabled: false,
         myLocationEnabled: true,
+        polylines: controller.polylines,
+        markers: controller.markers,
         mapType: MapType.normal,
         initialCameraPosition: controller.mapController.position.value,
         onMapCreated: (GoogleMapController controller) {
@@ -39,5 +60,9 @@ class _UsertrailsPageState
         },
       ),
     );
+  }
+
+  void _func() {
+    setState(() {});
   }
 }

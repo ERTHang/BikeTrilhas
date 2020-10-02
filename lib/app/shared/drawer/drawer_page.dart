@@ -98,30 +98,30 @@ class _DrawerPageState extends State<DrawerPage> {
               }
             },
           ),
-          // ListTile(
-          //   leading: Icon(
-          //     Icons.directions_bike,
-          //     color: Colors.black,
-          //     size: 40,
-          //   ),
-          //   title: Observer(builder: (_) {
-          //     Color cor;
-          //     cor = (draw.value == 2) ? Colors.white : Colors.black;
-          //     return Text(
-          //       'Suas Trilhas',
-          //       style: TextStyle(
-          //           height: 1.8,
-          //           fontSize: 18,
-          //           color: cor,
-          //           fontWeight: FontWeight.bold),
-          //     );
-          //   }),
-          //   dense: true,
-          //   onTap: () {
-          //     draw.value = 2;
-          //     Modular.to.pushNamed("/usertrail");
-          //   },
-          // ),
+          ListTile(
+            leading: Icon(
+              Icons.directions_bike,
+              color: Colors.black,
+              size: 40,
+            ),
+            title: Observer(builder: (_) {
+              Color cor;
+              cor = (draw.value == 2) ? Colors.white : Colors.black;
+              return Text(
+                'Suas rotas',
+                style: TextStyle(
+                    height: 1.8,
+                    fontSize: 18,
+                    color: cor,
+                    fontWeight: FontWeight.bold),
+              );
+            }),
+            dense: true,
+            onTap: () {
+              draw.value = 2;
+              Modular.to.pushNamed("/usertrail");
+            },
+          ),
           // ListTile(
           //   leading: Icon(
           //     Icons.place,

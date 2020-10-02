@@ -526,10 +526,10 @@ bottomSheetWaypoint(int codt) async {
   }
 }
 
-bottomSheetTempTrail(TrilhaModel trilha) {
+bottomSheetTempTrail(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState ) {
   controller.modelTrilha = null;
   controller.modelWaypoint = null;
-  controller.sheet = controller.scaffoldState.currentState.showBottomSheet(
+  controller.sheet = keyState.currentState.showBottomSheet(
     (context) {
       return ClipRRect(
           borderRadius: BorderRadius.only(
@@ -607,7 +607,7 @@ bottomSheetTempTrail(TrilhaModel trilha) {
                               ),
                               onTap: () {
                                 controller.nameSheet = null;
-                                bottomSheetTempTrail(trilha);
+                                bottomSheetTempTrail(trilha, keyState);
                               },
                             ),
                           ));
