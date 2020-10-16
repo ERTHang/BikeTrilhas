@@ -21,6 +21,7 @@ class _UsertrailsPageState
   @override
   Widget build(BuildContext context) {
     controller.state = _func;
+    controller.getPolylines();
     return Scaffold(
       key: controller.scaffoldState,
       appBar: AppBar(
@@ -37,14 +38,14 @@ class _UsertrailsPageState
             if (controller.mapController.sheet != null) {
               controller.mapController.sheet.close();
               controller.mapController.sheet = null;
-              controller.mapController.tappedTrilha = null;
-              controller.mapController.tappedWaypoint = null;
+              controller.tappedTrilha = null;
+              setState(() => {});
             }
             if (controller.mapController.nameSheet != null) {
               controller.mapController.nameSheet.close();
               controller.mapController.nameSheet = null;
-              controller.mapController.tappedTrilha = null;
-              controller.mapController.tappedWaypoint = null;
+              controller.tappedTrilha = null;
+              setState(() => {});
             }
           });
         },

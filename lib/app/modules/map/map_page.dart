@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
+import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
+import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -29,6 +31,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
 
   GoogleMapController mapController;
   Completer<GoogleMapController> _controller = Completer();
+  final AuthController auth = Modular.get();
 
   Widget build(BuildContext context) {
     controller.state = _func;
@@ -141,59 +144,62 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             child: Positioned(
               bottom: 0,
               left: 0,
-              child: 
-                  AnimatedContainer(
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                height: (routeState == 0) ? 0 : 40,
+                // width: (routeState == 0) ? 0 : 100,
+                width: 90,
+                curve: Curves.easeIn,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.only(topRight: Radius.circular(24)),
+                  color: (routeState >= 2) ? Colors.red : Colors.blue,
+                ),
+                child: Center(
+                  child: AnimatedCrossFade(
+                    firstChild: Text(
+                      (routeState == 0) ? '' : 'Origem',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    secondChild: Text(
+                      'Destino $destinos',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    crossFadeState: (routeState >= 2)
+                        ? CrossFadeState.showSecond
+                        : CrossFadeState.showFirst,
                     duration: Duration(milliseconds: 500),
-                    height: (routeState == 0) ? 0 : 40,
-                    // width: (routeState == 0) ? 0 : 100,
-                    width: 90,
-                    curve: Curves.easeIn,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(topRight: Radius.circular(24)),
-                      color: (routeState >= 2) ? Colors.red : Colors.blue,
-                    ),
-                    child: Center(
-                      child: AnimatedCrossFade(
-                        firstChild: Text(
-                          (routeState == 0) ? '' : 'Origem',
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        secondChild: Text(
-                          'Destino $destinos',
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        crossFadeState: (routeState >= 2)
-                            ? CrossFadeState.showSecond
-                            : CrossFadeState.showFirst,
-                        duration: Duration(milliseconds: 500),
-                      ),
-                    ),
                   ),
+                ),
               ),
+            ),
             maintainState: false,
           ),
           Positioned(
             bottom: 0,
             child: Visibility(
-                    child: RaisedButton(
-                      color: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24)
-                      ),
-                      child: Text("Criar", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                      onPressed: () {
-                        controller.getRoute();
-                        controller.trilhasFiltradas = temp;
-                        routeState = 0;
-                      },
-                    ),
-                    visible: routeState > 2,
-                    maintainSize: false,
-                    maintainSemantics: false,
-                    maintainInteractivity: false,
-                  ),
+              child: RaisedButton(
+                color: Colors.green,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24)),
+                child: Text(
+                  "Criar",
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  controller.getRoute();
+                  controller.trilhasFiltradas = temp;
+                  routeState = 0;
+                },
+              ),
+              visible: routeState > 2,
+              maintainSize: false,
+              maintainSemantics: false,
+              maintainInteractivity: false,
+            ),
           ),
           //botao rota
           Positioned(
@@ -237,28 +243,31 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               ),
             ),
           ),
-          // Positioned(
-          //   bottom: 30,
-          //   left: 30,
-          //   child: ButtonTheme(
-          //     height: 60,
-          //     minWidth: 60,
-          //     shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(360)),
-          //     child: RaisedButton(
-          //       color: Colors.blue,
-          //       onPressed: () {
-          //         Modular.to.pushNamed('/photo');
-          //       },
-          //       child: Icon(
-          //         Icons.camera_alt,
-          //         color: Colors.white,
-          //         size: 40,
-          //       ),
-          //       elevation: 5,
-          //     ),
-          //   ),
-          // )
+          Visibility(
+            visible: ADMIN.contains(auth.user.email),
+            child: Positioned(
+              bottom: 30,
+              left: 30,
+              child: ButtonTheme(
+                height: 60,
+                minWidth: 60,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(360)),
+                child: RaisedButton(
+                  color: Colors.blue,
+                  onPressed: () {
+                    Modular.to.pushNamed('/photo');
+                  },
+                  child: Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                  elevation: 5,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -288,8 +297,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             controller.tappedWaypoint = null;
           }
           if (routeState != 0) {
-            controller.routeMarkers
-                .add(Marker(markerId: MarkerId('destino $routeState'), position: latlng));
+            controller.routeMarkers.add(Marker(
+                markerId: MarkerId('destino $routeState'), position: latlng));
             controller.routePoints.add(latlng);
             destinos++;
             routeState++;

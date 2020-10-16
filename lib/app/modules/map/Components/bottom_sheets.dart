@@ -526,7 +526,7 @@ bottomSheetWaypoint(int codt) async {
   }
 }
 
-bottomSheetTempTrail(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState ) {
+bottomSheetTempTrail(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState, Function state) {
   controller.modelTrilha = null;
   controller.modelWaypoint = null;
   controller.sheet = keyState.currentState.showBottomSheet(
@@ -572,7 +572,7 @@ bottomSheetTempTrail(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState ) {
                   controller.createdTrails.remove(trilha);
                   controller.getPolylines();
                   controller.sheet = null;
-                  controller.state();
+                  state();
                   Navigator.of(context).pop();
                 },
               ),
@@ -586,7 +586,7 @@ bottomSheetTempTrail(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState ) {
                   onPressed: () {
                     controller.sheet = null;
                     Navigator.pop(context);
-                    controller.nameSheet = controller.scaffoldState.currentState
+                    controller.nameSheet = keyState.currentState
                         .showBottomSheet((context) {
                       return ClipRRect(
                           borderRadius: BorderRadius.only(
@@ -595,7 +595,7 @@ bottomSheetTempTrail(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState ) {
                           child: Container(
                             color: Colors.white,
                             width: MediaQuery.of(
-                                        controller.scaffoldState.currentContext)
+                                        keyState.currentContext)
                                     .size
                                     .width *
                                 0.8,
@@ -607,7 +607,7 @@ bottomSheetTempTrail(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState ) {
                               ),
                               onTap: () {
                                 controller.nameSheet = null;
-                                bottomSheetTempTrail(trilha, keyState);
+                                bottomSheetTempTrail(trilha, keyState, state);
                               },
                             ),
                           ));

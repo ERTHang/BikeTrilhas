@@ -22,8 +22,8 @@ abstract class _UsertrailsControllerBase with Store {
 
   @action
   getPolylines() {
-    mapController.polylines.clear();
-    mapController.markers.clear();
+    polylines.clear();
+    markers.clear();
     for (var trilha in mapController.createdTrails) {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
@@ -34,7 +34,7 @@ abstract class _UsertrailsControllerBase with Store {
           onTap: () {
             tappedTrilha = trilha.codt;
             state();
-            bottomSheetTempTrail(trilha, scaffoldState);
+            bottomSheetTempTrail(trilha, scaffoldState, state);
           },
           points: trilha.polylineCoordinates[i],
           width: 3,
@@ -47,7 +47,7 @@ abstract class _UsertrailsControllerBase with Store {
               markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
               position: trilha.waypoints[index].posicao,
               onTap: () {
-                bottomSheetTempTrail(trilha, scaffoldState);
+                bottomSheetTempTrail(trilha, scaffoldState, state);
                 tappedTrilha = trilha.codt;
                 state();
               },
