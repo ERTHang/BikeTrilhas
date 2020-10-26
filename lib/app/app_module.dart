@@ -14,6 +14,7 @@ import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/filter/filter_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:dio/dio.dart';
@@ -30,8 +31,9 @@ class AppModule extends MainModule {
         Bind<IAuthRepository>((i) => AuthRepository()),
         Bind((i) => AuthController()),
         Bind((i) => InfoRepository(i.get<Dio>())),
-        Bind((i) => TrilhaRepository(i.get<Dio>())),
+        Bind((i) => TrilhaRepository(i.get<Dio>(), i.get<SharedPrefs>())),
         Bind((i) => FilterRepository(i.get<Dio>())),
+        Bind((i) => SharedPrefs()),
         Bind((i) => Dio(BaseOptions(baseUrl: URL_BASE)))
       ];
 

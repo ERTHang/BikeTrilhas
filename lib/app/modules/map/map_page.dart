@@ -190,9 +190,9 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  controller.getRoute();
-                  controller.trilhasFiltradas = temp;
                   routeState = 0;
+                  controller.trilhasFiltradas = temp;
+                  controller.getRoute();
                 },
               ),
               visible: routeState > 2,

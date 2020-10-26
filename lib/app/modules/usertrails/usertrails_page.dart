@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -56,8 +57,11 @@ class _UsertrailsPageState
         markers: controller.markers,
         mapType: MapType.normal,
         initialCameraPosition: controller.mapController.position.value,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
+        onMapCreated: (GoogleMapController mapcontroller) {
+          if (controller.tappedTrilha != null) {
+            bottomSheetTempTrail(controller.mapController.newTrail, controller.scaffoldState, controller.state);
+          }
+          _controller.complete(mapcontroller);
         },
       ),
     );

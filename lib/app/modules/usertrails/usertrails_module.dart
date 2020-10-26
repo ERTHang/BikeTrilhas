@@ -5,7 +5,7 @@ import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_page.dart'
 class UsertrailsModule extends ChildModule {
   @override
   List<Bind> get binds => [
-        Bind((i) => UsertrailsController(i.get())),
+        Bind((i) => UsertrailsController(i.get(), i.get())),
       ];
 
   @override

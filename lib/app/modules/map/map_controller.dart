@@ -9,6 +9,7 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
@@ -48,6 +49,8 @@ abstract class _MapControllerBase with Store {
   Function state;
   PersistentBottomSheetController sheet;
   PersistentBottomSheetController nameSheet;
+  TrilhaModel newTrail;
+
 
   @action
   _MapControllerBase(
@@ -80,58 +83,56 @@ abstract class _MapControllerBase with Store {
   }
 
   getRoute() async {
-    TrilhaModel newTrail;
     newTrail = await trilhaRepository.getRoute(routePoints);
     routePoints.clear();
     routeMarkers.clear();
     createdTrails.add(newTrail);
-    bottomSheetTempTrail(newTrail, scaffoldState, state);
     tappedWaypoint = null;
-    tappedTrilha = newTrail.codt;
-    getPolylines();
+    tappedTrilha = null;
     state();
+    Modular.to.pushNamed('/usertrail');
   }
 
   @action
   getPolylines() {
     polylines.clear();
     markers.clear();
-    for (var trilha in createdTrails) {
-      for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
-        Polyline pol = Polyline(
-          zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-          consumeTapEvents: (trilhasFiltradas != [0]),
-          polylineId: PolylineId("rota $i " + trilha.codt.toString()),
-          color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
-          onTap: () {
-            tappedWaypoint = null;
-            tappedTrilha = trilha.codt;
-            state();
-            bottomSheetTempTrail(trilha, scaffoldState, state);
-          },
-          points: trilha.polylineCoordinates[i],
-          width: 3,
-          visible: (!trilhasFiltradas.contains(0)),
-        );
-        polylines.add(pol);
-        markers.addAll(
-          List.generate(
-            trilha.waypoints.length,
-            (index) => Marker(
-              markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
-              visible: (!trilhasFiltradas.contains(0)),
-              position: trilha.waypoints[index].posicao,
-              onTap: () {
-                tappedWaypoint = null;
-                bottomSheetTempTrail(trilha, scaffoldState, state);
-                tappedTrilha = trilha.codt;
-                state();
-              },
-            ),
-          ),
-        );
-      }
-    }
+    // for (var trilha in createdTrails) {
+    //   for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
+    //     Polyline pol = Polyline(
+    //       zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
+    //       consumeTapEvents: (trilhasFiltradas != [0]),
+    //       polylineId: PolylineId("rota $i " + trilha.codt.toString()),
+    //       color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
+    //       onTap: () {
+    //         tappedWaypoint = null;
+    //         tappedTrilha = trilha.codt;
+    //         state();
+    //         bottomSheetTempTrail(trilha, scaffoldState, state);
+    //       },
+    //       points: trilha.polylineCoordinates[i],
+    //       width: 3,
+    //       visible: (!trilhasFiltradas.contains(0)),
+    //     );
+    //     polylines.add(pol);
+    //     markers.addAll(
+    //       List.generate(
+    //         trilha.waypoints.length,
+    //         (index) => Marker(
+    //           markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
+    //           visible: (!trilhasFiltradas.contains(0)),
+    //           position: trilha.waypoints[index].posicao,
+    //           onTap: () {
+    //             tappedWaypoint = null;
+    //             bottomSheetTempTrail(trilha, scaffoldState, state);
+    //             tappedTrilha = trilha.codt;
+    //             state();
+    //           },
+    //         ),
+    //       ),
+    //     );
+    //   }
+    // }
     for (var trilha in trilhas.value) {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
