@@ -24,7 +24,18 @@ abstract class _UsertrailsControllerBase with Store {
   Set<Polyline> polylines = {};
   Set<Marker> markers = {};
   Function state;
+  List<LatLng> routePoints = [];
+  Set<Marker> routeMarkers = {};
   int tappedTrilha;
+
+  getRoute() async {
+    mapController.newTrail = await mapController.trilhaRepository.getRoute(routePoints);
+    routePoints.clear();
+    routeMarkers.clear();
+    mapController.createdTrails.add(mapController.newTrail);
+    tappedTrilha = null;
+    state();
+  }
 
   getPolylines() async {
     polylines.clear();
