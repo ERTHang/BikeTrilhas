@@ -94,6 +94,7 @@ class TrilhaRepository {
 
     for (var i = 0; i < routePoints.length - 1; i++) {
       rotaPolyline.add([]);
+      n++;
       // bool reversed;
       var codt = (await dio.get('/server/route', queryParameters: {
         "lat_orig": routePoints[i].latitude,
@@ -104,6 +105,10 @@ class TrilhaRepository {
           .data;
 
       var point = (await dio.get('/server/temp/$codt')).data;
+
+      if (point == "") {
+        return null;
+      }
 
       try {
         savedRoutes = SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));

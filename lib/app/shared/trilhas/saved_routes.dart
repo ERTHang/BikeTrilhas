@@ -1,6 +1,6 @@
 class SavedRoutes {
-  List<int> codes;
-  List<String> names;
+  List<int> codes = [];
+  List<String> names = [];
 
   SavedRoutes(this.codes, this.names);
 

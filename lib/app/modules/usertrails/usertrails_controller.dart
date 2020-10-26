@@ -1,6 +1,7 @@
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -26,14 +27,25 @@ abstract class _UsertrailsControllerBase with Store {
   Function state;
   List<LatLng> routePoints = [];
   Set<Marker> routeMarkers = {};
+  TrilhaModel newTrail;
   int tappedTrilha;
 
   getRoute() async {
-    mapController.newTrail = await mapController.trilhaRepository.getRoute(routePoints);
+    if (routePoints == []) {
+      return;
+    }
+    newTrail = await mapController.trilhaRepository.getRoute(routePoints);
     routePoints.clear();
     routeMarkers.clear();
-    mapController.createdTrails.add(mapController.newTrail);
     tappedTrilha = null;
+    if (newTrail == null) {
+      final snackBar = SnackBar(content: Text("Não conseguimos gerar uma rota com estes pontos."));
+      scaffoldState.currentState.removeCurrentSnackBar();
+      scaffoldState.currentState.showSnackBar(snackBar);
+      state();
+      return;
+    }
+    mapController.createdTrails.add(newTrail);
     state();
   }
 

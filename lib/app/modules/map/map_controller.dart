@@ -86,9 +86,16 @@ abstract class _MapControllerBase with Store {
     newTrail = await trilhaRepository.getRoute(routePoints);
     routePoints.clear();
     routeMarkers.clear();
-    createdTrails.add(newTrail);
     tappedWaypoint = null;
     tappedTrilha = null;
+    if (newTrail == null) {
+      final snackBar = SnackBar(content: Text("Não conseguimos gerar uma rota com estes pontos."));
+      scaffoldState.currentState.removeCurrentSnackBar();
+      scaffoldState.currentState.showSnackBar(snackBar);
+      state();
+      return;
+    }
+    createdTrails.add(newTrail);
     state();
     Modular.to.pushNamed('/usertrail');
   }
