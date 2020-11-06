@@ -21,10 +21,13 @@ class TrilhaRepository {
 
   void deleteTrilha(int codigo) {
     sharedPrefs.remove('trilha $codigo');
-
-    savedRoutes.codes.removeWhere((element) => element == codigo);
-    savedRoutes.names.removeWhere((element) => element == 'trilha $codigo');
-
+    for (var i = 0; i < savedRoutes.codes.length; i++) {
+      if (savedRoutes.codes[i] == codigo) {
+        savedRoutes.codes.removeAt(i);
+        savedRoutes.names.removeAt(i);
+        i--;
+      }
+    }
     sharedPrefs.remove('savedRoutes');
     sharedPrefs.save('savedRoutes', savedRoutes);
   }
@@ -54,21 +57,9 @@ class TrilhaRepository {
 
       var lat = point["latitudeTrilha"];
       var lon = point["longitudeTrilha"];
-      // if ((lat as List).isNotEmpty &&
-      //     sqrt(pow(lat[0] - routePoints[i].latitude, 2) +
-      //             pow(lon[0] - routePoints[i].longitude, 2)) <
-      //         sqrt(pow(lat[0] - routePoints[i+1].latitude, 2) +
-      //             pow(lon[0] - routePoints[i+1].longitude, 2))) {
-      //   trilhas.last.polylineCoordinates.last.add(routePoints[i]);
-      //   reversed = false;
-      // } else {
-      //   trilhas.last.polylineCoordinates.last.add(routePoints[i+1]);
-      //   reversed = true;
-      // }
-      for (var j = 0; j < (lat as List).length; j++) {
+      for (var j = 0; j < lat.length; j++) {
         trilhas.last.polylineCoordinates.last.add(LatLng(lat[j], lon[j]));
       }
-      // rotaPolyline.last.add((reversed) ? routePoints[i] : routePoints[i+1]);
       trilhas.last.waypoints.addAll([
         WaypointModel(
           codigo: n,
@@ -76,7 +67,7 @@ class TrilhaRepository {
         ),
         WaypointModel(
           codigo: 2 * n,
-          posicao: LatLng((lat as List).last, (lon as List).last),
+          posicao: LatLng(lat.last, (lon as List).last),
         )
       ]);
     }
@@ -92,10 +83,19 @@ class TrilhaRepository {
     var username = auth.user.displayName.toLowerCase();
     TrilhaModel model = TrilhaModel(n, 'Rota gerada por $username');
 
+    try {
+        savedRoutes = SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
+      } catch (Exception) {
+        savedRoutes = SavedRoutes([], []);
+      }
+
+      var numero = (savedRoutes.codes.isEmpty) ? 0 : savedRoutes.codes.last + 1;
+      model.codt = numero;
+
     for (var i = 0; i < routePoints.length - 1; i++) {
       rotaPolyline.add([]);
       n++;
-      // bool reversed;
+      bool reversed;
       var codt = (await dio.get('/server/route', queryParameters: {
         "lat_orig": routePoints[i].latitude,
         "lon_orig": routePoints[i].longitude,
@@ -110,14 +110,41 @@ class TrilhaRepository {
         return null;
       }
 
-      try {
-        savedRoutes = SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
-      } catch (Exception) {
-        savedRoutes = SavedRoutes([], []);
-      }
+      
 
-      var numero = (savedRoutes.codes.isEmpty) ? 0 : savedRoutes.codes.last + 1;
-      model.codt = numero;
+      var lat = point["latitudeTrilha"] as List;
+      var lon = point["longitudeTrilha"] as List;
+      if (lat.isNotEmpty &&
+          sqrt(pow(lat[0] - routePoints[i].latitude, 2) +
+                  pow(lon[0] - routePoints[i].longitude, 2)) <
+              sqrt(pow(lat[0] - routePoints[i+1].latitude, 2) +
+                  pow(lon[0] - routePoints[i+1].longitude, 2))) {
+        lat.insert(0, routePoints[i].latitude);
+        lon.insert(0, routePoints[i].longitude);
+        reversed = false;
+      } else {
+        lat.insert(0, routePoints[i+1].latitude);
+        lon.insert(0, routePoints[i+1].longitude);
+        reversed = true;
+      }
+      for (var j = 0; j < lat.length; j++) {
+        rotaPolyline.last.add(LatLng(lat[j], lon[j]));
+      }
+      rotaPolyline.last.add((reversed) ? routePoints[i] : routePoints[i+1]);
+      lat.add((reversed) ? routePoints[i].latitude : routePoints[i+1].latitude);
+      lon.add((reversed) ? routePoints[i].longitude : routePoints[i+1].longitude);
+      model.waypoints.addAll([
+        WaypointModel(
+          codigo: n,
+          posicao: routePoints[i],
+        ),
+        WaypointModel(
+          codigo: 2 * n,
+          posicao: routePoints[i+1],
+        )
+      ]);
+      
+      
       sharedPrefs.save('trilha $numero', point);
 
       savedRoutes.names.add('Rota gerada por $username');
@@ -128,33 +155,6 @@ class TrilhaRepository {
       } 
       sharedPrefs.save('savedRoutes', savedRoutes);
 
-      var lat = point["latitudeTrilha"];
-      var lon = point["longitudeTrilha"];
-      // if ((lat as List).isNotEmpty &&
-      //     sqrt(pow(lat[0] - routePoints[i].latitude, 2) +
-      //             pow(lon[0] - routePoints[i].longitude, 2)) <
-      //         sqrt(pow(lat[0] - routePoints[i+1].latitude, 2) +
-      //             pow(lon[0] - routePoints[i+1].longitude, 2))) {
-      //   rotaPolyline.last.add(routePoints[i]);
-      //   reversed = false;
-      // } else {
-      //   rotaPolyline.last.add(routePoints[i+1]);
-      //   reversed = true;
-      // }
-      for (var j = 0; j < (lat as List).length; j++) {
-        rotaPolyline.last.add(LatLng(lat[j], lon[j]));
-      }
-      // rotaPolyline.last.add((reversed) ? routePoints[i] : routePoints[i+1]);
-      model.waypoints.addAll([
-        WaypointModel(
-          codigo: n,
-          posicao: LatLng(lat[0], lon[0]),
-        ),
-        WaypointModel(
-          codigo: 2 * n,
-          posicao: LatLng((lat as List).last, (lon as List).last),
-        )
-      ]);
     }
     model.polylineCoordinates = rotaPolyline;
     return model;
@@ -177,7 +177,7 @@ class TrilhaRepository {
       var point = layers.data[layercod];
       var lat = point["latitudeTrilha"];
       var lon = point["longitudeTrilha"];
-      for (var i = 0; i < (lat as List).length; i++) {
+      for (var i = 0; i < lat.length; i++) {
         if (lat[i] == 0.0) {
           line.add([]);
         } else {
