@@ -169,7 +169,7 @@ class InfoRepository {
       if (dif == this.dificuldades[i - 1].dif_nome) {
         difCod = i;
       }
-    };
+    }
 
     for (var i = 1; i <= this.superficies.length; i++) {
       if (superficies.contains(this.superficies[i - 1].sup_nome)) {

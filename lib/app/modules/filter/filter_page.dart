@@ -391,6 +391,25 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
     );
   }
 
+  ExpansionPanel subtipo() {
+    return ExpansionPanel(
+      headerBuilder: (BuildContext context, bool isExpanded) {
+        return header(_data[6], onTap: (Item item) {
+          item.booleans = [false, false, false, false];
+        });
+      },
+      body: Column(
+        children: <Widget>[
+          tile(6, 0, 'Ciclovia'),
+          tile(6, 1, 'Ciclorrota'),
+          tile(6, 2, 'Compartilhada'),
+          tile(6, 3, 'Ciclofaixa'),
+        ],
+      ),
+      isExpanded: _data[4].isExpanded,
+    );
+  }
+
   ExpansionPanel categoria() {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
@@ -558,6 +577,7 @@ List<Item> generateItems() {
       false,
       false
     ]),
+    Item(expandedValue: 'Subtipos', modifiedValue: [], booleans: [false, false, false, false])
   ];
 }
 

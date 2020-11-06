@@ -2,8 +2,6 @@ import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
-import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';

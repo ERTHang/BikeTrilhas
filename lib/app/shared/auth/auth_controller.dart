@@ -1,5 +1,4 @@
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
-import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';

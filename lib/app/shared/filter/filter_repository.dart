@@ -6,7 +6,7 @@ class FilterRepository {
   FilterRepository(this.dio);
 
   Future<List<int>> getFiltered(List<int> tipo, List<int> dificuldade,
-      List<int> regiao, List<int> bairro, List<int> superficie, List<int> categoria) async {
+      List<int> regiao, List<int> bairro, List<int> superficie, List<int> categoria, List<int> subtipo) async {
 
     tipo = check(tipo);
     dificuldade = check(dificuldade);
@@ -14,6 +14,7 @@ class FilterRepository {
     regiao = check(regiao);
     superficie = check(superficie);
     categoria = check(categoria);
+    subtipo = check(subtipo);
 
     List<int> result = [];
 
@@ -24,7 +25,8 @@ class FilterRepository {
       "bairro": bairro,
       "regiao": regiao,
       "superficie": superficie,
-      "categoria": categoria
+      "categoria": categoria,
+      "subtipo": subtipo
     });
 
 
