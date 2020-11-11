@@ -44,11 +44,12 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         },
         children: <ExpansionPanel>[
           tipo(),
+          subtipo(),
           dificuldade(),
           regiao(),
           bairro(),
           superficie(),
-          categoria()
+          categoria(),
         ]);
   }
 
@@ -406,7 +407,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
           tile(6, 3, 'Ciclofaixa'),
         ],
       ),
-      isExpanded: _data[4].isExpanded,
+      isExpanded: _data[6].isExpanded,
     );
   }
 

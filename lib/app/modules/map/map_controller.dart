@@ -64,7 +64,7 @@ abstract class _MapControllerBase with Store {
   init() async {
     filterClear = false;
     typeNum = 2;
-    typeFilter = await filterRepository.getFiltered([2], [], [], [], [], []);
+    typeFilter = await filterRepository.getFiltered([2], [], [], [], [], [], []);
     trilhasFiltradas = typeFilter;
     final Uint8List iconBytes = await getBytesFromAsset('images/bola.png', 20);
     markerIcon = BitmapDescriptor.fromBytes(iconBytes);
@@ -216,7 +216,7 @@ abstract class _MapControllerBase with Store {
 
   typeChange(int typeValue) async {
     typeFilter =
-        await filterRepository.getFiltered([typeValue], [], [], [], [], []);
+        await filterRepository.getFiltered([typeValue], [], [], [], [], [], []);
     typeNum = typeValue;
   }
 }

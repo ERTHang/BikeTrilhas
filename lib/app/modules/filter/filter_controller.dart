@@ -27,6 +27,7 @@ abstract class _FilterControllerBase with Store {
     final List<int> bairro = [];
     final List<int> superficie = [];
     final List<int> categoria = [];
+    final List<int> subtipo = [];
 
     for (var i = 0; i < _data[2].booleans.length; i++) {
       if (_data[2].booleans[i]) {
@@ -51,12 +52,20 @@ abstract class _FilterControllerBase with Store {
         categoria.add(i + 1);
       }
     }
+
+    for (var i = 0; i < _data[6].booleans.length; i++) {
+      if (_data[6].booleans[i]) {
+        subtipo.add(i + 1);
+      }
+    }
+
     var filtros = await filterRepository.getFiltered([_data[0].modified],
-        [_data[1].modified], regiao, bairro, superficie, categoria);
+        [_data[1].modified], regiao, bairro, superficie, categoria, subtipo);
     if (superficie.isNotEmpty ||
         bairro.isNotEmpty ||
         categoria.isNotEmpty ||
         regiao.isNotEmpty ||
+        subtipo.isNotEmpty ||
         _data[1].modified != 0) {
       mapController.filtrar(
           filtros, false, value != mapController.typeNum, value);
