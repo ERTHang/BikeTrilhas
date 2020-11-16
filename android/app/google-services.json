@@ -8,52 +8,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:115669332033:android:ed6d748ce37b716a5216c0",
+        "mobilesdk_app_id": "1:115669332033:android:2ef383c3d8824f095216c0",
         "android_client_info": {
-          "package_name": "com.example.biketrilhas"
+          "package_name": "br.bdes.biketrilhas"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "115669332033-kn29tbc86sl5hvd9kj2tofmlgmq03r9l.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.biketrilhas",
-            "certificate_hash": "067e734fc86a783367e4285738a60fc2c8077854"
-          }
-        },
-        {
-          "client_id": "115669332033-rrsqmfih4icemsldbofc6j4bq7batft9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.biketrilhas",
-            "certificate_hash": "3e635d332a29ff4a2e6710cfe7da90fe17ec4d44"
-          }
-        },
-        {
-          "client_id": "115669332033-8qtbucu4orh6n89nbopcps2nldioi8oa.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.biketrilhas",
-            "certificate_hash": "aafffcfb0bc3f96def2febc0e86e1d0666dc6712"
-          }
-        },
-        {
-          "client_id": "115669332033-nbceair1tfb7cgq74amva5m1s3sa92vu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.biketrilhas",
-            "certificate_hash": "2e861d91aa0de756ef48fd55e33dbc59fd7daa17"
-          }
-        },
-        {
-          "client_id": "115669332033-h566jj5st596f5fvt6uhh3s1ba7v7khf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.biketrilhas",
-            "certificate_hash": "f579fe5e4233786dd5994213ea9d236984f885e6"
-          }
-        },
         {
           "client_id": "115669332033-sqpooankidh6m682mti9tn6i79m01q2p.apps.googleusercontent.com",
           "client_type": 3
@@ -61,7 +21,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAntIVRGjlCV7KDl9LyWyC-9IehpPTIEzM"
+          "current_key": "AIzaSyC-wihPM43YTamkwxO5HYsM8fujdjCcmMc"
         }
       ],
       "services": {

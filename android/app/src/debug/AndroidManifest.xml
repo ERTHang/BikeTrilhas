@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.biketrilhas">
+    package="br.bdes.biketrilhas">
     <uses-sdk android:minSdkVersion="21"/>
 
     <!-- Flutter needs it to communicate with the running application

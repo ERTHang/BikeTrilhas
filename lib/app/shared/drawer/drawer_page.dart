@@ -3,6 +3,7 @@ import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DrawerPage extends StatefulWidget {
   final String title;
@@ -218,11 +219,35 @@ class _DrawerPageState extends State<DrawerPage> {
             }),
             dense: true,
             onTap: () {
-              if (draw.value != 6) {
-                draw.value = 6;
-                Modular.to.pushNamed('/info');
-              }
+              Modular.to.pushNamed('/info');
             },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.launch,
+              color: Colors.black,
+              size: 40,
+            ),
+            title: Observer(builder: (_) {
+              Color cor;
+              cor = (draw.value == 6) ? Colors.white : Colors.black;
+              return Text(
+                'Política de Privacidade',
+                style: TextStyle(
+                    height: 1.8,
+                    fontSize: 18,
+                    color: cor,
+                    fontWeight: FontWeight.bold),
+              );
+            }),
+            dense: true,
+            onTap: () async {
+                if (await canLaunch(
+                    'https://bdes.joinville.udesc.br/politica/Politica_de_privacidade-Bike_Trilhas.pdf')) {
+                  await launch(
+                      'https://bdes.joinville.udesc.br/politica/Politica_de_privacidade-Bike_Trilhas.pdf');
+                }
+              },
           ),
         ],
       ),
