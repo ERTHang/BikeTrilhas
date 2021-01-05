@@ -50,6 +50,7 @@ abstract class _MapControllerBase with Store {
   PersistentBottomSheetController sheet;
   PersistentBottomSheetController nameSheet;
   TrilhaModel newTrail;
+  TrilhaModel followRoute;
 
 
   @action
@@ -77,7 +78,7 @@ abstract class _MapControllerBase with Store {
   Future<CameraPosition> getUserPos() async {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
     Position pos = await geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
+        desiredAccuracy: LocationAccuracy.high);
     return CameraPosition(
         target: LatLng(pos.latitude, pos.longitude), zoom: 15);
   }
@@ -104,47 +105,24 @@ abstract class _MapControllerBase with Store {
   getPolylines() {
     polylines.clear();
     markers.clear();
-    // for (var trilha in createdTrails) {
-    //   for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
-    //     Polyline pol = Polyline(
-    //       zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-    //       consumeTapEvents: (trilhasFiltradas != [0]),
-    //       polylineId: PolylineId("rota $i " + trilha.codt.toString()),
-    //       color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
-    //       onTap: () {
-    //         tappedWaypoint = null;
-    //         tappedTrilha = trilha.codt;
-    //         state();
-    //         bottomSheetTempTrail(trilha, scaffoldState, state);
-    //       },
-    //       points: trilha.polylineCoordinates[i],
-    //       width: 3,
-    //       visible: (!trilhasFiltradas.contains(0)),
-    //     );
-    //     polylines.add(pol);
-    //     markers.addAll(
-    //       List.generate(
-    //         trilha.waypoints.length,
-    //         (index) => Marker(
-    //           markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
-    //           visible: (!trilhasFiltradas.contains(0)),
-    //           position: trilha.waypoints[index].posicao,
-    //           onTap: () {
-    //             tappedWaypoint = null;
-    //             bottomSheetTempTrail(trilha, scaffoldState, state);
-    //             tappedTrilha = trilha.codt;
-    //             state();
-    //           },
-    //         ),
-    //       ),
-    //     );
-    //   }
-    // }
+    if (followRoute != null) {
+      for (var i = 0; i < followRoute.polylineCoordinates.length; i++) {
+        Polyline pol = Polyline(
+          zIndex: 3,
+          consumeTapEvents: false,
+          polylineId: PolylineId("rota $i " + followRoute.codt.toString()),
+          color: Colors.yellow,
+          points: followRoute.polylineCoordinates[i],
+          width: 3,
+        );
+        polylines.add(pol);
+      }
+    }
     for (var trilha in trilhas.value) {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-          consumeTapEvents: (trilhasFiltradas.isEmpty)
+          consumeTapEvents: (trilhasFiltradas.isEmpty || trilha.codt>=2000000)
               ? true
               : (trilhasFiltradas.contains(trilha.codt) ||
                   tappedTrilha == trilha.codt),
@@ -154,11 +132,11 @@ abstract class _MapControllerBase with Store {
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;
             state();
-            bottomSheetTrilha(trilha.codt);
+            (trilha.codt >= 2000000) ? bottomSheetTempTrail(trilha, scaffoldState, state) : bottomSheetTrilha(trilha.codt);
           },
           points: trilha.polylineCoordinates[i],
           width: 3,
-          visible: (trilhasFiltradas.isEmpty)
+          visible: (trilhasFiltradas.isEmpty || trilha.codt>=2000000)
               ? true
               : (trilhasFiltradas.contains(trilha.codt) ||
                   tappedTrilha == trilha.codt),

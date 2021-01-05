@@ -44,12 +44,12 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         },
         children: <ExpansionPanel>[
           tipo(),
-          subtipo(),
           dificuldade(),
           regiao(),
           bairro(),
           superficie(),
           categoria(),
+          subtipo(),
         ]);
   }
 

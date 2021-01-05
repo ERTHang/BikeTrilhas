@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
+import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_controller.dart';
 
@@ -20,7 +23,15 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends ModularState<MapPage, MapController> {
+  final GeolocatorService geoService = GeolocatorService();
+  Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController mapController;
+  int n = 0;
+  bool tracking;
+  StreamSubscription<Position> subscription;
+
   void initState() {
+    tracking = false;
     super.initState();
     controller.init();
   }
@@ -29,8 +40,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   int routeState = 0;
   int destinos = 0;
 
-  GoogleMapController mapController;
-  Completer<GoogleMapController> _controller = Completer();
   final AuthController auth = Modular.get();
 
   Widget build(BuildContext context) {
@@ -139,6 +148,51 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               return _map();
             },
           ),
+          // UserRoute
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: ButtonTheme(
+              height: 50,
+              minWidth: 50,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(360)),
+              child: RaisedButton(
+                color: Colors.blue,
+                onPressed: () {
+                  if (tracking) {
+                    controller.trilhas.value.add(controller.followRoute);
+                    controller.followRoute = null;
+                    subscription.cancel();
+                  } else {
+                    controller.followRoute =
+                        TrilhaModel(2000000 + n, 'followRoute $n');
+
+                    controller.followRoute.polylineCoordinates = [
+                      [controller.position.value.target]
+                    ];
+                    subscription =
+                        geoService.getCurrentLocation().listen((position) {
+                      centerScreen(position);
+                      setState(() {
+                        controller.followRoute.polylineCoordinates.last
+                            .add(LatLng(position.latitude, position.longitude));
+                      });
+                    });
+                  }
+                  setState(() {
+                    tracking = !tracking;
+                  });
+                },
+                child: Icon(
+                  Icons.track_changes,
+                  color: (tracking) ? Colors.green : Colors.white,
+                  size: 30,
+                ),
+                elevation: 5,
+              ),
+            ),
+          ),
           // Rota
           Visibility(
             child: Positioned(
@@ -246,11 +300,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           Visibility(
             visible: ADMIN.contains(auth.user.email),
             child: Positioned(
-              bottom: 30,
-              left: 30,
+              bottom: 70,
+              right: 10,
               child: ButtonTheme(
-                height: 60,
-                minWidth: 60,
+                height: 50,
+                minWidth: 50,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(360)),
                 child: RaisedButton(
@@ -261,7 +315,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   child: Icon(
                     Icons.camera_alt,
                     color: Colors.white,
-                    size: 40,
+                    size: 30,
                   ),
                   elevation: 5,
                 ),
@@ -308,6 +362,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       mapToolbarEnabled: false,
       myLocationButtonEnabled: false,
       myLocationEnabled: true,
+      zoomControlsEnabled: false,
       polylines: controller.polylines,
       markers: (routeState == 0) ? controller.markers : controller.routeMarkers,
       mapType: MapType.normal,
@@ -317,5 +372,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         mapController = controller;
       },
     );
+  }
+
+  Future<void> centerScreen(Position position) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(position.latitude, position.longitude), zoom: 19.0)));
   }
 }

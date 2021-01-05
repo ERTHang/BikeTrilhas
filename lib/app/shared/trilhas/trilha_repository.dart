@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
@@ -24,20 +25,7 @@ class TrilhaRepository {
     for (var i = 0; i < savedRoutes.codes.length; i++) {
       if (savedRoutes.codes[i] == codigo) {
         savedRoutes.codes.removeAt(i);
-        savedRoutes.names.removeAt(i);
-        i--;
       }
-    }
-    if (savedRoutes.sequenceInits.contains(codigo)) {
-      savedRoutes.sequenceInits.remove(codigo);
-      deleteTrilha(codigo+1);
-      deleteTrilha(codigo+2);
-    }
-    if (savedRoutes.sequenceInits.contains(codigo-1)) {
-      deleteTrilha(codigo-1);
-    }
-    if (savedRoutes.sequenceInits.contains(codigo-2)) {
-      deleteTrilha(codigo-2);
     }
     sharedPrefs.remove('savedRoutes');
     sharedPrefs.save('savedRoutes', savedRoutes);
@@ -52,42 +40,16 @@ class TrilhaRepository {
         savedRoutes = SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
       } catch (e) {
         print(e);
-        savedRoutes = SavedRoutes([], []);
+        savedRoutes = SavedRoutes([]);
       }
     }
 
     for (var i = 0; i < savedRoutes.codes.length; i++) {
-      trilhas.add(TrilhaModel(i, savedRoutes.names[i]));
-
-      for (var j = 0; j < 1; j++) {
-        trilhas.last.polylineCoordinates.add([]);
-        n++;
-        // bool reversed;
-        var numero = savedRoutes.codes[i];
-        var point = await sharedPrefs.read('trilha $numero');
-
-        var lat = point["latitudeTrilha"];
-        var lon = point["longitudeTrilha"];
-        for (var j = 0; j < lat.length; j++) {
-          trilhas.last.polylineCoordinates.last.add(LatLng(lat[j], lon[j]));
-        }
-        trilhas.last.waypoints.addAll([
-          WaypointModel(
-            codigo: n,
-            posicao: LatLng(lat[0], lon[0]),
-          ),
-          WaypointModel(
-            codigo: 2 * n,
-            posicao: LatLng(lat.last, (lon as List).last),
-          )
-        ]);
-        if (savedRoutes.sequenceInits.contains(numero)) {
-          j=-1;
-          i++;
-        }
-      }
+      var json = await sharedPrefs.read('trilha ${savedRoutes.codes[i]}');
+      TrilhaModel trilha;
+      trilha.fromJson(TrilhaModelJson.fromJson(json));
+      trilhas.add(trilha);
     }
-
       
     return trilhas;
   }
@@ -153,33 +115,34 @@ class TrilhaRepository {
         )
       ]);
       
-      if (savedRoutes==null) {
-        try {
-          savedRoutes = SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
-        } catch (Exception) {
-          savedRoutes = SavedRoutes([], []);
-        }
-      }
-
-      var numero = (savedRoutes.codes.isEmpty) ? 0 : savedRoutes.codes.last + 1;
-      model.codt = numero;
-      sharedPrefs.save('trilha $numero', point);
-
-      if (routePoints.length > i+2) {
-        savedRoutes.sequenceInits.add(numero);
-      }
-
-      savedRoutes.names.add('Rota gerada por $username');
-      savedRoutes.codes.add(numero);
-      try {
-        sharedPrefs.remove('savedRoutes');
-      } catch (e) {
-      } 
-      sharedPrefs.save('savedRoutes', savedRoutes);
 
     }
     model.polylineCoordinates = rotaPolyline;
+    await saveRoute(model);
     return model;
+  }
+
+  Future saveRoute(TrilhaModel model) async {
+    if (savedRoutes==null) {
+      try {
+        savedRoutes = SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
+      } catch (Exception) {
+        savedRoutes = SavedRoutes([]);
+      }
+    }
+    
+    var numero = (savedRoutes.codes.isEmpty) ? 0 : savedRoutes.codes.last + 1;
+    model.codt = numero;
+
+    TrilhaModelJson trilha = model.toJson();
+    sharedPrefs.save('trilha $numero', trilha.toJson());
+    
+    savedRoutes.codes.add(numero);
+    try {
+      sharedPrefs.remove('savedRoutes');
+    } catch (e) {
+    } 
+    sharedPrefs.save('savedRoutes', savedRoutes);
   }
 
   Future<List<TrilhaModel>> getAllTrilhas() async {
