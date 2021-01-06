@@ -19,11 +19,11 @@ class TrilhaModel {
           LatLngJson(waypoint.posicao.latitude, waypoint.posicao.longitude)));
     }
     for (var coordList in this.polylineCoordinates) {
+      trilha.polylineCoordinates.add([]);
       for (var coord in coordList) {
         trilha.polylineCoordinates.last
             .add(LatLngJson(coord.latitude, coord.longitude));
       }
-      trilha.polylineCoordinates.add([]);
     }
     return trilha;
   }
@@ -37,10 +37,10 @@ class TrilhaModel {
           posicao: LatLng(waypoint.posicao.lat, waypoint.posicao.lng)));
     }
     for (var coordList in json.polylineCoordinates) {
+      this.polylineCoordinates.add([]);
       for (var coord in coordList) {
         this.polylineCoordinates.last.add(LatLng(coord.lat, coord.lng));
       }
-      this.polylineCoordinates.add([]);
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:dio/dio.dart';
 import '../utils/constants.dart';
 
@@ -230,6 +231,56 @@ class InfoRepository {
     model.subtipo = getSubtipo(result['subtip_cod']);
 
     return model;
+  }
+
+  void updateDesnivel(List<TrilhaModel> cods) async {
+    DadosTrilhaModel aux;
+    double totalElevation = 0;
+    int difCod;
+    int n = 0;
+    int tipCod;
+
+    for (var cod in cods) {
+
+      aux = await getDadosTrilha(cod.codt);
+      for (var i = 1; i <= this.dificuldades.length; i++) {
+        if (aux.dificuldade == this.dificuldades[i - 1].dif_nome) {
+          difCod = i;
+        }
+      }
+
+      tipCod = (aux.tipo == 'Ciclovia') ? 2 : (aux.tipo == 'Trilha') ? 1 : 3;
+
+
+      if (aux.desnivel == 0) {
+        String location = "";
+        for (var coordList in cod.polylineCoordinates) {
+          for (var coord in coordList) {
+            n++;
+            if (location.length == 0) {
+              location="${coord.latitude},${coord.longitude}";
+            }
+            else{
+              location=location+"|${coord.latitude},${coord.longitude}";
+            }
+          }
+        }
+        Dio elevationDio = Dio();
+        String url = "https://maps.googleapis.com/maps/api/elevation/json?locations=$location&key=AIzaSyAntIVRGjlCV7KDl9LyWyC-9IehpPTIEzM";
+        var elevationPoints = (await elevationDio.get(url)).data['results'];
+        for (var result in elevationPoints) {
+          totalElevation += result['elevation']; 
+        }
+      }
+      await dio.put('/server/dados/${cod.codt}', data: {
+          "codt": cod.codt,
+          "descricao": aux.descricao,
+          "nome": aux.nome,
+          "difCod": difCod,
+          "tipo": tipCod,
+          "desnivel": totalElevation / n,
+        });
+    }
   }
 
   Future<DadosWaypointModel> getDadosWaypoint(int codwp) async {

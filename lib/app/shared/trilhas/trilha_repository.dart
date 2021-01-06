@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/saved_routes.dart';
@@ -46,8 +47,9 @@ class TrilhaRepository {
 
     for (var i = 0; i < savedRoutes.codes.length; i++) {
       var json = await sharedPrefs.read('trilha ${savedRoutes.codes[i]}');
-      TrilhaModel trilha;
-      trilha.fromJson(TrilhaModelJson.fromJson(json));
+      TrilhaModel trilha = TrilhaModel(savedRoutes.codes[i], 'aux');
+      var aux = TrilhaModelJson.fromJson(json);
+      trilha.fromJson(aux);
       trilhas.add(trilha);
     }
       
@@ -180,7 +182,8 @@ class TrilhaRepository {
       list.add(model);
       layercod++;
     }
-
+    InfoRepository infoRepository = Modular.get<InfoRepository>();
+    infoRepository.updateDesnivel(list);
     return list;
   }
 }

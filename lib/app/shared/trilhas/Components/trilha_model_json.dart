@@ -6,7 +6,7 @@ part 'trilha_model_json.g.dart';
 @JsonSerializable(explicitToJson: true)
 class TrilhaModelJson{
   int codt;
-  final String nome;
+  String nome;
   List<List<LatLngJson>> polylineCoordinates = [];
   List<WaypointJson> waypoints = [];
 
