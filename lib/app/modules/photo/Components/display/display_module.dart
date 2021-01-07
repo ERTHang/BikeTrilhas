@@ -9,8 +9,8 @@ class DisplayModule extends ChildModule {
       ];
 
   @override
-  List<Router> get routers => [
-        Router(Modular.initialRoute, child: (_, args) => DisplayPage()),
+  List<ModularRouter> get routers => [
+        ModularRouter(Modular.initialRoute, child: (_, args) => DisplayPage()),
       ];
 
   static Inject get to => Inject<DisplayModule>.of();

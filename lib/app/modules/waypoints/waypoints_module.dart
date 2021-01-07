@@ -9,8 +9,8 @@ class WaypointsModule extends ChildModule {
       ];
 
   @override
-  List<Router> get routers => [
-        Router(Modular.initialRoute, child: (_, args) => WaypointsPage()),
+  List<ModularRouter> get routers => [
+        ModularRouter(Modular.initialRoute, child: (_, args) => WaypointsPage()),
       ];
 
   static Inject get to => Inject<WaypointsModule>.of();

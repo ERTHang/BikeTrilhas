@@ -9,8 +9,8 @@ class UsertrailsModule extends ChildModule {
       ];
 
   @override
-  List<Router> get routers => [
-        Router(Modular.initialRoute, child: (_, args) => UsertrailsPage()),
+  List<ModularRouter> get routers => [
+        ModularRouter(Modular.initialRoute, child: (_, args) => UsertrailsPage()),
       ];
 
   static Inject get to => Inject<UsertrailsModule>.of();

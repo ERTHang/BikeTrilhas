@@ -18,9 +18,9 @@ import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter/material.dart';
 import 'package:biketrilhas_modular/app/app_widget.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends MainModule {
   @override
@@ -38,17 +38,17 @@ class AppModule extends MainModule {
       ];
 
   @override
-  List<Router> get routers => [
-        Router('/', child: (_, args) => SplashPage()),
-        Router('/login',
+  List<ModularRouter> get routers => [
+        ModularRouter('/', child: (_, args) => SplashPage()),
+        ModularRouter('/login',
             module: LoginModule(), transition: TransitionType.noTransition),
-        Router('/map',
+        ModularRouter('/map',
             module: MapModule(), transition: TransitionType.noTransition),
-        Router('/photo', module: PhotoModule()),
-        Router('/usertrail', module: UsertrailsModule()),
-        Router('/waypoint', module: WaypointsModule()),
-        Router('/filter', module: FilterModule()),
-        Router('/info', module: InfoModule())
+        ModularRouter('/photo', module: PhotoModule()),
+        ModularRouter('/usertrail', module: UsertrailsModule()),
+        ModularRouter('/waypoint', module: WaypointsModule()),
+        ModularRouter('/filter', module: FilterModule()),
+        ModularRouter('/info', module: InfoModule())
       ];
 
   @override

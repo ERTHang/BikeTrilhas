@@ -9,8 +9,8 @@ class FilterModule extends ChildModule {
       ];
 
   @override
-  List<Router> get routers => [
-        Router(Modular.initialRoute, child: (_, args) => FilterPage()),
+  List<ModularRouter> get routers => [
+        ModularRouter(Modular.initialRoute, child: (_, args) => FilterPage()),
       ];
 
   static Inject get to => Inject<FilterModule>.of();

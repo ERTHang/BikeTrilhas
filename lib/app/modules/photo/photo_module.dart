@@ -15,10 +15,10 @@ class PhotoModule extends ChildModule {
       ];
 
   @override
-  List<Router> get routers => [
-        Router(Modular.initialRoute, module: LoaderModule()),
-        Router('/photo', child: (_, args) => PhotoPage()),
-        Router('/display', child: (_, args) => DisplayPage()),
+  List<ModularRouter> get routers => [
+        ModularRouter(Modular.initialRoute, module: LoaderModule()),
+        ModularRouter('/photo', child: (_, args) => PhotoPage()),
+        ModularRouter('/display', child: (_, args) => DisplayPage()),
       ];
 
   static Inject get to => Inject<PhotoModule>.of();

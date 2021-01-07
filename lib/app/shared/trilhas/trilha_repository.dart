@@ -182,8 +182,8 @@ class TrilhaRepository {
       list.add(model);
       layercod++;
     }
-    InfoRepository infoRepository = Modular.get<InfoRepository>();
-    infoRepository.updateDesnivel(list);
+    // InfoRepository infoRepository = Modular.get<InfoRepository>();
+    // infoRepository.updateDesnivel(list);
     return list;
   }
 }

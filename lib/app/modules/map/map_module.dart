@@ -12,10 +12,10 @@ class MapModule extends ChildModule {
       ];
 
   @override
-  List<Router> get routers => [
-        Router(Modular.initialRoute, child: (_, args) => MapPage()),
-        Router('editor', child: (_, args) => EdicaoRotas()),
-        Router('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
+  List<ModularRouter> get routers => [
+        ModularRouter(Modular.initialRoute, child: (_, args) => MapPage()),
+        ModularRouter('editor', child: (_, args) => EdicaoRotas()),
+        ModularRouter('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
       ];
 
   static Inject get to => Inject<MapModule>.of();
