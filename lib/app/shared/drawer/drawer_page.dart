@@ -168,9 +168,9 @@ class _DrawerPageState extends State<DrawerPage> {
           //   dense: true,
           //   onTap: () {
           //     draw.value = 4;
-              // final snackBar = SnackBar(content: Text("Não implementado"));
-              // Scaffold.of(context).removeCurrentSnackBar();
-              // Scaffold.of(context).showSnackBar(snackBar);
+          // final snackBar = SnackBar(content: Text("Não implementado"));
+          // Scaffold.of(context).removeCurrentSnackBar();
+          // Scaffold.of(context).showSnackBar(snackBar);
           //   },
           // ),
           // ListTile(
@@ -242,12 +242,12 @@ class _DrawerPageState extends State<DrawerPage> {
             }),
             dense: true,
             onTap: () async {
-                if (await canLaunch(
-                    'https://bdes.joinville.udesc.br/politica/Politica_de_privacidade-Bike_Trilhas.pdf')) {
-                  await launch(
-                      'https://bdes.joinville.udesc.br/politica/Politica_de_privacidade-Bike_Trilhas.pdf');
-                }
-              },
+              if (await canLaunch(
+                  'https://bdes.joinville.udesc.br/politica/Politica_de_privacidade-Bike_Trilhas.pdf')) {
+                await launch(
+                    'https://bdes.joinville.udesc.br/politica/Politica_de_privacidade-Bike_Trilhas.pdf');
+              }
+            },
           ),
         ],
       ),
