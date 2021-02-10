@@ -36,6 +36,7 @@ class AppModule extends MainModule {
         Bind((i) => SharedPrefs()),
         Bind((i) => Dio(BaseOptions(baseUrl: URL_BASE)))
       ];
+
   @override
   List<ModularRouter> get routers => [
         ModularRouter('/', child: (_, args) => SplashPage()),

@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
-import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/saved_routes.dart';
@@ -33,12 +32,12 @@ class TrilhaRepository {
   }
 
   Future<List<TrilhaModel>> getStorageRoutes() async {
-
     List<TrilhaModel> trilhas = [];
 
     if (savedRoutes == null) {
       try {
-        savedRoutes = SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
+        savedRoutes =
+            SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
       } catch (e) {
         print(e);
         savedRoutes = SavedRoutes([]);
@@ -46,13 +45,13 @@ class TrilhaRepository {
     }
 
     for (var i = 0; i < savedRoutes.codes.length; i++) {
-      var json = await sharedPrefs.read('trilha ${savedRoutes.codes[i]}');
+      var json = await sharedPrefs.read('route ${savedRoutes.codes[i]}');
       TrilhaModel trilha = TrilhaModel(savedRoutes.codes[i], 'aux');
       var aux = TrilhaModelJson.fromJson(json);
       trilha.fromJson(aux);
       trilhas.add(trilha);
     }
-      
+
     return trilhas;
   }
 
@@ -63,8 +62,6 @@ class TrilhaRepository {
     var username = auth.user.displayName.toLowerCase();
     TrilhaModel model = TrilhaModel(n, 'Rota gerada por $username');
 
-    
-
     for (var i = 0; i < routePoints.length - 1; i++) {
       rotaPolyline.add([]);
       n++;
@@ -72,8 +69,8 @@ class TrilhaRepository {
       var codt = (await dio.get('/server/route', queryParameters: {
         "lat_orig": routePoints[i].latitude,
         "lon_orig": routePoints[i].longitude,
-        "lat_dest": routePoints[i+1].latitude,
-        "lon_dest": routePoints[i+1].longitude
+        "lat_dest": routePoints[i + 1].latitude,
+        "lon_dest": routePoints[i + 1].longitude
       }))
           .data;
 
@@ -83,29 +80,25 @@ class TrilhaRepository {
         return null;
       }
 
-      
-
       var lat = point["latitudeTrilha"] as List;
       var lon = point["longitudeTrilha"] as List;
-      if (lat.isNotEmpty &&
-          sqrt(pow(lat[0] - routePoints[i].latitude, 2) +
-                  pow(lon[0] - routePoints[i].longitude, 2)) <
-              sqrt(pow(lat[0] - routePoints[i+1].latitude, 2) +
-                  pow(lon[0] - routePoints[i+1].longitude, 2))) {
+      if (lat.isNotEmpty && isFirstPoint(lat, routePoints, i, lon)) {
         lat.insert(0, routePoints[i].latitude);
         lon.insert(0, routePoints[i].longitude);
         reversed = false;
       } else {
-        lat.insert(0, routePoints[i+1].latitude);
-        lon.insert(0, routePoints[i+1].longitude);
+        lat.insert(0, routePoints[i + 1].latitude);
+        lon.insert(0, routePoints[i + 1].longitude);
         reversed = true;
       }
       for (var j = 0; j < lat.length; j++) {
         rotaPolyline.last.add(LatLng(lat[j], lon[j]));
       }
-      rotaPolyline.last.add((reversed) ? routePoints[i] : routePoints[i+1]);
-      lat.add((reversed) ? routePoints[i].latitude : routePoints[i+1].latitude);
-      lon.add((reversed) ? routePoints[i].longitude : routePoints[i+1].longitude);
+      rotaPolyline.last.add((reversed) ? routePoints[i] : routePoints[i + 1]);
+      lat.add(
+          (reversed) ? routePoints[i].latitude : routePoints[i + 1].latitude);
+      lon.add(
+          (reversed) ? routePoints[i].longitude : routePoints[i + 1].longitude);
       model.waypoints.addAll([
         WaypointModel(
           codigo: n,
@@ -113,37 +106,42 @@ class TrilhaRepository {
         ),
         WaypointModel(
           codigo: 2 * n,
-          posicao: routePoints[i+1],
+          posicao: routePoints[i + 1],
         )
       ]);
-      
-
     }
     model.polylineCoordinates = rotaPolyline;
     await saveRoute(model);
     return model;
   }
 
+  bool isFirstPoint(List lat, List<LatLng> routePoints, int i, List lon) {
+    return sqrt(pow(lat[0] - routePoints[i].latitude, 2) +
+            pow(lon[0] - routePoints[i].longitude, 2)) <
+        sqrt(pow(lat[0] - routePoints[i + 1].latitude, 2) +
+            pow(lon[0] - routePoints[i + 1].longitude, 2));
+  }
+
   Future saveRoute(TrilhaModel model) async {
-    if (savedRoutes==null) {
+    if (savedRoutes == null) {
       try {
-        savedRoutes = SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
+        savedRoutes =
+            SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
       } catch (Exception) {
         savedRoutes = SavedRoutes([]);
       }
     }
-    
+
     var numero = (savedRoutes.codes.isEmpty) ? 0 : savedRoutes.codes.last + 1;
     model.codt = numero;
 
     TrilhaModelJson trilha = model.toJson();
-    sharedPrefs.save('trilha $numero', trilha.toJson());
-    
+    sharedPrefs.save('route $numero', trilha.toJson());
+
     savedRoutes.codes.add(numero);
     try {
       sharedPrefs.remove('savedRoutes');
-    } catch (e) {
-    } 
+    } catch (e) {}
     sharedPrefs.save('savedRoutes', savedRoutes);
   }
 

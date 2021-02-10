@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'trilha_model_json.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class TrilhaModelJson{
+class TrilhaModelJson {
   int codt;
   String nome;
   List<List<LatLngJson>> polylineCoordinates = [];
@@ -12,8 +12,7 @@ class TrilhaModelJson{
 
   TrilhaModelJson(this.codt, this.nome);
 
-  factory TrilhaModelJson.fromJson(Map<String, dynamic> json) => _$TrilhaModelJsonFromJson(json);
+  factory TrilhaModelJson.fromJson(Map<String, dynamic> json) =>
+      _$TrilhaModelJsonFromJson(json);
   Map<String, dynamic> toJson() => _$TrilhaModelJsonToJson(this);
-
-  
 }
