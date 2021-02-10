@@ -98,16 +98,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   child: Text("error getting position"),
                 );
               }
-              if (controller.trilhas.error != null) {
-                return Center(
-                  child: Text("error getting trilhas"),
-                );
-              }
-              if (controller.dataReady.error != null) {
-                return Center(
-                  child: Text("error getting data"),
-                );
-              }
               if (controller.position.value == null) {
                 return Center(
                   child: Column(
@@ -119,6 +109,12 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     ],
                   ),
                 );
+              }
+              if (controller.trilhas.error != null) {
+                return _map();
+              }
+              if (controller.dataReady.error != null) {
+                return _map();
               }
               if (controller.trilhas.value == null) {
                 return Center(
@@ -310,7 +306,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 child: RaisedButton(
                   color: Colors.blue,
                   onPressed: () {
-                    Modular.to.pushNamed('/photo');
+                    // Modular.to.pushNamed('/photo'); //desabilitado devido à bugs do plugin
                   },
                   child: Icon(
                     Icons.camera_alt,
