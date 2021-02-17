@@ -146,40 +146,42 @@ class TrilhaRepository {
   }
 
   Future<List<TrilhaModel>> getAllTrilhas() async {
-    var cods = await dio.get("/server/cods");
-    var layercod = 0;
-    var response = await dio.get("/server/trilhadados");
     List<TrilhaModel> list = List<TrilhaModel>();
-    var layers =
-        await dio.put("/server/layer", data: {"codt": (cods.data as List)});
+    try {
+      var cods = await dio.get("/server/cods");
+      var layercod = 0;
+      var response = await dio.get("/server/trilhadados");
+      var layers = await dio.put("/server/layer",
+          data: {"codt": (cods.data as List)}).timeout(Duration(seconds: 5));
 
-    for (var json in (response.data as List)) {
-      List<List<LatLng>> line = [];
-      TrilhaModel model = TrilhaModel(
-        json['codt'],
-        json['nome'],
-      );
-      var point = layers.data[layercod];
-      var lat = point["latitudeTrilha"];
-      var lon = point["longitudeTrilha"];
-      for (var i = 0; i < lat.length; i++) {
-        if (lat[i] == 0.0) {
-          line.add([]);
-        } else {
-          line.last.add(LatLng(lat[i], lon[i]));
+      for (var json in (response.data as List)) {
+        List<List<LatLng>> line = [];
+        TrilhaModel model = TrilhaModel(
+          json['codt'],
+          json['nome'],
+        );
+        var point = layers.data[layercod];
+        var lat = point["latitudeTrilha"];
+        var lon = point["longitudeTrilha"];
+        for (var i = 0; i < lat.length; i++) {
+          if (lat[i] == 0.0) {
+            line.add([]);
+          } else {
+            line.last.add(LatLng(lat[i], lon[i]));
+          }
         }
+        model.polylineCoordinates = line;
+        var cods = point["codwp"];
+        var latwp = point["latitudeWaypoint"];
+        var lonwp = point["longitudeWaypoint"];
+        for (var i = 0; i < (cods as List).length; i++) {
+          model.waypoints.add(WaypointModel(
+              codigo: cods[i], posicao: LatLng(latwp[i], lonwp[i])));
+        }
+        list.add(model);
+        layercod++;
       }
-      model.polylineCoordinates = line;
-      var cods = point["codwp"];
-      var latwp = point["latitudeWaypoint"];
-      var lonwp = point["longitudeWaypoint"];
-      for (var i = 0; i < (cods as List).length; i++) {
-        model.waypoints.add(WaypointModel(
-            codigo: cods[i], posicao: LatLng(latwp[i], lonwp[i])));
-      }
-      list.add(model);
-      layercod++;
-    }
+    } catch (e) {}
     // InfoRepository infoRepository = Modular.get<InfoRepository>();
     // infoRepository.updateDesnivel(list);
     return list;

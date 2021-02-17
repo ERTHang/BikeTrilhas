@@ -52,7 +52,6 @@ abstract class _MapControllerBase with Store {
   TrilhaModel newTrail;
   TrilhaModel followRoute;
 
-
   @action
   _MapControllerBase(
       this.trilhaRepository, this.filterRepository, this.infoRepository) {
@@ -65,7 +64,8 @@ abstract class _MapControllerBase with Store {
   init() async {
     filterClear = false;
     typeNum = 2;
-    typeFilter = await filterRepository.getFiltered([2], [], [], [], [], [], []);
+    typeFilter =
+        await filterRepository.getFiltered([2], [], [], [], [], [], []);
     trilhasFiltradas = typeFilter;
     final Uint8List iconBytes = await getBytesFromAsset('images/bola.png', 20);
     markerIcon = BitmapDescriptor.fromBytes(iconBytes);
@@ -76,7 +76,7 @@ abstract class _MapControllerBase with Store {
 
   @action
   Future<CameraPosition> getUserPos() async {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    final Geolocator geolocator = Geolocator();
     Position pos = await geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     return CameraPosition(
@@ -90,7 +90,8 @@ abstract class _MapControllerBase with Store {
     tappedWaypoint = null;
     tappedTrilha = null;
     if (newTrail == null) {
-      final snackBar = SnackBar(content: Text("Não conseguimos gerar uma rota com estes pontos."));
+      final snackBar = SnackBar(
+          content: Text("Não conseguimos gerar uma rota com estes pontos."));
       scaffoldState.currentState.removeCurrentSnackBar();
       scaffoldState.currentState.showSnackBar(snackBar);
       state();
@@ -122,21 +123,22 @@ abstract class _MapControllerBase with Store {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-          consumeTapEvents: (trilhasFiltradas.isEmpty || trilha.codt>=2000000)
+          consumeTapEvents: (trilhasFiltradas.isEmpty || trilha.codt >= 2000000)
               ? true
               : (trilhasFiltradas.contains(trilha.codt) ||
                   tappedTrilha == trilha.codt),
-          polylineId: PolylineId("trilha " + (trilha.codt + i * 10000).toString()),
+          polylineId:
+              PolylineId("trilha " + (trilha.codt + i * 10000).toString()),
           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
           onTap: () {
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;
             state();
-            (trilha.codt >= 2000000) ? bottomSheetTempTrail(trilha, scaffoldState, state) : bottomSheetTrilha(trilha.codt);
+            bottomSheetTrilha(trilha.codt);
           },
           points: trilha.polylineCoordinates[i],
           width: 3,
-          visible: (trilhasFiltradas.isEmpty || trilha.codt>=2000000)
+          visible: (trilhasFiltradas.isEmpty || trilha.codt >= 2000000)
               ? true
               : (trilhasFiltradas.contains(trilha.codt) ||
                   tappedTrilha == trilha.codt),

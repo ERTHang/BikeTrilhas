@@ -3,8 +3,9 @@ import 'package:geolocator/geolocator.dart';
 class GeolocatorService {
   final Geolocator geo = Geolocator();
 
-  Stream<Position> getCurrentLocation(){
-    var locationOptions = LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
+  Stream<Position> getCurrentLocation() {
+    var locationOptions = LocationOptions(
+        accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 8);
     return geo.getPositionStream(locationOptions);
   }
 

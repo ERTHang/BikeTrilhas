@@ -19,32 +19,41 @@ class InfoRepository {
 
   Future<bool> getModels() async {
     var result;
-    if (bairros.isNotEmpty || categorias.isNotEmpty || subtipos.isNotEmpty || regioes.isNotEmpty || superficies.isNotEmpty || dificuldades.isNotEmpty) {
+    if (bairros.isNotEmpty ||
+        categorias.isNotEmpty ||
+        subtipos.isNotEmpty ||
+        regioes.isNotEmpty ||
+        superficies.isNotEmpty ||
+        dificuldades.isNotEmpty) {
       return false;
     }
-    result = await dio.get('/server/bairro');
-    for (var json in (result.data as List)) {
-      bairros.add(Bairro(json["baiCod"], json["baiNome"]));
-    }
-    result = await dio.get('/server/categoria');
-    for (var json in (result.data as List)) {
-      categorias.add(Categoria(json["catCod"], json["catNome"]));
-    }
-    result = await dio.get('/server/regiao');
-    for (var json in (result.data as List)) {
-      regioes.add(Regiao(json['regCod'], json['regNome']));
-    }
-    result = await dio.get('/server/subtipo');
-    for (var json in (result.data as List)) {
-      subtipos.add(Subtipo(json["subtip_cod"], json["subtip_nome"]));
-    }
-    result = await dio.get('/server/superficie');
-    for (var json in (result.data as List)) {
-      superficies.add(Superficie(json["supCod"], json["supNome"]));
-    }
-    result = await dio.get('/server/dificuldade');
-    for (var json in (result.data as List)) {
-      dificuldades.add(Dificuldade(json["difCod"], json["difNome"]));
+    try {
+      result = await dio.get('/server/bairro');
+      for (var json in (result.data as List)) {
+        bairros.add(Bairro(json["baiCod"], json["baiNome"]));
+      }
+      result = await dio.get('/server/categoria');
+      for (var json in (result.data as List)) {
+        categorias.add(Categoria(json["catCod"], json["catNome"]));
+      }
+      result = await dio.get('/server/regiao');
+      for (var json in (result.data as List)) {
+        regioes.add(Regiao(json['regCod'], json['regNome']));
+      }
+      result = await dio.get('/server/subtipo');
+      for (var json in (result.data as List)) {
+        subtipos.add(Subtipo(json["subtip_cod"], json["subtip_nome"]));
+      }
+      result = await dio.get('/server/superficie');
+      for (var json in (result.data as List)) {
+        superficies.add(Superficie(json["supCod"], json["supNome"]));
+      }
+      result = await dio.get('/server/dificuldade');
+      for (var json in (result.data as List)) {
+        dificuldades.add(Dificuldade(json["difCod"], json["difNome"]));
+      }
+    } catch (e) {
+      return false;
     }
     return true;
   }
@@ -164,8 +173,12 @@ class InfoRepository {
     List<int> supInt = [];
     List<int> baiInt = [];
     List<int> regInt = [];
-    tipCod = (tipo == 'Ciclovia') ? 2 : (tipo == 'Trilha') ? 1 : 3;
-    
+    tipCod = (tipo == 'Ciclovia')
+        ? 2
+        : (tipo == 'Trilha')
+            ? 1
+            : 3;
+
     for (var i = 1; i <= this.dificuldades.length; i++) {
       if (dif == this.dificuldades[i - 1].dif_nome) {
         difCod = i;
@@ -191,7 +204,7 @@ class InfoRepository {
     }
 
     for (var i = 1; i <= this.subtipos.length; i++) {
-      if (subtipo == subtipos[i-1].subtip_nome) {
+      if (subtipo == subtipos[i - 1].subtip_nome) {
         subtipInt = i;
         break;
       }
@@ -223,7 +236,9 @@ class InfoRepository {
         (((result['desnivel'] as double) * 100).floor()) / 100,
         (result['tip_cod'] == 1)
             ? 'Trilha'
-            : (result['tip_cod'] == 2) ? 'Ciclovia' : 'Cicloturismo');
+            : (result['tip_cod'] == 2)
+                ? 'Ciclovia'
+                : 'Cicloturismo');
     model.regioes = getRegiao(result['regioes']);
     model.superficies = getSuperficie(result['superficies']);
     model.bairros = getBairro(result['bairros']);
@@ -241,7 +256,6 @@ class InfoRepository {
     int tipCod;
 
     for (var cod in cods) {
-
       aux = await getDadosTrilha(cod.codt);
       for (var i = 1; i <= this.dificuldades.length; i++) {
         if (aux.dificuldade == this.dificuldades[i - 1].dif_nome) {
@@ -249,8 +263,11 @@ class InfoRepository {
         }
       }
 
-      tipCod = (aux.tipo == 'Ciclovia') ? 2 : (aux.tipo == 'Trilha') ? 1 : 3;
-
+      tipCod = (aux.tipo == 'Ciclovia')
+          ? 2
+          : (aux.tipo == 'Trilha')
+              ? 1
+              : 3;
 
       if (aux.desnivel == 0) {
         String location = "";
@@ -258,28 +275,28 @@ class InfoRepository {
           for (var coord in coordList) {
             n++;
             if (location.length == 0) {
-              location="${coord.latitude},${coord.longitude}";
-            }
-            else{
-              location=location+"|${coord.latitude},${coord.longitude}";
+              location = "${coord.latitude},${coord.longitude}";
+            } else {
+              location = location + "|${coord.latitude},${coord.longitude}";
             }
           }
         }
         Dio elevationDio = Dio();
-        String url = "https://maps.googleapis.com/maps/api/elevation/json?locations=$location&key=AIzaSyAntIVRGjlCV7KDl9LyWyC-9IehpPTIEzM";
+        String url =
+            "https://maps.googleapis.com/maps/api/elevation/json?locations=$location&key=AIzaSyAntIVRGjlCV7KDl9LyWyC-9IehpPTIEzM";
         var elevationPoints = (await elevationDio.get(url)).data['results'];
         for (var result in elevationPoints) {
-          totalElevation += result['elevation']; 
+          totalElevation += result['elevation'];
         }
       }
       await dio.put('/server/dados/${cod.codt}', data: {
-          "codt": cod.codt,
-          "descricao": aux.descricao,
-          "nome": aux.nome,
-          "difCod": difCod,
-          "tipo": tipCod,
-          "desnivel": totalElevation / n,
-        });
+        "codt": cod.codt,
+        "descricao": aux.descricao,
+        "nome": aux.nome,
+        "difCod": difCod,
+        "tipo": tipCod,
+        "desnivel": totalElevation / n,
+      });
     }
   }
 

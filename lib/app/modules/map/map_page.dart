@@ -110,12 +110,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   ),
                 );
               }
-              if (controller.trilhas.error != null) {
-                return _map();
-              }
-              if (controller.dataReady.error != null) {
-                return _map();
-              }
               if (controller.trilhas.value == null) {
                 return Center(
                   child: Column(
@@ -157,8 +151,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 color: Colors.blue,
                 onPressed: () {
                   if (tracking) {
-                    controller.trilhas.value.add(controller.followRoute);
+                    controller.createdTrails.add(controller.followRoute);
+                    controller.trilhaRepository
+                        .saveRoute(controller.followRoute);
                     controller.followRoute = null;
+                    Modular.to.pushNamed('/usertrail');
                     subscription.cancel();
                   } else {
                     controller.followRoute =
