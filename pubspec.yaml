@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
+  location: ^3.2.4
   flutter_polyline_points: ^0.2.1
   url_launcher:
   json_annotation: ^3.1.0

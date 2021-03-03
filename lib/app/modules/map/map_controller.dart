@@ -134,7 +134,7 @@ abstract class _MapControllerBase with Store {
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;
             state();
-            bottomSheetTrilha(trilha.codt);
+            bottomSheetTrilha(trilha);
           },
           points: trilha.polylineCoordinates[i],
           width: 3,

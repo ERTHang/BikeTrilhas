@@ -43,7 +43,6 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
   exit(DadosTrilhaModel m) async {
     await _infoRepository.updateDadosTrilha(m.codt, m.nome, m.descricao, m.tipo,
         m.dificuldade, m.superficies, m.bairros, m.regioes, m.subtipo);
-    bottomSheetTrilha(m.codt);
     Modular.to.pop();
   }
 

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_controller.dart';
 
@@ -28,7 +29,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   GoogleMapController mapController;
   int n = 0;
   bool tracking;
-  StreamSubscription<Position> subscription;
+  StreamSubscription<LocationData> subscription;
+  Location location = new Location();
 
   void initState() {
     tracking = false;
@@ -64,7 +66,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   controller.getPolylines();
                   setState(() {
                     controller.tappedTrilha = value.codt;
-                    bottomSheetTrilha(value.codt);
+                    bottomSheetTrilha(value);
                   });
                   mapController.animateCamera(
                       CameraUpdate.newLatLng(value.polylineCoordinates[0][0]));
@@ -155,8 +157,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     controller.trilhaRepository
                         .saveRoute(controller.followRoute);
                     controller.followRoute = null;
-                    Modular.to.pushNamed('/usertrail');
                     subscription.cancel();
+                    Modular.to.pushNamed('/usertrail');
                   } else {
                     controller.followRoute =
                         TrilhaModel(2000000 + n, 'followRoute $n');
@@ -164,9 +166,12 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     controller.followRoute.polylineCoordinates = [
                       [controller.position.value.target]
                     ];
+                    checkPermission(location);
                     subscription =
-                        geoService.getCurrentLocation().listen((position) {
-                      centerScreen(position);
+                        location.onLocationChanged.listen((position) {
+                      centerScreen(Position(
+                          latitude: position.latitude,
+                          longitude: position.longitude));
                       setState(() {
                         controller.followRoute.polylineCoordinates.last
                             .add(LatLng(position.latitude, position.longitude));
@@ -318,6 +323,29 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         ],
       ),
     );
+  }
+
+  void checkPermission(Location location) async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    location.changeSettings(distanceFilter: 8, interval: 1000);
   }
 
   void _func() {

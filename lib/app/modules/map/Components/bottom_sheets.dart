@@ -12,7 +12,8 @@ import 'package:photo_view/photo_view.dart';
 final mapController = Modular.get<MapController>();
 
 Future<DadosTrilhaModel> getDataTrilha(int codt) async {
-  mapController.modelTrilha = await mapController.infoRepository.getDadosTrilha(codt);
+  mapController.modelTrilha =
+      await mapController.infoRepository.getDadosTrilha(codt);
   return mapController.modelTrilha;
 }
 
@@ -22,12 +23,14 @@ Future<DadosWaypointModel> getDataWaypoint(int codt) async {
   return mapController.modelWaypoint;
 }
 
-bottomSheetTrilha(int codt) async {
+bottomSheetTrilha(TrilhaModel trilha) async {
   final AuthController auth = Modular.get();
-  mapController.sheet = mapController.scaffoldState.currentState.showBottomSheet(
+
+  mapController.sheet =
+      mapController.scaffoldState.currentState.showBottomSheet(
     (context) {
       return FutureBuilder(
-        future: getDataTrilha(codt),
+        future: getDataTrilha(trilha.codt),
         builder: (context, snapshot) {
           Widget wid;
           if (snapshot.hasData) {
@@ -36,14 +39,18 @@ bottomSheetTrilha(int codt) async {
             String superficies;
             if (mapController.modelTrilha.bairros.isNotEmpty) {
               bairros = mapController.modelTrilha.bairros[0];
-              for (var i = 1; i < mapController.modelTrilha.bairros.length; i++) {
+              for (var i = 1;
+                  i < mapController.modelTrilha.bairros.length;
+                  i++) {
                 bairros += ', ' + mapController.modelTrilha.bairros[i];
               }
             }
 
             if (mapController.modelTrilha.regioes.isNotEmpty) {
               regioes = mapController.modelTrilha.regioes[0];
-              for (var i = 1; i < mapController.modelTrilha.regioes.length; i++) {
+              for (var i = 1;
+                  i < mapController.modelTrilha.regioes.length;
+                  i++) {
                 regioes += ', ' + mapController.modelTrilha.regioes[i];
               }
             }
@@ -115,9 +122,9 @@ bottomSheetTrilha(int codt) async {
                                   color: Colors.black),
                               children: <TextSpan>[
                             TextSpan(
-                                text:
-                                    mapController.modelTrilha.desnivel.toString() +
-                                        ' m',
+                                text: mapController.modelTrilha.desnivel
+                                        .toString() +
+                                    ' m',
                                 style: TextStyle(fontWeight: FontWeight.normal))
                           ])),
                       RichText(
@@ -225,7 +232,7 @@ bottomSheetTrilha(int codt) async {
                                   ),
                                   onTap: () {
                                     mapController.nameSheet = null;
-                                    bottomSheetTrilha(codt);
+                                    bottomSheetTrilha(trilha);
                                   },
                                 ),
                               ));
@@ -255,10 +262,11 @@ bottomSheetTrilha(int codt) async {
                   topRight: Radius.circular(20), topLeft: Radius.circular(20)),
               child: Container(
                 color: Colors.white,
-                height: MediaQuery.of(mapController.scaffoldState.currentContext)
-                        .size
-                        .height *
-                    0.2,
+                height:
+                    MediaQuery.of(mapController.scaffoldState.currentContext)
+                            .size
+                            .height *
+                        0.2,
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -330,7 +338,8 @@ bottomSheetWaypoint(int codt) async {
                                 style: TextStyle(fontWeight: FontWeight.normal))
                           ])),
                       Visibility(
-                        visible: mapController.modelWaypoint.descricao.isNotEmpty,
+                        visible:
+                            mapController.modelWaypoint.descricao.isNotEmpty,
                         child: RichText(
                             text: TextSpan(
                                 text: 'Descrição: ',
@@ -371,7 +380,8 @@ bottomSheetWaypoint(int codt) async {
                         )),
                       ),
                       Visibility(
-                          visible: mapController.modelWaypoint.imagens.length >= 1,
+                          visible:
+                              mapController.modelWaypoint.imagens.length >= 1,
                           maintainState: false,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -423,9 +433,10 @@ bottomSheetWaypoint(int codt) async {
                                                         ],
                                                         fit: StackFit.expand,
                                                       ),
-                                                      height: MediaQuery.of(mapController
-                                                                  .scaffoldState
-                                                                  .currentContext)
+                                                      height: MediaQuery.of(
+                                                                  mapController
+                                                                      .scaffoldState
+                                                                      .currentContext)
                                                               .size
                                                               .height *
                                                           0.7,
@@ -497,10 +508,11 @@ bottomSheetWaypoint(int codt) async {
                   topRight: Radius.circular(20), topLeft: Radius.circular(20)),
               child: Container(
                 color: Colors.white,
-                height: MediaQuery.of(mapController.scaffoldState.currentContext)
-                        .size
-                        .height *
-                    0.1,
+                height:
+                    MediaQuery.of(mapController.scaffoldState.currentContext)
+                            .size
+                            .height *
+                        0.1,
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -526,101 +538,98 @@ bottomSheetWaypoint(int codt) async {
   }
 }
 
-bottomSheetTempTrail(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState, Function state) {
+bottomSheetTempTrail(
+    TrilhaModel trilha, GlobalKey<ScaffoldState> keyState, Function state) {
   mapController.modelTrilha = null;
   mapController.modelWaypoint = null;
-  mapController.sheet = keyState.currentState.showBottomSheet(
-    (context) {
-      return ClipRRect(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          child: Stack(children: <Widget>[
-            Container(
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width,
-              height: 100,
-              padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  RichText(
-                    text: TextSpan(
-                      text: 'Nome: ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black),
-                      children: <TextSpan>[
-                        TextSpan(
-                            text: trilha.nome,
-                            style: TextStyle(fontWeight: FontWeight.normal))
-                      ],
-                    ),
+  mapController.sheet = keyState.currentState.showBottomSheet((context) {
+    return ClipRRect(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        child: Stack(children: <Widget>[
+          Container(
+            color: Colors.white,
+            width: MediaQuery.of(context).size.width,
+            height: 100,
+            padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                RichText(
+                  text: TextSpan(
+                    text: 'Nome: ',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
+                    children: <TextSpan>[
+                      TextSpan(
+                          text: trilha.nome,
+                          style: TextStyle(fontWeight: FontWeight.normal))
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Positioned(
-              bottom: 44,
+          ),
+          Positioned(
+            bottom: 44,
+            right: 10,
+            child: IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
+              onPressed: () {
+                mapController.createdTrails.remove(trilha);
+
+                mapController.trilhaRepository.deleteTrilha(trilha.codt);
+
+                mapController.getPolylines();
+                mapController.sheet = null;
+                state();
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+          Positioned(
+              bottom: 10,
               right: 10,
               child: IconButton(
-                icon: Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
+                color: Colors.blue,
+                icon: Icon(Icons.arrow_downward),
                 onPressed: () {
-                  mapController.createdTrails.remove(trilha);
-
-                  mapController.trilhaRepository.deleteTrilha(trilha.codt);
-
-                  mapController.getPolylines();
                   mapController.sheet = null;
-                  state();
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-            Positioned(
-                bottom: 10,
-                right: 10,
-                child: IconButton(
-                  color: Colors.blue,
-                  icon: Icon(Icons.arrow_downward),
-                  onPressed: () {
-                    mapController.sheet = null;
-                    Navigator.pop(context);
-                    mapController.nameSheet = keyState.currentState
-                        .showBottomSheet((context) {
-                      return ClipRRect(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20)),
-                          child: Container(
-                            color: Colors.white,
-                            width: MediaQuery.of(
-                                        keyState.currentContext)
-                                    .size
-                                    .width *
-                                0.8,
-                            child: ListTile(
-                              title: Text(trilha.nome),
-                              trailing: Icon(
-                                Icons.arrow_upward,
-                                color: Colors.blue,
-                              ),
-                              onTap: () {
-                                mapController.nameSheet = null;
-                                bottomSheetTempTrail(trilha, keyState, state);
-                              },
+                  Navigator.pop(context);
+                  mapController.nameSheet =
+                      keyState.currentState.showBottomSheet((context) {
+                    return ClipRRect(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20)),
+                        child: Container(
+                          color: Colors.white,
+                          width: MediaQuery.of(keyState.currentContext)
+                                  .size
+                                  .width *
+                              0.8,
+                          child: ListTile(
+                            title: Text(trilha.nome),
+                            trailing: Icon(
+                              Icons.arrow_upward,
+                              color: Colors.blue,
                             ),
-                          ));
-                    });
-                  },
-                ))
-          ]));
-    },
-    backgroundColor: Colors.transparent
-  );
+                            onTap: () {
+                              mapController.nameSheet = null;
+                              bottomSheetTempTrail(trilha, keyState, state);
+                            },
+                          ),
+                        ));
+                  });
+                },
+              ))
+        ]));
+  }, backgroundColor: Colors.transparent);
   final auxSheet = mapController.sheet;
   final auxNameSheet = mapController.nameSheet;
   if (auxSheet != null) {
