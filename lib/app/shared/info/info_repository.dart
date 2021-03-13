@@ -4,6 +4,7 @@ import 'package:biketrilhas_modular/app/shared/info/models.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:dio/dio.dart';
 import '../utils/constants.dart';
+import 'package:connectivity/connectivity.dart';
 
 class InfoRepository {
   final Dio dio;
@@ -224,28 +225,37 @@ class InfoRepository {
         .data;
   }
 
+  //Verificar se esta online ou offline
   Future<DadosTrilhaModel> getDadosTrilha(int codt) async {
-    var result = (await dio.get('/server/naogeografico',
-            queryParameters: {"tipo": "trilha", "cod": codt}))
-        .data[0];
-    DadosTrilhaModel model = DadosTrilhaModel(
-        codt,
-        result['nome'],
-        result['descricao'],
-        (((result['comprimento'] as double) * 100).floor()) / 100,
-        (((result['desnivel'] as double) * 100).floor()) / 100,
-        (result['tip_cod'] == 1)
-            ? 'Trilha'
-            : (result['tip_cod'] == 2)
-                ? 'Ciclovia'
-                : 'Cicloturismo');
-    model.regioes = getRegiao(result['regioes']);
-    model.superficies = getSuperficie(result['superficies']);
-    model.bairros = getBairro(result['bairros']);
-    model.dificuldade = getDificuldade(result['dif_cod']);
-    model.subtipo = getSubtipo(result['subtip_cod']);
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print('>> Usuario Online!');
+      var result = (await dio.get('/server/naogeografico',
+              queryParameters: {"tipo": "trilha", "cod": codt}))
+          .data[0];
+      DadosTrilhaModel model = DadosTrilhaModel(
+          codt,
+          result['nome'],
+          result['descricao'],
+          (((result['comprimento'] as double) * 100).floor()) / 100,
+          (((result['desnivel'] as double) * 100).floor()) / 100,
+          (result['tip_cod'] == 1)
+              ? 'Trilha'
+              : (result['tip_cod'] == 2)
+                  ? 'Ciclovia'
+                  : 'Cicloturismo');
+      model.regioes = getRegiao(result['regioes']);
+      model.superficies = getSuperficie(result['superficies']);
+      model.bairros = getBairro(result['bairros']);
+      model.dificuldade = getDificuldade(result['dif_cod']);
+      model.subtipo = getSubtipo(result['subtip_cod']);
 
-    return model;
+      return model;
+    } else {
+      print('>> Usuario Off-line');
+      return null;
+    }
   }
 
   void updateDesnivel(List<TrilhaModel> cods) async {
