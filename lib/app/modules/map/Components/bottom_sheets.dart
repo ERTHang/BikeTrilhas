@@ -229,23 +229,10 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                     },
                   ),
                 ),
-                //Botão carregar dados da trilha
+                //Botão para ver as informaçõs da trilha
                 Positioned(
                   top: 40,
                   right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.cloud_upload_outlined),
-                    iconSize: 25,
-                    onPressed: () async {
-                      getPrefs(context, alerta: true);
-                    },
-                  ),
-                ),
-                //Botão para ver as informaçõs da trilha
-                Positioned(
-                  top: 5,
-                  right: 45,
                   child: IconButton(
                     color: Colors.blue,
                     icon: Icon(Icons.assignment_late_outlined),

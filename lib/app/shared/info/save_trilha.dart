@@ -1,7 +1,9 @@
+import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:flutter/material.dart';
 
 List codigosTrilhasSalvas = [];
+List<DadosTrilhaModel> dadosTrilhasModel = [];
 int incrementadorTrilhasNovas = 0;
 SharedPrefs sharedPrefs = SharedPrefs();
 
@@ -51,8 +53,10 @@ salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade, bairros,
   if (codigosTrilhasSalvas.contains(codigo)) {
     alert(context, 'Trilha já foi salva!');
   } else {
-    sharedPrefs.save(codigo.toString(), toJson(nome, comprimento, desnivel, tipo, dificuldade, bairros,
-    regioes, superficies));
+    sharedPrefs.save(
+        codigo.toString(),
+        toJson(nome, comprimento, desnivel, tipo, dificuldade, bairros, regioes,
+            superficies));
     codigosTrilhasSalvas.add(codigo);
     incrementadorTrilhasNovas += 1;
     await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
@@ -86,6 +90,17 @@ alertaInfosTrilha(codigo, context) async {
         'Nome: ${aux["nome"]}\nComprimento: ${aux["comprimento"]} Km\nDesnivel: ${aux["desnivel"]}');
   } else {
     alert(context, 'Trilha não disponível!\nSalve antes de buscar os dados!');
+  }
+}
+
+allToDadosTrilhaModel() async {
+  if (codigosTrilhasSalvas.length != dadosTrilhasModel.length) {
+    for (int i = dadosTrilhasModel.length; i < codigosTrilhasSalvas.length; i++) {
+      Map<String, dynamic> mapa =
+          await sharedPrefs.read(codigosTrilhasSalvas[i].toString());
+      DadosTrilhaModel trilha = DadosTrilhaModel(codigosTrilhasSalvas[i], mapa['nome'], mapa['descricao'], mapa['comprimento'], mapa['desnivel'], mapa['tipo']);
+      dadosTrilhasModel.add(trilha);
+    }
   }
 }
 

@@ -47,7 +47,7 @@ dev_dependencies:
   json_serializable:
   flutter_launcher_icons:
   mockito: ^4.1.1
-  mobx_codegen: 
+  mobx_codegen:
   build_runner: ^1.8.1
   flutter_test:
     sdk: flutter

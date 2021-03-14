@@ -48,7 +48,7 @@ class AppModule extends MainModule {
         ModularRouter('/usertrail', module: UsertrailsModule()),
         ModularRouter('/waypoint', module: WaypointsModule()),
         ModularRouter('/filter', module: FilterModule()),
-        ModularRouter('/info', module: InfoModule())
+        ModularRouter('/info', module: InfoModule()),
       ];
 
   @override
