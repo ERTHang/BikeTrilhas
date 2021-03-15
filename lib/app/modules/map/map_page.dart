@@ -6,6 +6,7 @@ import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -14,6 +15,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_controller.dart';
+import 'package:connectivity/connectivity.dart';
 
 class MapPage extends StatefulWidget {
   final String title;
@@ -45,6 +47,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   final AuthController auth = Modular.get();
 
   Widget build(BuildContext context) {
+    final TrilhaRepository trilhaRepository = Modular.get();
     controller.state = _func;
     return Scaffold(
       key: controller.scaffoldState,
@@ -95,6 +98,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         children: <Widget>[
           Observer(
             builder: (context) {
+              var connectivityResult =
+                  await(Connectivity().checkConnectivity());
+              if (connectivityResult == ConnectivityResult.none) {
+                trilhaRepository.getStorageTrilhas();
+              }
               if (controller.position.error != null) {
                 return Center(
                   child: Text("error getting position"),
@@ -400,4 +408,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(position.latitude, position.longitude), zoom: 19.0)));
   }
+
+  await(Future<ConnectivityResult> checkConnectivity) {}
 }
