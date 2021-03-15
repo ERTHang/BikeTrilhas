@@ -82,6 +82,18 @@ getPrefs(context, {alerta: false}) async {
   }
 }
 
+//GetPrefs sem alert
+getPrefNoAlert() async {
+  if (await sharedPrefs.haveKey('codigosSalvos') == false) {
+    await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
+  } else {
+    if (codigosTrilhasSalvas.isEmpty || incrementadorTrilhasNovas != 0) {
+      codigosTrilhasSalvas = await SharedPrefs().read('codigosSalvos');
+      incrementadorTrilhasNovas = 0;
+    }
+  }
+}
+
 alertaInfosTrilha(codigo, context) async {
   await getPrefs(context);
   if (codigosTrilhasSalvas.contains(codigo)) {
@@ -95,10 +107,18 @@ alertaInfosTrilha(codigo, context) async {
 
 allToDadosTrilhaModel() async {
   if (codigosTrilhasSalvas.length != dadosTrilhasModel.length) {
-    for (int i = dadosTrilhasModel.length; i < codigosTrilhasSalvas.length; i++) {
+    for (int i = dadosTrilhasModel.length;
+        i < codigosTrilhasSalvas.length;
+        i++) {
       Map<String, dynamic> mapa =
           await sharedPrefs.read(codigosTrilhasSalvas[i].toString());
-      DadosTrilhaModel trilha = DadosTrilhaModel(codigosTrilhasSalvas[i], mapa['nome'], mapa['descricao'], mapa['comprimento'], mapa['desnivel'], mapa['tipo']);
+      DadosTrilhaModel trilha = DadosTrilhaModel(
+          codigosTrilhasSalvas[i],
+          mapa['nome'],
+          mapa['descricao'],
+          mapa['comprimento'],
+          mapa['desnivel'],
+          mapa['tipo']);
       dadosTrilhasModel.add(trilha);
     }
   }
@@ -114,7 +134,9 @@ alert(BuildContext context, String msg) {
         onWillPop: () async => false,
         child: AlertDialog(
           title: Text("Trilha"),
-          content: Text(msg),
+          content: Text(
+            msg,
+          ),
           actions: <Widget>[
             FlatButton(
                 child: Text('OK'),

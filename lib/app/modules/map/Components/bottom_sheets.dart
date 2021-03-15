@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
-import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -226,19 +223,6 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         mapController.modelTrilha.regioes,
                         mapController.modelTrilha.superficies,
                       );
-                    },
-                  ),
-                ),
-                //Botão para ver as informaçõs da trilha
-                Positioned(
-                  top: 40,
-                  right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.assignment_late_outlined),
-                    iconSize: 25,
-                    onPressed: () async {
-                      alertaInfosTrilha(trilha.codt, context);
                     },
                   ),
                 ),

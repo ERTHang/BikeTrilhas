@@ -5,6 +5,9 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:dio/dio.dart';
 import '../utils/constants.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+
+var connectivityResult;
 
 class InfoRepository {
   final Dio dio;
@@ -227,10 +230,7 @@ class InfoRepository {
 
   //Verificar se esta online ou offline
   Future<DadosTrilhaModel> getDadosTrilha(int codt) async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      print('>> Usuario Online!');
+    if (await isOnline()) {
       var result = (await dio.get('/server/naogeografico',
               queryParameters: {"tipo": "trilha", "cod": codt}))
           .data[0];
@@ -253,8 +253,43 @@ class InfoRepository {
 
       return model;
     } else {
-      print('>> Usuario Off-line');
-      return null;
+      getPrefNoAlert();
+      if (codigosTrilhasSalvas.contains(codt)) {
+        var result = await sharedPrefs.read(codt.toString());
+        DadosTrilhaModel model = DadosTrilhaModel(
+          codt,
+          result['nome'],
+          '',
+          result['comprimento'],
+          result['desnivel'],
+          result['tipo'],
+        );
+        
+        model.regioes = [];
+        model.superficies = [];
+        model.bairros = [];
+        model.dificuldade = result['dificuldade'];
+        model.subtipo = '';
+
+        return model;
+      }else{
+        DadosTrilhaModel model = DadosTrilhaModel(
+          null,
+          'Trilha não salva',
+          'Trilha não salva',
+          0,
+          0,
+          'Trilha não salva',
+        );
+        
+        model.regioes = ['Trilha não salva'];
+        model.superficies = ['Trilha não salva'];
+        model.bairros = ['Trilha não salva'];
+        model.dificuldade = 'Trilha não salva';
+        model.subtipo = 'Trilha não salva';
+
+        return model;
+      }
     }
   }
 
@@ -323,4 +358,13 @@ class InfoRepository {
 
     return model;
   }
+}
+
+//Retorna os dados de como o usuario está conectado com a internet ou offline
+isOnline() async {
+  connectivityResult = await (Connectivity().checkConnectivity());
+  if (connectivityResult == ConnectivityResult.none) {
+    return false;
+  }
+  return true;
 }
