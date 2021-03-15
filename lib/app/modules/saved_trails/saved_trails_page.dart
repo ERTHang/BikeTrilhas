@@ -36,23 +36,69 @@ class SavedTrailsPage extends StatelessWidget {
 
             return Card(
               color: Colors.grey[200],
-              child: Center(
-                child: Container(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text('Codigo: ${c.codt},'),
-                      SizedBox(height: 5),
-                      Text('Nome: ${c.nome}'),
-                      SizedBox(height: 5),
-                      Text('Comprimento: ${c.comprimento}'),
-                      SizedBox(height: 5),
-                      Text('Desnivel: ${c.desnivel}'),
-                      SizedBox(height: 5),
-                      Text('tipo: ${c.tipo}'),
-                    ],
-                  ),
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Nome: ${c.nome}', style: textStyle()),
+                    SizedBox(height: 5),
+                    Text('Comprimento: ${c.comprimento} KM',
+                        style: textStyle()),
+                    SizedBox(height: 5),
+                    Text('Desnivel: ${c.desnivel} m', style: textStyle()),
+                    SizedBox(height: 5),
+                    Text('tipo: ${c.tipo}', style: textStyle()),
+                    ButtonBarTheme(
+                      data: ButtonBarTheme.of(context),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ButtonBar(
+                              children: <Widget>[
+                                Container(
+                                  height: 50,
+                                  child: FlatButton(
+                                    splashColor: Colors.grey[400],
+                                    child: LayoutBuilder(
+                                        builder: (context, constraint) {
+                                      return new Icon(
+                                        Icons.delete_outline_rounded,
+                                        size: constraint.biggest.height,
+                                        color: Colors.black45,
+                                      );
+                                    }),
+                                    onPressed: () {
+                                      alert(context, 'Em contrução');
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  height: 50,
+                                  child: FlatButton(
+                                    splashColor: Colors.grey[400],
+                                    child: LayoutBuilder(
+                                        builder: (context, constraint) {
+                                      return new Icon(
+                                        Icons.location_on_outlined,
+                                        size: constraint.biggest.height,
+                                        color: Colors.black45,
+                                      );
+                                    }),
+                                    onPressed: () {
+                                      alert(context, 'Em contrução');
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -60,5 +106,9 @@ class SavedTrailsPage extends StatelessWidget {
         ),
       );
     }
+  }
+
+  textStyle() {
+    return TextStyle(fontWeight: FontWeight.normal, fontSize: 15);
   }
 }

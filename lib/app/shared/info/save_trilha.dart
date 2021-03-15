@@ -1,4 +1,5 @@
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:flutter/material.dart';
 
@@ -50,17 +51,25 @@ Map<String, dynamic> toJson(nome, comprimento, desnivel, tipo, dificuldade,
 
 salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade, bairros,
     regioes, superficies) async {
-  if (codigosTrilhasSalvas.contains(codigo)) {
-    alert(context, 'Trilha já foi salva!');
-  } else {
-    sharedPrefs.save(
-        codigo.toString(),
-        toJson(nome, comprimento, desnivel, tipo, dificuldade, bairros, regioes,
-            superficies));
-    codigosTrilhasSalvas.add(codigo);
-    incrementadorTrilhasNovas += 1;
-    await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
-    alert(context, 'Trilha salva com sucesso!');
+  if (await isOnline()) {
+    if (codigosTrilhasSalvas.contains(codigo)) {
+      alert(context, 'Trilha já foi salva!');
+    } else {
+      sharedPrefs.save(
+          codigo.toString(),
+          toJson(nome, comprimento, desnivel, tipo, dificuldade, bairros,
+              regioes, superficies));
+      codigosTrilhasSalvas.add(codigo);
+      incrementadorTrilhasNovas += 1;
+      await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
+      alert(context, 'Trilha salva com sucesso!');
+    }
+  }else{
+    if (codigosTrilhasSalvas.contains(codigo)) {
+      alert(context, 'Trilha já foi salva!');
+    } else {
+      alert(context, 'Sem conexão para salvar!');
+    }
   }
 }
 
