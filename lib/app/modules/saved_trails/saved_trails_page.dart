@@ -2,7 +2,12 @@ import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:flutter/material.dart';
 
-class SavedTrailsPage extends StatelessWidget {
+class SavedTrailsPage extends StatefulWidget {
+  @override
+  _SavedTrailsPageState createState() => _SavedTrailsPageState();
+}
+
+class _SavedTrailsPageState extends State<SavedTrailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,15 +69,21 @@ class SavedTrailsPage extends StatelessWidget {
                                     splashColor: Colors.grey[400],
                                     child: LayoutBuilder(
                                         builder: (context, constraint) {
-                                      return new Icon(
-                                        Icons.delete_outline_rounded,
-                                        size: constraint.biggest.height,
-                                        color: Colors.black45,
+                                      return MaterialButton(
+                                        shape: CircleBorder(),
+                                        child: new Icon(
+                                          Icons.delete_outline_rounded,
+                                          size: constraint.biggest.height,
+                                          color: Colors.black45,
+                                        ),
+                                        onPressed: () async {
+                                          await removerTrilhaMsg(
+                                              'Deseja excluir a trilha ${c.nome}?',
+                                              c.codt);
+                                        },
                                       );
                                     }),
-                                    onPressed: () {
-                                      alert(context, 'Em contrução');
-                                    },
+                                    onPressed: () {},
                                   ),
                                 ),
                                 Container(
@@ -81,15 +92,19 @@ class SavedTrailsPage extends StatelessWidget {
                                     splashColor: Colors.grey[400],
                                     child: LayoutBuilder(
                                         builder: (context, constraint) {
-                                      return new Icon(
-                                        Icons.location_on_outlined,
-                                        size: constraint.biggest.height,
-                                        color: Colors.black45,
+                                      return MaterialButton(
+                                        shape: CircleBorder(),
+                                        child: new Icon(
+                                          Icons.location_on_outlined,
+                                          size: constraint.biggest.height,
+                                          color: Colors.black45,
+                                        ),
+                                        onPressed: () {
+                                          alert(context, 'Em contrução');
+                                        },
                                       );
                                     }),
-                                    onPressed: () {
-                                      alert(context, 'Em contrução');
-                                    },
+                                    onPressed: () {},
                                   ),
                                 ),
                               ],
@@ -110,5 +125,38 @@ class SavedTrailsPage extends StatelessWidget {
 
   textStyle() {
     return TextStyle(fontWeight: FontWeight.normal, fontSize: 15);
+  }
+
+  removerTrilhaMsg(msg, codt) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: Text("Remover"),
+            content: Text(
+              msg,
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  child: Text('OK'),
+                  onPressed: () async {
+                    await deleteTrilha(codt);
+                    await allToDadosTrilhaModel();
+                    Navigator.pop(context);
+                    setState(() {});
+                  }),
+              FlatButton(
+                  child: Text('VOLTAR'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

@@ -64,7 +64,7 @@ salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade, bairros,
       await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
       alert(context, 'Trilha salva com sucesso!');
     }
-  }else{
+  } else {
     if (codigosTrilhasSalvas.contains(codigo)) {
       alert(context, 'Trilha já foi salva!');
     } else {
@@ -89,6 +89,12 @@ getPrefs(context, {alerta: false}) async {
       }
     }
   }
+}
+
+deleteTrilha(codt) async {
+  codigosTrilhasSalvas.remove(codt);
+  await sharedPrefs.remove(codt.toString());
+  await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
 }
 
 //GetPrefs sem alert
@@ -116,19 +122,37 @@ alertaInfosTrilha(codigo, context) async {
 
 allToDadosTrilhaModel() async {
   if (codigosTrilhasSalvas.length != dadosTrilhasModel.length) {
-    for (int i = dadosTrilhasModel.length;
-        i < codigosTrilhasSalvas.length;
-        i++) {
-      Map<String, dynamic> mapa =
-          await sharedPrefs.read(codigosTrilhasSalvas[i].toString());
-      DadosTrilhaModel trilha = DadosTrilhaModel(
-          codigosTrilhasSalvas[i],
-          mapa['nome'],
-          mapa['descricao'],
-          mapa['comprimento'],
-          mapa['desnivel'],
-          mapa['tipo']);
-      dadosTrilhasModel.add(trilha);
+    if (codigosTrilhasSalvas.length > dadosTrilhasModel.length) {
+      for (int i = dadosTrilhasModel.length;
+          i < codigosTrilhasSalvas.length;
+          i++) {
+        Map<String, dynamic> mapa =
+            await sharedPrefs.read(codigosTrilhasSalvas[i].toString());
+        DadosTrilhaModel trilha = DadosTrilhaModel(
+            codigosTrilhasSalvas[i],
+            mapa['nome'],
+            mapa['descricao'],
+            mapa['comprimento'],
+            mapa['desnivel'],
+            mapa['tipo']);
+        dadosTrilhasModel.add(trilha);
+      }
+    } else if (codigosTrilhasSalvas.length < dadosTrilhasModel.length) {
+      dadosTrilhasModel = [];
+      for (int i = 0;
+          i < codigosTrilhasSalvas.length;
+          i++) {
+        Map<String, dynamic> mapa =
+            await sharedPrefs.read(codigosTrilhasSalvas[i].toString());
+        DadosTrilhaModel trilha = DadosTrilhaModel(
+            codigosTrilhasSalvas[i],
+            mapa['nome'],
+            mapa['descricao'],
+            mapa['comprimento'],
+            mapa['desnivel'],
+            mapa['tipo']);
+        dadosTrilhasModel.add(trilha);
+      }
     }
   }
 }
