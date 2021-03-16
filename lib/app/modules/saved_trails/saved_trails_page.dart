@@ -40,9 +40,10 @@ class _SavedTrailsPageState extends State<SavedTrailsPage> {
             DadosTrilhaModel c = lista[index];
 
             return Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               color: Colors.grey[200],
               child: Container(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -64,7 +65,7 @@ class _SavedTrailsPageState extends State<SavedTrailsPage> {
                             ButtonBar(
                               children: <Widget>[
                                 Container(
-                                  height: 50,
+                                  height: 45,
                                   child: FlatButton(
                                     splashColor: Colors.grey[400],
                                     child: LayoutBuilder(
@@ -87,7 +88,7 @@ class _SavedTrailsPageState extends State<SavedTrailsPage> {
                                   ),
                                 ),
                                 Container(
-                                  height: 50,
+                                  height: 45,
                                   child: FlatButton(
                                     splashColor: Colors.grey[400],
                                     child: LayoutBuilder(
