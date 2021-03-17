@@ -16,4 +16,10 @@ class SharedPrefs {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove(key);
   }
+
+  //Verificar se a key existe na memória
+  haveKey(key) async{
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey(key);
+  }
 }
