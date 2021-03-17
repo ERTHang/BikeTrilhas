@@ -2,9 +2,7 @@ import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
-import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +25,7 @@ Future<DadosWaypointModel> getDataWaypoint(int codt) async {
 
 bottomSheetTrilha(TrilhaModel trilha) async {
   final AuthController auth = Modular.get();
-  final TrilhaRepository trilhaRepository = Modular.get();
+
   mapController.sheet =
       mapController.scaffoldState.currentState.showBottomSheet(
     (context) {
@@ -201,43 +199,6 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         ),
                       ),
                     ],
-                  ),
-                ),
-                //Botão para salvar trilha
-                Positioned(
-                  top: 5,
-                  right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.save_alt_outlined),
-                    iconSize: 25,
-                    onPressed: () async {
-                      await getPrefs(context);
-                      SaveTrilha(
-                        context,
-                        trilha.codt,
-                        trilha.nome,
-                        mapController.modelTrilha.comprimento,
-                        mapController.modelTrilha.desnivel,
-                        mapController.modelTrilha.tipo,
-                        mapController.modelTrilha.dificuldade,
-                        mapController.modelTrilha.bairros,
-                        mapController.modelTrilha.regioes,
-                        mapController.modelTrilha.superficies,
-                      );
-                    },
-                  ),
-                ),
-                Positioned(
-                  bottom: 110,
-                  right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.save_alt_outlined),
-                    iconSize: 25,
-                    onPressed: () async {
-                      trilhaRepository.saveTrilha(trilha);
-                    },
                   ),
                 ),
                 Positioned(

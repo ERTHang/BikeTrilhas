@@ -18,7 +18,6 @@ environment:
 
 dependencies:
   location: ^4.1.1
-  connectivity: ^1.0.0
   flutter_polyline_points: ^0.2.1
   url_launcher:
   json_annotation: 3.1.1
@@ -38,7 +37,6 @@ dependencies:
   flutter_mobx:
   mobx: ^1.2.1+4
   flutter_modular: ^3.0.1
-  connectivity:
   flutter:
     sdk: flutter
 
