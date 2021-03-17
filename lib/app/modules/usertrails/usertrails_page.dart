@@ -30,10 +30,6 @@ class _UsertrailsPageState
           title: Text('Suas Rotas'),
           centerTitle: true,
         ),
-        drawer: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: DrawerPage(),
-        ),
         body: Stack(
           alignment: Alignment.center,
           children: [
@@ -64,9 +60,15 @@ class _UsertrailsPageState
               myLocationButtonEnabled: false,
               myLocationEnabled: true,
               polylines: controller.polylines,
-              markers: (routeState == 0) ? controller.markers : controller.routeMarkers,
+              markers: (routeState == 0)
+                  ? controller.markers
+                  : controller.routeMarkers,
               mapType: MapType.normal,
-              initialCameraPosition: (mapController.newTrail != null) ? CameraPosition(target: mapController.newTrail.waypoints[0].posicao, zoom: 14) : controller.mapController.position.value,
+              initialCameraPosition: (mapController.newTrail != null)
+                  ? CameraPosition(
+                      target: mapController.newTrail.waypoints[0].posicao,
+                      zoom: 14)
+                  : controller.mapController.position.value,
               onMapCreated: (GoogleMapController mapcontroller) {
                 if (controller.tappedTrilha != null) {
                   bottomSheetTempTrail(controller.mapController.newTrail,

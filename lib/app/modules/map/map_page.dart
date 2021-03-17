@@ -111,6 +111,22 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   ),
                 );
               }
+              if (store.trilhas.error != null) {
+                print(store.trilhas.error);
+                return _map();
+              }
+              if (store.trilhas.value == null) {
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      Text("Obtendo trilhas")
+                    ],
+                  ),
+                );
+              }
               store.getPolylines();
               return _map();
             },
@@ -120,10 +136,9 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             bottom: 10,
             right: 10,
             child: ButtonTheme(
-              height: 50,
-              minWidth: 50,
               child: ElevatedButton(
                 style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(Size(50, 50)),
                   backgroundColor: MaterialStateProperty.all(Colors.blue),
                   elevation: MaterialStateProperty.all(5),
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(

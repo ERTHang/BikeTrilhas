@@ -7,13 +7,15 @@ import 'package:biketrilhas_modular/app/modules/map/map_page.dart';
 
 class MapModule extends Module {
   @override
-  List<Bind> binds =
-      [Bind.singleton((i) => MapController(i.get<TrilhaRepository>(), i.get(), i.get()))];
+  final List<Bind> binds = [
+    Bind.singleton(
+        (i) => MapController(i.get<TrilhaRepository>(), i.get(), i.get()))
+  ];
 
   @override
   final List<ModularRoute> routes = [
-        ChildRoute(Modular.initialRoute, child: (_, args) => MapPage()),
-        ChildRoute('editor', child: (_, args) => EdicaoRotas()),
-        ChildRoute('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
-      ];
+    ChildRoute(Modular.initialRoute, child: (_, args) => MapPage()),
+    ChildRoute('editor', child: (_, args) => EdicaoRotas()),
+    ChildRoute('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
+  ];
 }
