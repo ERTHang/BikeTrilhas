@@ -34,7 +34,7 @@ class _DrawerPageState extends State<DrawerPage> {
             padding: const EdgeInsets.fromLTRB(90, 30, 90, 0),
             child: CircleAvatar(
               backgroundColor: Colors.transparent,
-              backgroundImage: NetworkImage(auth.user.photoUrl),
+              backgroundImage: NetworkImage(auth.user.photoURL),
               radius: 60,
             ),
           ),

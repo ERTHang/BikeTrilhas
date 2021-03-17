@@ -35,7 +35,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   void initState() {
     tracking = false;
     super.initState();
-    controller.init();
+    store.init();
   }
 
   List<int> temp = [];
@@ -45,9 +45,9 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   final AuthController auth = Modular.get();
 
   Widget build(BuildContext context) {
-    controller.state = _func;
+    store.state = _func;
     return Scaffold(
-      key: controller.scaffoldState,
+      key: store.scaffoldState,
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: Text(
@@ -60,12 +60,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               icon: Icon(Icons.search),
               onPressed: () {
                 showSearch(
-                        context: context,
-                        delegate: CustomSearchDelegate(controller))
+                        context: context, delegate: CustomSearchDelegate(store))
                     .then((value) {
-                  controller.getPolylines();
+                  store.getPolylines();
                   setState(() {
-                    controller.tappedTrilha = value.codt;
+                    store.tappedTrilha = value.codt;
                     bottomSheetTrilha(value);
                   });
                   mapController.animateCamera(
@@ -77,12 +76,12 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 icon: Icon(Icons.delete_sweep, color: Colors.red),
                 onPressed: () {
                   setState(() {
-                    controller.filterClear = false;
-                    controller.trilhasFiltradas = controller.typeFilter;
-                    controller.getPolylines();
+                    store.filterClear = false;
+                    store.trilhasFiltradas = store.typeFilter;
+                    store.getPolylines();
                   });
                 }),
-            visible: (controller.filterClear),
+            visible: (store.filterClear),
           )
         ],
       ),
@@ -95,12 +94,12 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         children: <Widget>[
           Observer(
             builder: (context) {
-              if (controller.position.error != null) {
+              if (store.position.error != null) {
                 return Center(
                   child: Text("error getting position"),
                 );
               }
-              if (controller.position.value == null) {
+              if (store.position.value == null) {
                 return Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,31 +111,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   ),
                 );
               }
-              if (controller.trilhas.value == null) {
-                return Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircularProgressIndicator(),
-                      Text("Obtendo trilhas salvas")
-                    ],
-                  ),
-                );
-              }
-              if (controller.dataReady.value == null) {
-                return Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircularProgressIndicator(),
-                      Text("Obtendo informações necessárias")
-                    ],
-                  ),
-                );
-              }
-              controller.getPolylines();
+              store.getPolylines();
               return _map();
             },
           ),
@@ -147,33 +122,36 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             child: ButtonTheme(
               height: 50,
               minWidth: 50,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(360)),
-              child: RaisedButton(
-                color: Colors.blue,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  elevation: MaterialStateProperty.all(5),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(360))),
+                ),
                 onPressed: () {
                   if (tracking) {
-                    controller.createdTrails.add(controller.followRoute);
-                    controller.trilhaRepository
-                        .saveRoute(controller.followRoute);
-                    controller.followRoute = null;
+                    store.createdTrails.add(store.followRoute);
+                    store.trilhaRepository.saveRoute(store.followRoute);
+                    store.followRoute = null;
                     subscription.cancel();
                     Modular.to.pushNamed('/usertrail');
                   } else {
-                    controller.followRoute =
+                    store.followRoute =
                         TrilhaModel(2000000 + n, 'followRoute $n');
 
-                    controller.followRoute.polylineCoordinates = [
-                      [controller.position.value.target]
+                    store.followRoute.polylineCoordinates = [
+                      [store.position.value.target]
                     ];
                     checkPermission(location);
                     subscription =
                         location.onLocationChanged.listen((position) {
+                      // ignore: missing_required_param
                       centerScreen(Position(
                           latitude: position.latitude,
                           longitude: position.longitude));
                       setState(() {
-                        controller.followRoute.polylineCoordinates.last
+                        store.followRoute.polylineCoordinates.last
                             .add(LatLng(position.latitude, position.longitude));
                       });
                     });
@@ -187,7 +165,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   color: (tracking) ? Colors.green : Colors.white,
                   size: 30,
                 ),
-                elevation: 5,
               ),
             ),
           ),
@@ -232,10 +209,15 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           Positioned(
             bottom: 0,
             child: Visibility(
-              child: RaisedButton(
-                color: Colors.green,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24)),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.green),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                ),
                 child: Text(
                   "Criar",
                   style: TextStyle(
@@ -243,8 +225,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 ),
                 onPressed: () {
                   routeState = 0;
-                  controller.trilhasFiltradas = temp;
-                  controller.getRoute();
+                  store.trilhasFiltradas = temp;
+                  store.getRoute();
                 },
               ),
               visible: routeState > 2,
@@ -259,31 +241,31 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             right: 5,
             child: IconButton(
               onPressed: () {
-                controller.routePoints.clear();
-                controller.routeMarkers.clear();
+                store.routePoints.clear();
+                store.routeMarkers.clear();
                 destinos = 0;
-                if (controller.sheet != null) {
-                  controller.sheet.close();
-                  controller.sheet = null;
-                  controller.tappedTrilha = null;
-                  controller.tappedWaypoint = null;
+                if (store.sheet != null) {
+                  store.sheet.close();
+                  store.sheet = null;
+                  store.tappedTrilha = null;
+                  store.tappedWaypoint = null;
                 }
-                if (controller.nameSheet != null) {
-                  controller.nameSheet.close();
-                  controller.nameSheet = null;
-                  controller.tappedTrilha = null;
-                  controller.tappedWaypoint = null;
+                if (store.nameSheet != null) {
+                  store.nameSheet.close();
+                  store.nameSheet = null;
+                  store.tappedTrilha = null;
+                  store.tappedWaypoint = null;
                 }
                 if (routeState == 0) {
                   setState(() {
-                    temp = controller.trilhasFiltradas;
-                    controller.trilhasFiltradas = [0];
+                    temp = store.trilhasFiltradas;
+                    store.trilhasFiltradas = [0];
                     routeState = 1;
                   });
                 } else {
                   setState(() {
-                    controller.trilhasFiltradas = temp;
-                    controller.getPolylines();
+                    store.trilhasFiltradas = temp;
+                    store.getPolylines();
                     routeState = 0;
                   });
                 }
@@ -353,28 +335,28 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   }
 
   Widget _map() {
-    if (controller.position == null) {
+    if (store.position == null) {
       return Container();
     }
     return GoogleMap(
       onTap: (latlng) {
         setState(() {
-          if (controller.sheet != null) {
-            controller.sheet.close();
-            controller.sheet = null;
-            controller.tappedTrilha = null;
-            controller.tappedWaypoint = null;
+          if (store.sheet != null) {
+            store.sheet.close();
+            store.sheet = null;
+            store.tappedTrilha = null;
+            store.tappedWaypoint = null;
           }
-          if (controller.nameSheet != null) {
-            controller.nameSheet.close();
-            controller.nameSheet = null;
-            controller.tappedTrilha = null;
-            controller.tappedWaypoint = null;
+          if (store.nameSheet != null) {
+            store.nameSheet.close();
+            store.nameSheet = null;
+            store.tappedTrilha = null;
+            store.tappedWaypoint = null;
           }
           if (routeState != 0) {
-            controller.routeMarkers.add(Marker(
+            store.routeMarkers.add(Marker(
                 markerId: MarkerId('destino $routeState'), position: latlng));
-            controller.routePoints.add(latlng);
+            store.routePoints.add(latlng);
             destinos++;
             routeState++;
           }
@@ -384,10 +366,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       myLocationButtonEnabled: false,
       myLocationEnabled: true,
       zoomControlsEnabled: false,
-      polylines: controller.polylines,
-      markers: (routeState == 0) ? controller.markers : controller.routeMarkers,
+      polylines: store.polylines,
+      markers: (routeState == 0) ? store.markers : store.routeMarkers,
       mapType: MapType.normal,
-      initialCameraPosition: controller.position.value,
+      initialCameraPosition: store.position.value,
       onMapCreated: (GoogleMapController controller) {
         _controller.complete(controller);
         mapController = controller;

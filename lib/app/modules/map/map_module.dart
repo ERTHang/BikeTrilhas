@@ -5,18 +5,15 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_page.dart';
 
-class MapModule extends ChildModule {
+class MapModule extends Module {
   @override
-  List<Bind> get binds => [
-        Bind((i) => MapController(i.get<TrilhaRepository>(), i.get(), i.get()))
-      ];
+  List<Bind> binds =
+      [Bind.singleton((i) => MapController(i.get<TrilhaRepository>(), i.get(), i.get()))];
 
   @override
-  List<ModularRouter> get routers => [
-        ModularRouter(Modular.initialRoute, child: (_, args) => MapPage()),
-        ModularRouter('editor', child: (_, args) => EdicaoRotas()),
-        ModularRouter('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
+  final List<ModularRoute> routes = [
+        ChildRoute(Modular.initialRoute, child: (_, args) => MapPage()),
+        ChildRoute('editor', child: (_, args) => EdicaoRotas()),
+        ChildRoute('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
       ];
-
-  static Inject get to => Inject<MapModule>.of();
 }

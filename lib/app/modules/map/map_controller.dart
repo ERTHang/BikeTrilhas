@@ -76,8 +76,7 @@ abstract class _MapControllerBase with Store {
 
   @action
   Future<CameraPosition> getUserPos() async {
-    final Geolocator geolocator = Geolocator();
-    Position pos = await geolocator.getCurrentPosition(
+    Position pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     return CameraPosition(
         target: LatLng(pos.latitude, pos.longitude), zoom: 15);
