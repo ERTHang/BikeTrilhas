@@ -2,16 +2,14 @@ import 'package:biketrilhas_modular/app/modules/photo/Components/display/display
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:biketrilhas_modular/app/modules/photo/Components/display/display_page.dart';
 
-class DisplayModule extends ChildModule {
+class DisplayModule extends Module {
   @override
-  List<Bind> get binds => [
-        Bind((i) => DisplayController(i.get())),
+  final List<Bind> binds = [
+        Bind.singleton((i) => DisplayController(i.get())),
       ];
 
   @override
-  List<ModularRouter> get routers => [
-        ModularRouter(Modular.initialRoute, child: (_, args) => DisplayPage()),
+  final List<ModularRoute> routes = [
+        ChildRoute(Modular.initialRoute, child: (_, args) => DisplayPage()),
       ];
-
-  static Inject get to => Inject<DisplayModule>.of();
 }

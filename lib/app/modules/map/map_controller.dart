@@ -56,7 +56,10 @@ abstract class _MapControllerBase with Store {
   _MapControllerBase(
       this.trilhaRepository, this.filterRepository, this.infoRepository) {
     dataReady = infoRepository.getModels().asObservable();
-    trilhas = trilhaRepository.getAllTrilhas().asObservable();
+    trilhas = trilhaRepository
+        .getAllTrilhas()
+        .timeout(Duration(seconds: 10))
+        .asObservable();
     position = getUserPos().asObservable();
   }
 
@@ -76,8 +79,8 @@ abstract class _MapControllerBase with Store {
 
   @action
   Future<CameraPosition> getUserPos() async {
-    final Geolocator geolocator = Geolocator();
-    Position pos = await geolocator.getCurrentPosition(
+    await Geolocator.checkPermission();
+    Position pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     return CameraPosition(
         target: LatLng(pos.latitude, pos.longitude), zoom: 15);

@@ -13,10 +13,10 @@ abstract class _AuthControllerBase with Store {
   AuthStatus status = AuthStatus.loading;
 
   @observable
-  FirebaseUser user;
+  User user;
 
   @action
-  setUser(FirebaseUser value) {
+  setUser(User value) {
     user = value;
     status = user == null ? AuthStatus.logoff : AuthStatus.login;
   }

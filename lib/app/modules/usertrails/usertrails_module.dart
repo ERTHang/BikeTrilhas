@@ -2,16 +2,14 @@ import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_page.dart';
 
-class UsertrailsModule extends ChildModule {
+class UsertrailsModule extends Module {
   @override
-  List<Bind> get binds => [
-        Bind((i) => UsertrailsController(i.get(), i.get())),
+  final List<Bind> binds = [
+        Bind.singleton((i) => UsertrailsController(i.get(), i.get())),
       ];
 
   @override
-  List<ModularRouter> get routers => [
-        ModularRouter(Modular.initialRoute, child: (_, args) => UsertrailsPage()),
+  final List<ModularRoute> routes = [
+        ChildRoute(Modular.initialRoute, child: (_, args) => UsertrailsPage()),
       ];
-
-  static Inject get to => Inject<UsertrailsModule>.of();
 }

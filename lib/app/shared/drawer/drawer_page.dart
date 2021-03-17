@@ -34,7 +34,7 @@ class _DrawerPageState extends State<DrawerPage> {
             padding: const EdgeInsets.fromLTRB(90, 30, 90, 0),
             child: CircleAvatar(
               backgroundColor: Colors.transparent,
-              backgroundImage: NetworkImage(auth.user.photoUrl),
+              backgroundImage: NetworkImage(auth.user.photoURL),
               radius: 60,
             ),
           ),
@@ -69,7 +69,8 @@ class _DrawerPageState extends State<DrawerPage> {
             onTap: () {
               if (draw.value != 0) {
                 draw.value = 0;
-                Modular.to.popUntil(ModalRoute.withName('/map'));
+                Modular.to.popUntil((route) => route.isFirst);
+                Navigator.pop(context);
               }
             },
           ),
@@ -119,86 +120,12 @@ class _DrawerPageState extends State<DrawerPage> {
             }),
             dense: true,
             onTap: () {
-              draw.value = 2;
-              Modular.to.pushNamed("/usertrail");
+              if (draw.value != 2) {
+                draw.value = 2;
+                Modular.to.pushNamed("/usertrail");
+              }
             },
           ),
-          // ListTile(
-          //   leading: Icon(
-          //     Icons.place,
-          //     color: Colors.black,
-          //     size: 40,
-          //   ),
-          //   title: Observer(builder: (_) {
-          //     Color cor;
-          //     cor = (draw.value == 3) ? Colors.white : Colors.black;
-          //     return Text(
-          //       'Sinalizações',
-          //       style: TextStyle(
-          //           height: 1.8,
-          //           fontSize: 18,
-          //           color: cor,
-          //           fontWeight: FontWeight.bold),
-          //     );
-          //   }),
-          //   dense: true,
-          //   onTap: () {
-          //     draw.value = 3;
-          //     Modular.to.pushNamed("/waypoint");
-          //   },
-          // ),
-          // ListTile(
-          //   leading: Icon(
-          //     Icons.timeline,
-          //     color: Colors.black,
-          //     size: 40,
-          //   ),
-          //   title: Observer(builder: (_) {
-          //     Color cor;
-          //     cor = (draw.value == 4) ? Colors.white : Colors.black;
-          //     return Text(
-          //       'Indicadores',
-          //       style: TextStyle(
-          //           height: 1.8,
-          //           fontSize: 18,
-          //           color: cor,
-          //           fontWeight: FontWeight.bold),
-          //     );
-          //   }),
-          //   dense: true,
-          //   onTap: () {
-          //     draw.value = 4;
-          // final snackBar = SnackBar(content: Text("Não implementado"));
-          // Scaffold.of(context).removeCurrentSnackBar();
-          // Scaffold.of(context).showSnackBar(snackBar);
-          //   },
-          // ),
-          // ListTile(
-          //   leading: Icon(
-          //     Icons.portable_wifi_off,
-          //     color: Colors.black,
-          //     size: 40,
-          //   ),
-          //   title: Observer(builder: (_) {
-          //     Color cor;
-          //     cor = (draw.value == 5) ? Colors.white : Colors.black;
-          //     return Text(
-          //       'Modo Offline',
-          //       style: TextStyle(
-          //           height: 1.8,
-          //           fontSize: 18,
-          //           color: cor,
-          //           fontWeight: FontWeight.bold),
-          //     );
-          //   }),
-          //   dense: true,
-          //   onTap: () {
-          //     draw.value = 5;
-          //     final snackBar = SnackBar(content: Text("Não implementado"));
-          //     Scaffold.of(context).removeCurrentSnackBar();
-          //     Scaffold.of(context).showSnackBar(snackBar);
-          //   },
-          // ),
           ListTile(
             leading: Icon(
               Icons.info,
@@ -207,7 +134,7 @@ class _DrawerPageState extends State<DrawerPage> {
             ),
             title: Observer(builder: (_) {
               Color cor;
-              cor = (draw.value == 6) ? Colors.white : Colors.black;
+              cor = (draw.value == 3) ? Colors.white : Colors.black;
               return Text(
                 'Sobre',
                 style: TextStyle(
@@ -219,7 +146,10 @@ class _DrawerPageState extends State<DrawerPage> {
             }),
             dense: true,
             onTap: () {
-              Modular.to.pushNamed('/info');
+              if (draw.value != 3) {
+                draw.value = 3;
+                Modular.to.pushNamed('/info');
+              }
             },
           ),
           ListTile(

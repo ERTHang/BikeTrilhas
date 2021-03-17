@@ -1,0 +1,4 @@
+lib/app/lib/app/modules/trilhas_salvas/trilhas_salvas_page.dart
+test/app/lib/app/modules/trilhas_salvas/trilhas_salvas_page_test.dart
+lib/app/lib/app/modules/trilhas_salvas/trilhas_salvas_controller.dart
+test/app/lib/app/modules/trilhas_salvas/trilhas_salvas_controller_test.dart

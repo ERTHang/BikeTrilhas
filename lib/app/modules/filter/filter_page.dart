@@ -21,7 +21,6 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
           title: Text('Filtros'),
           centerTitle: true,
         ),
-        drawer: DrawerPage(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
@@ -505,12 +504,25 @@ List<Item> generateItems() {
   return <Item>[
     Item(
         expandedValue: 'Tipo',
-        value: (controller.value == 1) ? 'Trilha' : (controller.value == 2) ? 'Ciclovia' : (controller.value == 3) ? 'Cicloturismo' : '',
+        value: (controller.value == 1)
+            ? 'Trilha'
+            : (controller.value == 2)
+                ? 'Ciclovia'
+                : (controller.value == 3)
+                    ? 'Cicloturismo'
+                    : '',
         modified: controller.value,
-        modifiedValue: [(controller.value == 1) ? 'Trilha' : (controller.value == 2) ? 'Ciclovia' : 'Cicloturismo']),
+        modifiedValue: [
+          (controller.value == 1)
+              ? 'Trilha'
+              : (controller.value == 2)
+                  ? 'Ciclovia'
+                  : 'Cicloturismo'
+        ]),
     Item(expandedValue: 'Dificuldade', modifiedValue: []),
     Item(
-        expandedValue: 'Regiões', modifiedValue: [],
+        expandedValue: 'Regiões',
+        modifiedValue: [],
         booleans: [false, false, false, false, false]),
     Item(expandedValue: 'Bairros', modifiedValue: [], booleans: [
       false,
@@ -557,7 +569,8 @@ List<Item> generateItems() {
       false
     ]),
     Item(
-        expandedValue: 'Superfícies', modifiedValue: [],
+        expandedValue: 'Superfícies',
+        modifiedValue: [],
         booleans: [false, false, false, false, false, false]),
     Item(expandedValue: 'Categorias', modifiedValue: [], booleans: [
       false,
@@ -578,7 +591,10 @@ List<Item> generateItems() {
       false,
       false
     ]),
-    Item(expandedValue: 'Subtipos', modifiedValue: [], booleans: [false, false, false, false])
+    Item(
+        expandedValue: 'Subtipos',
+        modifiedValue: [],
+        booleans: [false, false, false, false])
   ];
 }
 

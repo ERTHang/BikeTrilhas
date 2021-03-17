@@ -1,15 +1,15 @@
 import 'package:geolocator/geolocator.dart';
 
 class GeolocatorService {
-  final Geolocator geo = Geolocator();
-
   Stream<Position> getCurrentLocation() {
-    var locationOptions = LocationOptions(
-        accuracy: LocationAccuracy.bestForNavigation, distanceFilter: 8);
-    return geo.getPositionStream(locationOptions);
+    return Geolocator.getPositionStream(
+        desiredAccuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 8,
+        intervalDuration: Duration(seconds: 1));
   }
 
   Future<Position> getInitialLocation() async {
-    return geo.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    return Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
   }
 }
