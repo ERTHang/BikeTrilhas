@@ -40,7 +40,8 @@ class _SavedTrailsPageState extends State<SavedTrailsPage> {
             DadosTrilhaModel c = lista[index];
 
             return Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)),
               color: Colors.grey[200],
               child: Container(
                 padding: EdgeInsets.all(12),
@@ -101,7 +102,7 @@ class _SavedTrailsPageState extends State<SavedTrailsPage> {
                                           color: Colors.black45,
                                         ),
                                         onPressed: () {
-                                          alert(context, 'Em contrução');
+                                          alert(context, 'Em construção');
                                         },
                                       );
                                     }),
@@ -142,17 +143,17 @@ class _SavedTrailsPageState extends State<SavedTrailsPage> {
             ),
             actions: <Widget>[
               FlatButton(
+                  child: Text('VOLTAR'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              FlatButton(
                   child: Text('OK'),
                   onPressed: () async {
                     await deleteTrilha(codt);
                     await allToDadosTrilhaModel();
                     Navigator.pop(context);
                     setState(() {});
-                  }),
-              FlatButton(
-                  child: Text('VOLTAR'),
-                  onPressed: () {
-                    Navigator.pop(context);
                   }),
             ],
           ),

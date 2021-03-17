@@ -109,17 +109,6 @@ getPrefNoAlert() async {
   }
 }
 
-alertaInfosTrilha(codigo, context) async {
-  await getPrefs(context);
-  if (codigosTrilhasSalvas.contains(codigo)) {
-    var aux = await sharedPrefs.read(codigo.toString());
-    alert(context,
-        'Nome: ${aux["nome"]}\nComprimento: ${aux["comprimento"]} Km\nDesnivel: ${aux["desnivel"]}');
-  } else {
-    alert(context, 'Trilha não disponível!\nSalve antes de buscar os dados!');
-  }
-}
-
 allToDadosTrilhaModel() async {
   if (codigosTrilhasSalvas.length != dadosTrilhasModel.length) {
     if (codigosTrilhasSalvas.length > dadosTrilhasModel.length) {
@@ -158,6 +147,17 @@ allToDadosTrilhaModel() async {
 }
 
 //********Alerta*********/
+alertaInfosTrilha(codigo, context) async {
+  await getPrefs(context);
+  if (codigosTrilhasSalvas.contains(codigo)) {
+    var aux = await sharedPrefs.read(codigo.toString());
+    alert(context,
+        'Nome: ${aux["nome"]}\nComprimento: ${aux["comprimento"]} Km\nDesnivel: ${aux["desnivel"]}');
+  } else {
+    alert(context, 'Trilha não disponível!\nSalve antes de buscar os dados!');
+  }
+}
+
 alert(BuildContext context, String msg) {
   showDialog(
     context: context,

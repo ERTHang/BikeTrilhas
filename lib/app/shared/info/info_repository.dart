@@ -98,6 +98,17 @@ class InfoRepository {
     return list;
   }
 
+  //getRegiao para trilhas offline
+  List<String> getRegiaoTrilhasOffline(cods) {
+    List<String> list = [];
+    for (var reg in regioes) {
+      if (cods.contains(reg.reg_nome)) {
+        list.add(reg.reg_nome);
+      }
+    }
+    return list;
+  }
+
   String getSubtipo(cod) {
     for (var subtipo in subtipos) {
       if (cod == subtipo.subtip_cod) {
@@ -117,6 +128,17 @@ class InfoRepository {
     return list;
   }
 
+  //getSuperficie para trilhas offline
+  List<String> getSuperficieTrilhasOffline(cods) {
+    List<String> list = [];
+    for (var sup in superficies) {
+      if (cods.contains(sup.sup_nome)) {
+        list.add(sup.sup_nome);
+      }
+    }
+    return list;
+  }
+
   List<String> getBairros() {
     List<String> list = [];
     for (var bai in bairros) {
@@ -129,6 +151,17 @@ class InfoRepository {
     List<String> list = [];
     for (var bai in bairros) {
       if (cods.contains(bai.bai_cod)) {
+        list.add(bai.bai_nome);
+      }
+    }
+    return list;
+  }
+
+  //getBairro para trilhas offline
+  List<String> getBairrosTrilhasOffline(cods) {
+    List<String> list = [];
+    for (var bai in bairros) {
+      if (cods.contains(bai.bai_nome)) {
         list.add(bai.bai_nome);
       }
     }
@@ -256,6 +289,8 @@ class InfoRepository {
       getPrefNoAlert();
       if (codigosTrilhasSalvas.contains(codt)) {
         var result = await sharedPrefs.read(codt.toString());
+
+        //print(result['bairros'].toString());
         DadosTrilhaModel model = DadosTrilhaModel(
           codt,
           result['nome'],
@@ -264,15 +299,15 @@ class InfoRepository {
           result['desnivel'],
           result['tipo'],
         );
-        
-        model.regioes = [];
-        model.superficies = [];
-        model.bairros = [];
+
+        model.regioes = getRegiaoTrilhasOffline(result['regioes']);
+        model.superficies = getSuperficieTrilhasOffline(result['superficies']);
+        model.bairros = getBairrosTrilhasOffline(result['bairros']);
         model.dificuldade = result['dificuldade'];
         model.subtipo = '';
 
         return model;
-      }else{
+      } else {
         DadosTrilhaModel model = DadosTrilhaModel(
           null,
           'Trilha não salva',
@@ -281,7 +316,7 @@ class InfoRepository {
           0,
           'Trilha não salva',
         );
-        
+
         model.regioes = ['Trilha não salva'];
         model.superficies = ['Trilha não salva'];
         model.bairros = ['Trilha não salva'];
