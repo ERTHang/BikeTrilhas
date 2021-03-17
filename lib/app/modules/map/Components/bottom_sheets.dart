@@ -426,54 +426,58 @@ bottomSheetWaypoint(int codt) async {
                                                 context: mapController
                                                     .scaffoldState
                                                     .currentContext,
-                                                child: SimpleDialog(
-                                                  contentPadding:
-                                                      EdgeInsets.all(0),
-                                                  children: <Widget>[
-                                                    Container(
-                                                      child: Stack(
-                                                        children: <Widget>[
-                                                          PhotoView(
-                                                            imageProvider:
-                                                                CachedNetworkImageProvider(
-                                                                    e),
-                                                            minScale:
-                                                                PhotoViewComputedScale
-                                                                    .covered,
-                                                          ),
-                                                          Positioned(
-                                                            top: 5,
-                                                            right: 5,
-                                                            child: IconButton(
-                                                                icon: Icon(
-                                                                  Icons.close,
-                                                                  color: Colors
-                                                                      .red,
-                                                                ),
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                }),
-                                                          ),
-                                                        ],
-                                                        fit: StackFit.expand,
+                                                builder: (_) {
+                                                  return SimpleDialog(
+                                                    contentPadding:
+                                                        EdgeInsets.all(0),
+                                                    children: <Widget>[
+                                                      Container(
+                                                        child: Stack(
+                                                          children: <Widget>[
+                                                            PhotoView(
+                                                              imageProvider:
+                                                                  CachedNetworkImageProvider(
+                                                                      e),
+                                                              minScale:
+                                                                  PhotoViewComputedScale
+                                                                      .covered,
+                                                            ),
+                                                            Positioned(
+                                                              top: 5,
+                                                              right: 5,
+                                                              child: IconButton(
+                                                                  icon: Icon(
+                                                                    Icons.close,
+                                                                    color: Colors
+                                                                        .red,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  }),
+                                                            ),
+                                                          ],
+                                                          fit: StackFit.expand,
+                                                        ),
+                                                        height: MediaQuery.of(
+                                                                    mapController
+                                                                        .scaffoldState
+                                                                        .currentContext)
+                                                                .size
+                                                                .height *
+                                                            0.7,
+                                                        width: MediaQuery.of(
+                                                                    mapController
+                                                                        .scaffoldState
+                                                                        .currentContext)
+                                                                .size
+                                                                .width *
+                                                            0.7,
                                                       ),
-                                                      height: MediaQuery.of(
-                                                                  mapController
-                                                                      .scaffoldState
-                                                                      .currentContext)
-                                                              .size
-                                                              .height *
-                                                          0.7,
-                                                      width: MediaQuery.of(mapController
-                                                                  .scaffoldState
-                                                                  .currentContext)
-                                                              .size
-                                                              .width *
-                                                          0.7,
-                                                    ),
-                                                  ],
-                                                ));
+                                                    ],
+                                                  );
+                                                });
                                           },
                                         ))
                                     .toList()),

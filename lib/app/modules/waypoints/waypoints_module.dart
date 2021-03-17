@@ -2,16 +2,14 @@ import 'package:biketrilhas_modular/app/modules/waypoints/waypoints_controller.d
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:biketrilhas_modular/app/modules/waypoints/waypoints_page.dart';
 
-class WaypointsModule extends ChildModule {
+class WaypointsModule extends Module {
   @override
-  List<Bind> get binds => [
-        Bind((i) => WaypointsController(i.get())),
+  final List<Bind> binds = [
+        Bind.singleton((i) => WaypointsController(i.get())),
       ];
 
   @override
-  List<ModularRouter> get routers => [
-        ModularRouter(Modular.initialRoute, child: (_, args) => WaypointsPage()),
+  final List<ModularRoute> routes = [
+        ChildRoute(Modular.initialRoute, child: (_, args) => WaypointsPage()),
       ];
-
-  static Inject get to => Inject<WaypointsModule>.of();
 }

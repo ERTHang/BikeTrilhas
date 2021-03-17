@@ -8,24 +8,23 @@ class AuthRepository implements IAuthRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
-  Future<FirebaseUser> getGoogleLogin() async {
+  Future<User> getGoogleLogin() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    final FirebaseUser user =
-        (await _auth.signInWithCredential(credential)).user;
+    final User user = (await _auth.signInWithCredential(credential)).user;
     return user;
   }
 
   @override
-  Future<FirebaseUser> getUser() {
-    return _auth.currentUser();
+  Future<User> getUser() async {
+    return _auth.currentUser;
   }
 
   @override
