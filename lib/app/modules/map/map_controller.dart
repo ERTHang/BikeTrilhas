@@ -58,7 +58,7 @@ abstract class _MapControllerBase with Store {
   _MapControllerBase(
       this.trilhaRepository, this.filterRepository, this.infoRepository) {
     dataReady = infoRepository.getModels().asObservable();
-    position = getUserPos().asObservable();
+    position = getUserPos().timeout(Duration(seconds: 10)).asObservable();
   }
 
   @action

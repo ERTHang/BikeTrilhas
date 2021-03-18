@@ -108,6 +108,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         children: <Widget>[
           Observer(
             builder: (context) {
+              checkPermission(location);
               if (store.position.error != null) {
                 return Center(
                   child: Text("error getting position"),
