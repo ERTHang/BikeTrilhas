@@ -3,12 +3,9 @@ import 'dart:async';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.dart';
-import 'package:biketrilhas_modular/app/modules/saved_trails/nav.dart';
-import 'package:biketrilhas_modular/app/modules/saved_trails/saved_trails_page.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -17,8 +14,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_controller.dart';
-import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
-import 'package:connectivity/connectivity.dart';
 
 class MapPage extends StatefulWidget {
   final String title;
@@ -51,7 +46,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
 
   Widget build(BuildContext context) {
     store.state = _func;
-    final TrilhaRepository trilhaRepository = Modular.get();
     return Scaffold(
       key: store.scaffoldState,
       appBar: AppBar(
@@ -62,14 +56,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          //Botão para ver as trilhas salvas
-          IconButton(
-              icon: Icon(Icons.assistant_photo_outlined),
-              onPressed: () async {
-                await getPrefs(context);
-                await allToDadosTrilhaModel();
-                push(context, SavedTrailsPage());
-              }),
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
@@ -412,6 +398,4 @@ class _MapPageState extends ModularState<MapPage, MapController> {
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(position.latitude, position.longitude), zoom: 19.0)));
   }
-
-  await(Future<ConnectivityResult> checkConnectivity) {}
 }
