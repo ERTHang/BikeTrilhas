@@ -4,6 +4,7 @@ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/saved_routes.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/saved_trilhas.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:dio/dio.dart';
@@ -15,7 +16,7 @@ class TrilhaRepository {
   final SharedPrefs sharedPrefs;
 
   TrilhaRepository(this.dio, this.sharedPrefs);
-
+  SavedTrilhas savedTrilhas;
   SavedRoutes savedRoutes;
 
   int n = 10000;
@@ -51,7 +52,31 @@ class TrilhaRepository {
       trilha.fromJson(aux);
       trilhas.add(trilha);
     }
+    return trilhas;
+  }
 
+  Future<List<TrilhaModel>> getStorageTrilhas() async {
+    print('storage trilhas chamada');
+    List<TrilhaModel> trilhas = [];
+
+    if (savedTrilhas == null) {
+      try {
+        print('saved trilhas eh nulo');
+        savedTrilhas =
+            SavedTrilhas.fromJson(await sharedPrefs.read('savedTrilhas'));
+      } catch (e) {
+        print(e);
+        savedTrilhas = SavedTrilhas([]);
+      }
+    }
+
+    for (var i = 0; i < savedTrilhas.codes.length; i++) {
+      var json = await sharedPrefs.read('trilha ${savedTrilhas.codes[i]}');
+      TrilhaModel trilha = TrilhaModel(savedTrilhas.codes[i], 'aux');
+      var aux = TrilhaModelJson.fromJson(json);
+      trilha.fromJson(aux);
+      trilhas.add(trilha);
+    }
     return trilhas;
   }
 
@@ -143,6 +168,29 @@ class TrilhaRepository {
       sharedPrefs.remove('savedRoutes');
     } catch (e) {}
     sharedPrefs.save('savedRoutes', savedRoutes);
+  }
+
+  Future saveTrilha(TrilhaModel model) async {
+    if (savedTrilhas == null) {
+      try {
+        print('savedtrilhas = null na hora de salvar');
+        savedTrilhas =
+            SavedTrilhas.fromJson(await sharedPrefs.read('savedTrilhas'));
+      } catch (Exception) {
+        savedTrilhas = SavedTrilhas([]);
+      }
+    }
+
+    var numero = model.codt;
+
+    TrilhaModelJson trilha = model.toJson();
+    sharedPrefs.save('trilha $numero', trilha.toJson());
+
+    savedTrilhas.codes.add(numero);
+    try {
+      sharedPrefs.remove('savedTrilhas');
+    } catch (e) {}
+    sharedPrefs.save('savedTrilhas', savedTrilhas);
   }
 
   Future<List<TrilhaModel>> getAllTrilhas() async {

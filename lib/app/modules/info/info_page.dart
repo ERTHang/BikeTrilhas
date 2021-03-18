@@ -1,3 +1,4 @@
+import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'info_controller.dart';
@@ -31,9 +32,12 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
             SizedBox(
               height: 30,
             ),
-            Text('NEMOBIS é um programa de extensão da UDESC - CCT coordenado pelo prof. Fabiano Baldo ' +
-                'em que tem por objetivo a promoção de ações que visam incentivar o uso de modos sustentáveis' +
-                ' de transporte no município de Joinville.', style: TextStyle(fontSize: 16),),
+            Text(
+              'NEMOBIS é um programa de extensão da UDESC - CCT coordenado pelo prof. Fabiano Baldo ' +
+                  'em que tem por objetivo a promoção de ações que visam incentivar o uso de modos sustentáveis' +
+                  ' de transporte no município de Joinville.',
+              style: TextStyle(fontSize: 16),
+            ),
           ])),
         ));
   }
