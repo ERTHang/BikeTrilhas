@@ -108,12 +108,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         children: <Widget>[
           Observer(
             builder: (context) {
-              var connectivityResult =
-                  await(Connectivity().checkConnectivity());
-              if (connectivityResult == ConnectivityResult.none) {
-                trilhaRepository.getStorageTrilhas();
-              }
-              if (store.position.error != null) {  
+              if (store.position.error != null) {
                 return Center(
                   child: Text("error getting position"),
                 );

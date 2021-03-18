@@ -213,6 +213,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                     iconSize: 25,
                     onPressed: () async {
                       await getPrefs(context);
+                      trilhaRepository.saveTrilha(trilha);
                       SaveTrilha(
                         context,
                         trilha.codt,
@@ -225,18 +226,6 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         mapController.modelTrilha.regioes,
                         mapController.modelTrilha.superficies,
                       );
-                    },
-                  ),
-                ),
-                Positioned(
-                  bottom: 110,
-                  right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.save_alt_outlined),
-                    iconSize: 25,
-                    onPressed: () async {
-                      trilhaRepository.saveTrilha(trilha);
                     },
                   ),
                 ),

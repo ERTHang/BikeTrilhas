@@ -7,6 +7,7 @@ import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -51,15 +52,12 @@ abstract class _MapControllerBase with Store {
   PersistentBottomSheetController nameSheet;
   TrilhaModel newTrail;
   TrilhaModel followRoute;
+  ConnectivityResult connectivityResult;
 
   @action
   _MapControllerBase(
       this.trilhaRepository, this.filterRepository, this.infoRepository) {
     dataReady = infoRepository.getModels().asObservable();
-    trilhas = trilhaRepository
-        .getAllTrilhas()
-        .timeout(Duration(seconds: 10))
-        .asObservable();
     position = getUserPos().asObservable();
   }
 
@@ -67,9 +65,18 @@ abstract class _MapControllerBase with Store {
   init() async {
     filterClear = false;
     typeNum = 2;
-    typeFilter =
-        await filterRepository.getFiltered([2], [], [], [], [], [], []);
-    trilhasFiltradas = typeFilter;
+    connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult != ConnectivityResult.none) {
+      trilhas = trilhaRepository
+          .getAllTrilhas()
+          .timeout(Duration(seconds: 10))
+          .asObservable();
+      typeFilter =
+          await filterRepository.getFiltered([2], [], [], [], [], [], []);
+      trilhasFiltradas = typeFilter;
+    } else {
+      trilhas = trilhaRepository.getStorageTrilhas().asObservable();
+    }
     final Uint8List iconBytes = await getBytesFromAsset('images/bola.png', 20);
     markerIcon = BitmapDescriptor.fromBytes(iconBytes);
     final Uint8List iconBytes2 =
