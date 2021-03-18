@@ -43,4 +43,10 @@ class TrilhaModel {
       }
     }
   }
+
+  //To String
+  @override
+  String toString() {
+    return '\nCod: ${this.codt}\nNome: ${this.nome}';
+  }
 }
