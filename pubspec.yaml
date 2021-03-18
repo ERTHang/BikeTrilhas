@@ -37,6 +37,7 @@ dependencies:
   flutter_mobx:
   mobx: ^1.2.1+4
   flutter_modular: ^3.0.1
+  connectivity:
   flutter:
     sdk: flutter
 

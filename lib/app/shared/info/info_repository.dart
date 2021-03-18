@@ -4,6 +4,10 @@ import 'package:biketrilhas_modular/app/shared/info/models.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:dio/dio.dart';
 import '../utils/constants.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+
+var connectivityResult;
 
 class InfoRepository {
   final Dio dio;
@@ -94,6 +98,17 @@ class InfoRepository {
     return list;
   }
 
+  //getRegiao para trilhas offline
+  List<String> getRegiaoTrilhasOffline(cods) {
+    List<String> list = [];
+    for (var reg in regioes) {
+      if (cods.contains(reg.reg_nome)) {
+        list.add(reg.reg_nome);
+      }
+    }
+    return list;
+  }
+
   String getSubtipo(cod) {
     for (var subtipo in subtipos) {
       if (cod == subtipo.subtip_cod) {
@@ -113,6 +128,17 @@ class InfoRepository {
     return list;
   }
 
+  //getSuperficie para trilhas offline
+  List<String> getSuperficieTrilhasOffline(cods) {
+    List<String> list = [];
+    for (var sup in superficies) {
+      if (cods.contains(sup.sup_nome)) {
+        list.add(sup.sup_nome);
+      }
+    }
+    return list;
+  }
+
   List<String> getBairros() {
     List<String> list = [];
     for (var bai in bairros) {
@@ -125,6 +151,17 @@ class InfoRepository {
     List<String> list = [];
     for (var bai in bairros) {
       if (cods.contains(bai.bai_cod)) {
+        list.add(bai.bai_nome);
+      }
+    }
+    return list;
+  }
+
+  //getBairro para trilhas offline
+  List<String> getBairrosTrilhasOffline(cods) {
+    List<String> list = [];
+    for (var bai in bairros) {
+      if (cods.contains(bai.bai_nome)) {
         list.add(bai.bai_nome);
       }
     }
@@ -224,28 +261,71 @@ class InfoRepository {
         .data;
   }
 
+  //Verificar se esta online ou offline
   Future<DadosTrilhaModel> getDadosTrilha(int codt) async {
-    var result = (await dio.get('/server/naogeografico',
-            queryParameters: {"tipo": "trilha", "cod": codt}))
-        .data[0];
-    DadosTrilhaModel model = DadosTrilhaModel(
-        codt,
-        result['nome'],
-        result['descricao'],
-        (((result['comprimento'] as double) * 100).floor()) / 100,
-        (((result['desnivel'] as double) * 100).floor()) / 100,
-        (result['tip_cod'] == 1)
-            ? 'Trilha'
-            : (result['tip_cod'] == 2)
-                ? 'Ciclovia'
-                : 'Cicloturismo');
-    model.regioes = getRegiao(result['regioes']);
-    model.superficies = getSuperficie(result['superficies']);
-    model.bairros = getBairro(result['bairros']);
-    model.dificuldade = getDificuldade(result['dif_cod']);
-    model.subtipo = getSubtipo(result['subtip_cod']);
+    if (await isOnline()) {
+      var result = (await dio.get('/server/naogeografico',
+              queryParameters: {"tipo": "trilha", "cod": codt}))
+          .data[0];
+      DadosTrilhaModel model = DadosTrilhaModel(
+          codt,
+          result['nome'],
+          result['descricao'],
+          (((result['comprimento'] as double) * 100).floor()) / 100,
+          (((result['desnivel'] as double) * 100).floor()) / 100,
+          (result['tip_cod'] == 1)
+              ? 'Trilha'
+              : (result['tip_cod'] == 2)
+                  ? 'Ciclovia'
+                  : 'Cicloturismo');
+      model.regioes = getRegiao(result['regioes']);
+      model.superficies = getSuperficie(result['superficies']);
+      model.bairros = getBairro(result['bairros']);
+      model.dificuldade = getDificuldade(result['dif_cod']);
+      model.subtipo = getSubtipo(result['subtip_cod']);
 
-    return model;
+      return model;
+    } else {
+      getPrefNoAlert();
+      if (codigosTrilhasSalvas.contains(codt)) {
+        var result = await sharedPrefs.read(codt.toString());
+
+        //print(result['bairros'].toString());
+        DadosTrilhaModel model = DadosTrilhaModel(
+          codt,
+          result['nome'],
+          '',
+          result['comprimento'],
+          result['desnivel'],
+          result['tipo'],
+        );
+
+        model.regioes = getRegiaoTrilhasOffline(result['regioes']);
+        model.superficies = getSuperficieTrilhasOffline(result['superficies']);
+        model.bairros = getBairrosTrilhasOffline(result['bairros']);
+        model.dificuldade = result['dificuldade'];
+        model.subtipo = '';
+
+        return model;
+      } else {
+        DadosTrilhaModel model = DadosTrilhaModel(
+          null,
+          'Trilha não salva',
+          'Trilha não salva',
+          0,
+          0,
+          'Trilha não salva',
+        );
+
+        model.regioes = ['Trilha não salva'];
+        model.superficies = ['Trilha não salva'];
+        model.bairros = ['Trilha não salva'];
+        model.dificuldade = 'Trilha não salva';
+        model.subtipo = 'Trilha não salva';
+
+        return model;
+      }
+    }
   }
 
   void updateDesnivel(List<TrilhaModel> cods) async {
@@ -313,4 +393,13 @@ class InfoRepository {
 
     return model;
   }
+}
+
+//Retorna os dados de como o usuario está conectado com a internet ou offline
+isOnline() async {
+  connectivityResult = await (Connectivity().checkConnectivity());
+  if (connectivityResult == ConnectivityResult.none) {
+    return false;
+  }
+  return true;
 }

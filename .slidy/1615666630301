@@ -1,0 +1,4 @@
+lib/app/modules/saved_trails/saved_trails_page.dart
+test/app/modules/saved_trails/saved_trails_page_test.dart
+lib/app/modules/saved_trails/saved_trails_controller.dart
+test/app/modules/saved_trails/saved_trails_controller_test.dart
