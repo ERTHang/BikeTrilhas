@@ -67,11 +67,9 @@ class _DrawerPageState extends State<DrawerPage> {
             }),
             dense: true,
             onTap: () {
-              if (draw.value != 0) {
-                draw.value = 0;
-                Modular.to.popUntil((route) => route.isFirst);
-                Navigator.pop(context);
-              }
+              draw.value = 0;
+              Navigator.pop(context);
+              Modular.to.popUntil((route) => route.isFirst);
             },
           ),
           ListTile(
@@ -96,6 +94,7 @@ class _DrawerPageState extends State<DrawerPage> {
             onTap: () {
               if (draw.value != 1) {
                 draw.value = 1;
+                Navigator.pop(context);
                 Modular.to.pushNamed('/filter');
               }
             },
@@ -122,6 +121,7 @@ class _DrawerPageState extends State<DrawerPage> {
             onTap: () {
               if (draw.value != 2) {
                 draw.value = 2;
+                Navigator.pop(context);
                 Modular.to.pushNamed("/usertrail");
               }
             },
@@ -148,6 +148,7 @@ class _DrawerPageState extends State<DrawerPage> {
             onTap: () {
               if (draw.value != 3) {
                 draw.value = 3;
+                Navigator.pop(context);
                 Modular.to.pushNamed('/info');
               }
             },
@@ -172,6 +173,7 @@ class _DrawerPageState extends State<DrawerPage> {
             }),
             dense: true,
             onTap: () async {
+              Navigator.pop(context);
               if (await canLaunch(
                   'https://bdes.joinville.udesc.br/politica/Politica_de_privacidade-Bike_Trilhas.pdf')) {
                 await launch(

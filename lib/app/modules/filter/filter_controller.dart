@@ -75,8 +75,9 @@ abstract class _FilterControllerBase with Store {
     }
 
     mapController.getPolylines();
+    mapController.state();
 
-    Modular.to.popUntil(ModalRoute.withName('/map'));
+    Modular.to.popUntil((route) => route.isFirst);
     drawerClassController.value = 0;
   }
 }

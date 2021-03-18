@@ -201,6 +201,32 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                     ],
                   ),
                 ),
+                //Botão para salvar trilha
+                Positioned(
+                  top: 5,
+                  right: 10,
+                  child: IconButton(
+                    color: Colors.blue,
+                    icon: Icon(Icons.save_alt_outlined),
+                    iconSize: 25,
+                    onPressed: () async {
+                      await getPrefs(context);
+                      trilhaRepository.saveTrilha(trilha);
+                      SaveTrilha(
+                        context,
+                        trilha.codt,
+                        trilha.nome,
+                        mapController.modelTrilha.comprimento,
+                        mapController.modelTrilha.desnivel,
+                        mapController.modelTrilha.tipo,
+                        mapController.modelTrilha.dificuldade,
+                        mapController.modelTrilha.bairros,
+                        mapController.modelTrilha.regioes,
+                        mapController.modelTrilha.superficies,
+                      );
+                    },
+                  ),
+                ),
                 Positioned(
                     bottom: 10,
                     right: 10,
