@@ -12,6 +12,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TrilhaRepository {
+  List<int> savedCods = [];
   final Dio dio;
   final SharedPrefs sharedPrefs;
 
@@ -76,8 +77,17 @@ class TrilhaRepository {
       var aux = TrilhaModelJson.fromJson(json);
       trilha.fromJson(aux);
       trilhas.add(trilha);
+      savedCods.add(trilha.codt);
     }
     return trilhas;
+  }
+
+  isSaved(int codTrilha) async{
+    for (int i = 0; i < savedCods.length; i++) {
+      if (codTrilha == savedCods.elementAt(i)) {
+        return true;
+      }
+    }
   }
 
   Future<TrilhaModel> getRoute(List<LatLng> routePoints) async {

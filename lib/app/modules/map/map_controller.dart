@@ -5,6 +5,7 @@ import 'package:biketrilhas_modular/app/shared/filter/filter_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:connectivity/connectivity.dart';
@@ -139,7 +140,11 @@ abstract class _MapControllerBase with Store {
                   tappedTrilha == trilha.codt),
           polylineId:
               PolylineId("trilha " + (trilha.codt + i * 10000).toString()),
-          color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
+          color: (trilha.codt == tappedTrilha)
+              ? Colors.red
+              : codigosTrilhasSalvas.contains(trilha.codt)
+                  ? Colors.green
+                  : Colors.blue,
           onTap: () {
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;

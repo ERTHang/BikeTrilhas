@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.dart';
-import 'package:biketrilhas_modular/app/modules/saved_trails/nav.dart';
-import 'package:biketrilhas_modular/app/modules/saved_trails/saved_trails_page.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
@@ -17,7 +15,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_controller.dart';
-import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:connectivity/connectivity.dart';
 
 class MapPage extends StatefulWidget {
@@ -62,14 +59,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          //Botão para ver as trilhas salvas
-          IconButton(
-              icon: Icon(Icons.assistant_photo_outlined),
-              onPressed: () async {
-                await getPrefs(context);
-                await allToDadosTrilhaModel();
-                push(context, SavedTrailsPage());
-              }),
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
