@@ -1,4 +1,3 @@
-import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'filter_controller.dart';

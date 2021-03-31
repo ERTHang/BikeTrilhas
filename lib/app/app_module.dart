@@ -1,7 +1,7 @@
 import 'package:biketrilhas_modular/app/modules/filter/filter_module.dart';
 import 'package:biketrilhas_modular/app/modules/info/info_module.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
-import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_module.dart';
+import 'package:biketrilhas_modular/app/modules/userroutes/userroutes_module.dart';
 import 'package:biketrilhas_modular/app/modules/waypoints/waypoints_module.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/modules/photo/photo_module.dart';
@@ -42,7 +42,7 @@ class AppModule extends Module {
     ModuleRoute('/map',
         module: MapModule(), transition: TransitionType.noTransition),
     ModuleRoute('/photo', module: PhotoModule()),
-    ModuleRoute('/usertrail', module: UsertrailsModule()),
+    ModuleRoute('/userroute', module: UserroutesModule()),
     ModuleRoute('/waypoint', module: WaypointsModule()),
     ModuleRoute('/filter', module: FilterModule()),
     ModuleRoute('/info', module: InfoModule())

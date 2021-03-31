@@ -387,7 +387,7 @@ class InfoRepository {
     DadosWaypointModel model = DadosWaypointModel(codwp, result['cod'],
         result['nome'], result['descricao'], result['numeroDeImagens']);
     for (var i = 1; i <= model.numImagens; i++) {
-      model.imagens.add(URL_BASE + '/server/byteimage/$i/$codwp');
+      model.imagens.add(URL_BASE + 'server/byteimage/$i/$codwp');
     }
     model.categorias = getCategoria(result['categoriaWaypoint']);
 

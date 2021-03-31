@@ -1,5 +1,7 @@
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -92,7 +94,14 @@ class _DrawerPageState extends State<DrawerPage> {
             }),
             dense: true,
             onTap: () {
-              if (draw.value != 1) {
+              if (mapController.connectivityResult == ConnectivityResult.none) {
+                Navigator.pop(context);
+                final snackBar = SnackBar(
+                    content: Text(
+                        "Opção indisponível por falta de conexão à internet."));
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              } else if (draw.value != 1) {
                 draw.value = 1;
                 Navigator.pop(context);
                 Modular.to.pushNamed('/filter');
@@ -122,7 +131,7 @@ class _DrawerPageState extends State<DrawerPage> {
               if (draw.value != 2) {
                 draw.value = 2;
                 Navigator.pop(context);
-                Modular.to.pushNamed("/usertrail");
+                Modular.to.pushNamed("/userroute");
               }
             },
           ),

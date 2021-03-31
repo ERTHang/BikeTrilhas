@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 
-part 'usertrails_controller.g.dart';
+part 'userroutes_controller.g.dart';
 
-class UsertrailsController = _UsertrailsControllerBase
-    with _$UsertrailsController;
+class UserroutesController = _UserroutesControllerBase
+    with _$UserroutesController;
 
-abstract class _UsertrailsControllerBase with Store {
-  _UsertrailsControllerBase(this.mapController, this.drawerClassController) {
+abstract class _UserroutesControllerBase with Store {
+  _UserroutesControllerBase(this.mapController, this.drawerClassController) {
     drawerClassController.value = 2;
     if (mapController.newTrail != null) {
       tappedTrilha = mapController.newTrail.codt;
@@ -57,6 +57,8 @@ abstract class _UsertrailsControllerBase with Store {
     if (checkedStorage == null) {
       checkedStorage = 1;
       mapController.createdTrails.clear();
+      mapController.createdTrails
+          .addAll(await mapController.trilhaRepository.getStorageRoutes());
     }
 
     for (var trilha in mapController.createdTrails) {

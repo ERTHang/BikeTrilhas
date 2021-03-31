@@ -22,7 +22,7 @@ class TrilhaRepository {
   int n = 10000;
 
   void deleteTrilha(int codigo) {
-    sharedPrefs.remove('trilha $codigo');
+    sharedPrefs.remove('route $codigo');
     for (var i = 0; i < savedRoutes.codes.length; i++) {
       if (savedRoutes.codes[i] == codigo) {
         savedRoutes.codes.removeAt(i);
