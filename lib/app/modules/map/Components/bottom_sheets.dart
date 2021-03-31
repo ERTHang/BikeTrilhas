@@ -930,7 +930,7 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
                 child: Text('OK'),
                 onPressed: () async {
                   await deleteTrilha(codt);
-                  //await trilhaRepository.deleteTrilha(codt);
+                  await trilhaRepository.deleteTrail(codt);
                   await allToDadosTrilhaModel();
                   Navigator.pop(context);
                   bottomSheetTrilha(trilha);
