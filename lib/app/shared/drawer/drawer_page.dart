@@ -96,7 +96,6 @@ class _DrawerPageState extends State<DrawerPage> {
             onTap: () async {
               if (draw.value != 1) {
                 if (await isOnline() == true) {
-                  draw.value = 1;
                   Navigator.pop(context);
                   Modular.to.pushNamed('/filter');
                 } else {

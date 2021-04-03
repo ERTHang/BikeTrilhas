@@ -15,7 +15,6 @@ class DisplayPage extends StatefulWidget {
 }
 
 class _DisplayPageState extends ModularState<DisplayPage, DisplayController> {
-  
   PhotoController photoController = Modular.get<PhotoController>();
   final TextEditingController nameController = TextEditingController();
 
@@ -24,7 +23,7 @@ class _DisplayPageState extends ModularState<DisplayPage, DisplayController> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          controller.savePicture();
+          store.savePicture();
         },
         backgroundColor: Colors.blue,
         child: Icon(Icons.send),
@@ -49,9 +48,9 @@ class _DisplayPageState extends ModularState<DisplayPage, DisplayController> {
                   controller: nameController,
                   cursorRadius: Radius.circular(200),
                   decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Adicione uma legenda...',
-                    hintStyle: TextStyle(color: Colors.white70)),
+                      border: InputBorder.none,
+                      hintText: 'Adicione uma legenda...',
+                      hintStyle: TextStyle(color: Colors.white70)),
                 ),
               ),
             ),

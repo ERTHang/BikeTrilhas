@@ -1,4 +1,3 @@
-import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'filter_controller.dart';
@@ -24,7 +23,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
-              controller.filtrar(_data, controller, context);
+              store.filtrar(_data, store, context);
             },
             label: Text('Filtrar')),
         body: SingleChildScrollView(
@@ -57,7 +56,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[0], onTap: (Item item) {
           item.value = null;
-          controller.value = 0;
+          store.value = 0;
         });
       },
       body: Column(
@@ -68,7 +67,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               value: 'Ciclovia',
               onChanged: (value) {
                 setState(() {
-                  controller.value = 2;
+                  store.value = 2;
                   _data[0].modified = 2;
                   _data[0].value = value;
                   _data[0].modifiedValue.clear();
@@ -79,7 +78,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
             title: Text('Ciclovia'),
             onTap: () {
               setState(() {
-                controller.value = 2;
+                store.value = 2;
                 _data[0].modified = 2;
                 _data[0].value = 'Ciclovia';
                 _data[0].modifiedValue.clear();
@@ -93,7 +92,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               value: 'Trilha',
               onChanged: (value) {
                 setState(() {
-                  controller.value = 1;
+                  store.value = 1;
                   _data[0].modified = 1;
                   _data[0].value = value;
                   _data[0].modifiedValue.clear();
@@ -104,7 +103,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
             title: Text('Trilha'),
             onTap: () {
               setState(() {
-                controller.value = 1;
+                store.value = 1;
                 _data[0].modified = 1;
                 _data[0].value = 'Trilha';
                 _data[0].modifiedValue.clear();
@@ -118,7 +117,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
               value: 'Cicloturismo',
               onChanged: (value) {
                 setState(() {
-                  controller.value = 3;
+                  store.value = 3;
                   _data[0].modified = 3;
                   _data[0].value = value;
                   _data[0].modifiedValue.clear();
@@ -129,7 +128,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
             title: Text('Cicloturismo'),
             onTap: () {
               setState(() {
-                controller.value = 3;
+                store.value = 3;
                 _data[0].modified = 3;
                 _data[0].value = 'Cicloturismo';
                 _data[0].modifiedValue.clear();

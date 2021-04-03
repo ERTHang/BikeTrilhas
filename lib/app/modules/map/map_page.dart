@@ -6,7 +6,6 @@ import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -48,7 +47,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
 
   Widget build(BuildContext context) {
     store.state = _func;
-    final TrilhaRepository trilhaRepository = Modular.get();
     return Scaffold(
       key: store.scaffoldState,
       appBar: AppBar(

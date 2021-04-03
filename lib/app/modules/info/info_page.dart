@@ -1,4 +1,3 @@
-import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'info_controller.dart';

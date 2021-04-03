@@ -951,7 +951,7 @@ salvarTrilhaMsg(msg, context, trilhaRepository, trilha) async {
       return WillPopScope(
         onWillPop: () async => false,
         child: AlertDialog(
-          title: Text("Remover"),
+          title: Text("Salvar"),
           content: Text(
             msg,
           ),
