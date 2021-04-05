@@ -4,12 +4,12 @@ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-class EdicaoRotas extends StatefulWidget {
+class EdicaoTrilhas extends StatefulWidget {
   @override
-  _EdicaoRotasState createState() => _EdicaoRotasState();
+  _EdicaoTrilhasState createState() => _EdicaoTrilhasState();
 }
 
-class _EdicaoRotasState extends State<EdicaoRotas> {
+class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
   TextEditingController _nameController;
   TextEditingController _descController;
   TextEditingController _supController;
@@ -83,7 +83,7 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.blue),
           title: Text(
-            'Editar Rota',
+            'Editar Trilha',
             style: TextStyle(color: Colors.blue),
           ),
           centerTitle: true,
