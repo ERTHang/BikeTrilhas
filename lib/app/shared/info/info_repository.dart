@@ -286,7 +286,7 @@ class InfoRepository {
 
       return model;
     } else {
-      getPrefNoAlert();
+      await getPrefNoAlert();
       if (codigosTrilhasSalvas.contains(codt)) {
         var result = await sharedPrefs.read(codt.toString());
 

@@ -5,6 +5,7 @@ import 'package:biketrilhas_modular/app/shared/filter/filter_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:connectivity/connectivity.dart';
@@ -58,11 +59,11 @@ abstract class _MapControllerBase with Store {
   _MapControllerBase(
       this.trilhaRepository, this.filterRepository, this.infoRepository) {
     dataReady = infoRepository.getModels().asObservable();
-    position = getUserPos().timeout(Duration(seconds: 10)).asObservable();
   }
 
   @action
   init() async {
+    position = getUserPos().asObservable();
     filterClear = false;
     typeNum = 2;
     connectivityResult = await (Connectivity().checkConnectivity());
@@ -86,11 +87,36 @@ abstract class _MapControllerBase with Store {
 
   @action
   Future<CameraPosition> getUserPos() async {
-    await Geolocator.checkPermission();
-    Position pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    Position pos = await _determinePosition();
     return CameraPosition(
         target: LatLng(pos.latitude, pos.longitude), zoom: 15);
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Serviços de localização estão desabilitados');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error(
+            'Necessitamos da localização do usuário para o funcionamento do aplicativo');
+      }
+
+      if (permission == LocationPermission.denied) {
+        return Future.error(
+            'Necessitamos da localização do usuário para o funcionamento do aplicativo');
+      }
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
   }
 
   getRoute() async {
@@ -139,7 +165,11 @@ abstract class _MapControllerBase with Store {
                   tappedTrilha == trilha.codt),
           polylineId:
               PolylineId("trilha " + (trilha.codt + i * 10000).toString()),
-          color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
+          color: (trilha.codt == tappedTrilha)
+              ? Colors.red
+              : codigosTrilhasSalvas.contains(trilha.codt)
+                  ? Colors.green
+                  : Colors.blue,
           onTap: () {
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;

@@ -3,8 +3,10 @@ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:flutter/material.dart';
 
+//codigosTrilhasSalvas irá guardar valores inteiros dos códigos das trilhas salvas
 List codigosTrilhasSalvas = [];
 List<DadosTrilhaModel> dadosTrilhasModel = [];
+//Usado na lógica de verificar se alguma trilha foi salva e não está em memória local
 int incrementadorTrilhasNovas = 0;
 SharedPrefs sharedPrefs = SharedPrefs();
 
@@ -49,6 +51,7 @@ Map<String, dynamic> toJson(nome, comprimento, desnivel, tipo, dificuldade,
       'superficies': superficies
     };
 
+//Função para salvar trilha em memória local
 salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade, bairros,
     regioes, superficies) async {
   if (await isOnline()) {
@@ -73,6 +76,7 @@ salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade, bairros,
   }
 }
 
+//Função que busca trilhas salvas em memória local (com alerta)
 getPrefs(context, {alerta: false}) async {
   if (await sharedPrefs.haveKey('codigosSalvos') == false) {
     await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
@@ -84,6 +88,7 @@ getPrefs(context, {alerta: false}) async {
         alert(context, 'Busca realizada com sucesso!');
       }
     } else {
+      //Irá retornar a mesma lista, sem necessidade de ler todos os codigos novamente
       if (alerta == true) {
         await alert(context, 'Não foram salvas novas trilhas!');
       }
@@ -91,13 +96,14 @@ getPrefs(context, {alerta: false}) async {
   }
 }
 
+//Função deletar trilha da memória local
 deleteTrilha(codt) async {
   codigosTrilhasSalvas.remove(codt);
   await sharedPrefs.remove(codt.toString());
   await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
 }
 
-//GetPrefs sem alert
+//Função que busca trilhas salvas em memória local (sem alerta)
 getPrefNoAlert() async {
   if (await sharedPrefs.haveKey('codigosSalvos') == false) {
     await SharedPrefs().save('codigosSalvos', codigosTrilhasSalvas);
@@ -109,6 +115,7 @@ getPrefNoAlert() async {
   }
 }
 
+//Função que converte todas as trilhas salvas em DadosTrilhaModel
 allToDadosTrilhaModel() async {
   if (codigosTrilhasSalvas.length != dadosTrilhasModel.length) {
     if (codigosTrilhasSalvas.length > dadosTrilhasModel.length) {
@@ -146,7 +153,7 @@ allToDadosTrilhaModel() async {
   }
 }
 
-//********Alerta*********/
+//********Alertas*********/
 alertaInfosTrilha(codigo, context) async {
   await getPrefs(context);
   if (codigosTrilhasSalvas.contains(codigo)) {

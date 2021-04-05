@@ -12,6 +12,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
 
 final mapController = Modular.get<MapController>();
+var icone;
 
 Future<DadosTrilhaModel> getDataTrilha(int codt) async {
   mapController.modelTrilha =
@@ -64,227 +65,455 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                 superficies += ', ' + mapController.modelTrilha.superficies[i];
               }
             }
-            wid = ClipRRect(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-              child: Stack(children: <Widget>[
-                Container(
-                  color: Colors.white,
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      RichText(
-                          text: TextSpan(
-                              text: 'Nome: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: mapController.modelTrilha.nome,
-                                style: TextStyle(fontWeight: FontWeight.normal))
-                          ])),
-                      Visibility(
-                        visible: mapController.modelTrilha.descricao.isNotEmpty,
-                        child: RichText(
+            getPrefNoAlert();
+            if (codigosTrilhasSalvas.contains(trilha.codt)) {
+              icone = Icon(Icons.delete_outline_outlined);
+              wid = ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+                child: Stack(children: <Widget>[
+                  Container(
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        RichText(
                             text: TextSpan(
-                                text: 'Descrição: ',
+                                text: 'Nome: ',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black),
                                 children: <TextSpan>[
                               TextSpan(
-                                  text: mapController.modelTrilha.descricao,
+                                  text: mapController.modelTrilha.nome,
                                   style:
                                       TextStyle(fontWeight: FontWeight.normal))
                             ])),
-                      ),
-                      RichText(
-                          text: TextSpan(
-                              text: 'Comprimento: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: mapController.modelTrilha.comprimento
-                                        .toString() +
-                                    ' KM',
-                                style: TextStyle(fontWeight: FontWeight.normal))
-                          ])),
-                      RichText(
-                          text: TextSpan(
-                              text: 'Desnível: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: mapController.modelTrilha.desnivel
-                                        .toString() +
-                                    ' m',
-                                style: TextStyle(fontWeight: FontWeight.normal))
-                          ])),
-                      RichText(
-                          text: TextSpan(
-                              text: 'Tipo: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: mapController.modelTrilha.tipo,
-                                style: TextStyle(fontWeight: FontWeight.normal))
-                          ])),
-                      Visibility(
-                        visible: mapController.modelTrilha.subtipo.isNotEmpty,
-                        child: RichText(
-                            text: TextSpan(
-                                text: 'Subtipo: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                                children: <TextSpan>[
-                              TextSpan(
-                                  text: mapController.modelTrilha.subtipo,
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.normal))
-                            ])),
-                      ),
-                      RichText(
-                          text: TextSpan(
-                              text: 'Dificuldade: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: mapController.modelTrilha.dificuldade,
-                                style: TextStyle(fontWeight: FontWeight.normal))
-                          ])),
-                      RichText(
-                          text: TextSpan(
-                              text: 'Bairros: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: bairros,
-                                style: TextStyle(fontWeight: FontWeight.normal))
-                          ])),
-                      RichText(
-                          text: TextSpan(
-                              text: 'Regiões: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: regioes,
-                                style: TextStyle(fontWeight: FontWeight.normal))
-                          ])),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Superficies: ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.black),
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: superficies,
-                                style: TextStyle(fontWeight: FontWeight.normal))
-                          ],
+                        Visibility(
+                          visible:
+                              mapController.modelTrilha.descricao.isNotEmpty,
+                          child: RichText(
+                              text: TextSpan(
+                                  text: 'Descrição: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                  children: <TextSpan>[
+                                TextSpan(
+                                    text: mapController.modelTrilha.descricao,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal))
+                              ])),
                         ),
-                      ),
-                    ],
+                        RichText(
+                            text: TextSpan(
+                                text: 'Comprimento: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.comprimento
+                                          .toString() +
+                                      ' KM',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Desnível: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.desnivel
+                                          .toString() +
+                                      ' m',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Tipo: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.tipo,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        Visibility(
+                          visible: mapController.modelTrilha.subtipo.isNotEmpty,
+                          child: RichText(
+                              text: TextSpan(
+                                  text: 'Subtipo: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                  children: <TextSpan>[
+                                TextSpan(
+                                    text: mapController.modelTrilha.subtipo,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal))
+                              ])),
+                        ),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Dificuldade: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.dificuldade,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Bairros: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: bairros,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Regiões: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: regioes,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                          text: TextSpan(
+                            text: 'Superficies: ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: superficies,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                //Botão para salvar trilha
-                Positioned(
-                  top: 5,
-                  right: 10,
-                  child: IconButton(
-                    color: Colors.blue,
-                    icon: Icon(Icons.save_alt_outlined),
-                    iconSize: 25,
-                    onPressed: () async {
-                      await getPrefs(context);
-                      trilhaRepository.saveTrilha(trilha);
-                      SaveTrilha(
-                        context,
-                        trilha.codt,
-                        trilha.nome,
-                        mapController.modelTrilha.comprimento,
-                        mapController.modelTrilha.desnivel,
-                        mapController.modelTrilha.tipo,
-                        mapController.modelTrilha.dificuldade,
-                        mapController.modelTrilha.bairros,
-                        mapController.modelTrilha.regioes,
-                        mapController.modelTrilha.superficies,
-                      );
-                    },
-                  ),
-                ),
-                Positioned(
-                    bottom: 10,
+                  //Botão para remover trilha
+                  Positioned(
+                    top: 5,
                     right: 10,
                     child: IconButton(
                       color: Colors.blue,
-                      icon: Icon(Icons.arrow_downward),
-                      onPressed: () {
-                        mapController.sheet = null;
-                        Navigator.pop(context);
-                        mapController.nameSheet = mapController
-                            .scaffoldState.currentState
-                            .showBottomSheet((context) {
-                          return ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20)),
-                              child: Container(
-                                color: Colors.white,
-                                width: MediaQuery.of(mapController
-                                            .scaffoldState.currentContext)
-                                        .size
-                                        .width *
-                                    0.8,
-                                child: ListTile(
-                                  title: Text(mapController.modelTrilha.nome),
-                                  trailing: Icon(
-                                    Icons.arrow_upward,
-                                    color: Colors.blue,
-                                  ),
-                                  onTap: () {
-                                    mapController.nameSheet = null;
-                                    bottomSheetTrilha(trilha);
-                                  },
-                                ),
-                              ));
-                        }, backgroundColor: Colors.transparent);
-                      },
-                    )),
-                Visibility(
-                  visible: ADMIN.contains(auth.user.email),
-                  child: Positioned(
-                    bottom: 44,
-                    right: 10,
-                    child: IconButton(
-                      color: Colors.blue,
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Modular.to.pushNamed('/map/editor');
+                      icon: icone,
+                      iconSize: 25,
+                      onPressed: () async {
+                        removerTrilhaMsg(
+                            'Deseja excluir a trilha ${trilha.nome}',
+                            trilha.codt,
+                            context,
+                            trilhaRepository,
+                            trilha);
                       },
                     ),
                   ),
-                ),
-              ]),
-            );
+                  Positioned(
+                      bottom: 10,
+                      right: 10,
+                      child: IconButton(
+                        color: Colors.blue,
+                        icon: Icon(Icons.arrow_downward),
+                        onPressed: () {
+                          mapController.sheet = null;
+                          Navigator.pop(context);
+                          mapController.nameSheet = mapController
+                              .scaffoldState.currentState
+                              .showBottomSheet((context) {
+                            return ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20)),
+                                child: Container(
+                                  color: Colors.white,
+                                  width: MediaQuery.of(mapController
+                                              .scaffoldState.currentContext)
+                                          .size
+                                          .width *
+                                      0.8,
+                                  child: ListTile(
+                                    title: Text(mapController.modelTrilha.nome),
+                                    trailing: Icon(
+                                      Icons.arrow_upward,
+                                      color: Colors.blue,
+                                    ),
+                                    onTap: () {
+                                      mapController.nameSheet = null;
+                                      bottomSheetTrilha(trilha);
+                                    },
+                                  ),
+                                ));
+                          }, backgroundColor: Colors.transparent);
+                        },
+                      )),
+                  Visibility(
+                    visible: ADMIN.contains(auth.user.email),
+                    child: Positioned(
+                      bottom: 44,
+                      right: 10,
+                      child: IconButton(
+                        color: Colors.blue,
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Modular.to.pushNamed('/map/editor');
+                        },
+                      ),
+                    ),
+                  ),
+                ]),
+              );
+            } else {
+              wid = ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+                child: Stack(children: <Widget>[
+                  Container(
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        RichText(
+                            text: TextSpan(
+                                text: 'Nome: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.nome,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        Visibility(
+                          visible:
+                              mapController.modelTrilha.descricao.isNotEmpty,
+                          child: RichText(
+                              text: TextSpan(
+                                  text: 'Descrição: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                  children: <TextSpan>[
+                                TextSpan(
+                                    text: mapController.modelTrilha.descricao,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal))
+                              ])),
+                        ),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Comprimento: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.comprimento
+                                          .toString() +
+                                      ' KM',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Desnível: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.desnivel
+                                          .toString() +
+                                      ' m',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Tipo: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.tipo,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        Visibility(
+                          visible: mapController.modelTrilha.subtipo.isNotEmpty,
+                          child: RichText(
+                              text: TextSpan(
+                                  text: 'Subtipo: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                  children: <TextSpan>[
+                                TextSpan(
+                                    text: mapController.modelTrilha.subtipo,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal))
+                              ])),
+                        ),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Dificuldade: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelTrilha.dificuldade,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Bairros: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: bairros,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                            text: TextSpan(
+                                text: 'Regiões: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: regioes,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                        RichText(
+                          text: TextSpan(
+                            text: 'Superficies: ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: superficies,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //Botão para salvar trilha
+                  Positioned(
+                    top: 5,
+                    right: 10,
+                    child: IconButton(
+                      color: Colors.blue,
+                      icon: icone,
+                      iconSize: 25,
+                      onPressed: () async {
+                        salvarTrilhaMsg('Deseja salvar a trilha ${trilha.nome}',
+                            context, trilhaRepository, trilha);
+                      },
+                    ),
+                  ),
+                  Positioned(
+                      bottom: 10,
+                      right: 10,
+                      child: IconButton(
+                        color: Colors.blue,
+                        icon: Icon(Icons.arrow_downward),
+                        onPressed: () {
+                          mapController.sheet = null;
+                          Navigator.pop(context);
+                          mapController.nameSheet = mapController
+                              .scaffoldState.currentState
+                              .showBottomSheet((context) {
+                            return ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20)),
+                                child: Container(
+                                  color: Colors.white,
+                                  width: MediaQuery.of(mapController
+                                              .scaffoldState.currentContext)
+                                          .size
+                                          .width *
+                                      0.8,
+                                  child: ListTile(
+                                    title: Text(mapController.modelTrilha.nome),
+                                    trailing: Icon(
+                                      Icons.arrow_upward,
+                                      color: Colors.blue,
+                                    ),
+                                    onTap: () {
+                                      mapController.nameSheet = null;
+                                      bottomSheetTrilha(trilha);
+                                    },
+                                  ),
+                                ));
+                          }, backgroundColor: Colors.transparent);
+                        },
+                      )),
+                  Visibility(
+                    visible: ADMIN.contains(auth.user.email),
+                    child: Positioned(
+                      bottom: 44,
+                      right: 10,
+                      child: IconButton(
+                        color: Colors.blue,
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Modular.to.pushNamed('/map/editor');
+                        },
+                      ),
+                    ),
+                  ),
+                ]),
+              );
+            }
           } else {
+            icone = Icon(Icons.save_alt_outlined);
             wid = ClipRRect(
               borderRadius: BorderRadius.only(
                   topRight: Radius.circular(20), topLeft: Radius.circular(20)),
@@ -676,4 +905,86 @@ bottomSheetTempTrail(
       mapController.nameSheet = null;
     });
   }
+}
+
+removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
+  await showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text("Remover"),
+          content: Text(
+            msg,
+          ),
+          actions: <Widget>[
+            FlatButton(
+                child: Text('VOLTAR'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  return;
+                }),
+            FlatButton(
+                child: Text('OK'),
+                onPressed: () async {
+                  await deleteTrilha(codt);
+                  await trilhaRepository.deleteTrail(codt);
+                  await allToDadosTrilhaModel();
+                  Navigator.pop(context);
+                  bottomSheetTrilha(trilha);
+                }),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+salvarTrilhaMsg(msg, context, trilhaRepository, trilha) async {
+  await getPrefs(context);
+  await showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text("Salvar"),
+          content: Text(
+            msg,
+          ),
+          actions: <Widget>[
+            FlatButton(
+                child: Text('VOLTAR'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  return;
+                }),
+            FlatButton(
+                child: Text('OK'),
+                onPressed: () async {
+                  trilhaRepository.saveTrilha(trilha);
+                  SaveTrilha(
+                    context,
+                    trilha.codt,
+                    trilha.nome,
+                    mapController.modelTrilha.comprimento,
+                    mapController.modelTrilha.desnivel,
+                    mapController.modelTrilha.tipo,
+                    mapController.modelTrilha.dificuldade,
+                    mapController.modelTrilha.bairros,
+                    mapController.modelTrilha.regioes,
+                    mapController.modelTrilha.superficies,
+                  );
+                  await allToDadosTrilhaModel();
+                  Navigator.pop(context);
+                  bottomSheetTrilha(trilha);
+                }),
+          ],
+        ),
+      );
+    },
+  );
 }
