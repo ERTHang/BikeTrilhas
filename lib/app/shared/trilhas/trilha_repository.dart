@@ -12,6 +12,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TrilhaRepository {
+  List<int> savedCods = [];
   final Dio dio;
   final SharedPrefs sharedPrefs;
 
@@ -22,7 +23,7 @@ class TrilhaRepository {
   int n = 10000;
 
   void deleteTrilha(int codigo) {
-    sharedPrefs.remove('trilha $codigo');
+    sharedPrefs.remove('route $codigo');
     for (var i = 0; i < savedRoutes.codes.length; i++) {
       if (savedRoutes.codes[i] == codigo) {
         savedRoutes.codes.removeAt(i);
@@ -30,6 +31,18 @@ class TrilhaRepository {
     }
     sharedPrefs.remove('savedRoutes');
     sharedPrefs.save('savedRoutes', savedRoutes);
+  }
+
+//Deletar trilha
+  Future<void> deleteTrail(int codigo) async {
+    sharedPrefs.remove('trilha $codigo');
+    for (var i = 0; i < savedTrilhas.codes.length; i++) {
+      if (savedTrilhas.codes[i] == codigo) {
+        savedTrilhas.codes.removeAt(i);
+      }
+    }
+    await sharedPrefs.remove('savedTrilhas');
+    await sharedPrefs.save('savedTrilhas', savedTrilhas);
   }
 
   Future<List<TrilhaModel>> getStorageRoutes() async {
@@ -76,8 +89,17 @@ class TrilhaRepository {
       var aux = TrilhaModelJson.fromJson(json);
       trilha.fromJson(aux);
       trilhas.add(trilha);
+      savedCods.add(trilha.codt);
     }
     return trilhas;
+  }
+
+  isSaved(int codTrilha) async {
+    for (int i = 0; i < savedCods.length; i++) {
+      if (codTrilha == savedCods.elementAt(i)) {
+        return true;
+      }
+    }
   }
 
   Future<TrilhaModel> getRoute(List<LatLng> routePoints) async {

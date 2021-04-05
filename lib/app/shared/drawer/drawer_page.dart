@@ -1,5 +1,7 @@
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
+import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -91,11 +93,14 @@ class _DrawerPageState extends State<DrawerPage> {
               );
             }),
             dense: true,
-            onTap: () {
+            onTap: () async {
               if (draw.value != 1) {
-                draw.value = 1;
-                Navigator.pop(context);
-                Modular.to.pushNamed('/filter');
+                if (await isOnline() == true) {
+                  Navigator.pop(context);
+                  Modular.to.pushNamed('/filter');
+                } else {
+                  alert(context, 'Filtro indisponivel offline');
+                }
               }
             },
           ),
