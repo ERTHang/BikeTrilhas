@@ -53,17 +53,17 @@ class _UsertrailsPageState
               polylines: store.polylines,
               markers: (routeState == 0) ? store.markers : store.routeMarkers,
               mapType: MapType.normal,
-              initialCameraPosition: (mapController.newTrail != null)
+              initialCameraPosition: (mapController.followTrail != null)
                   ? CameraPosition(
-                      target: mapController.newTrail.waypoints[0].posicao,
+                      target: mapController.followTrail.waypoints[0].posicao,
                       zoom: 14)
                   : store.mapController.position.value,
               onMapCreated: (GoogleMapController mapcontroller) {
                 if (store.tappedTrilha != null) {
-                  bottomSheetTempTrail(store.mapController.newTrail,
+                  bottomSheetTempTrail(store.mapController.followTrail,
                       store.scaffoldState, store.state);
                 }
-                store.mapController.newTrail = null;
+                store.mapController.followTrail = null;
                 _controller.complete(mapcontroller);
               },
             ),

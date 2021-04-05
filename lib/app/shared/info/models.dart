@@ -51,3 +51,12 @@ class Dificuldade {
 
   Dificuldade(this.dif_cod, this.dif_nome);
 }
+
+class Cidade {
+  // ignore: non_constant_identifier_names
+  final int cid_cod;
+  // ignore: non_constant_identifier_names
+  final String cid_nome;
+
+  Cidade(this.cid_cod, this.cid_nome);
+}

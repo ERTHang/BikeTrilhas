@@ -55,6 +55,7 @@ abstract class _MapControllerBase with Store {
   PersistentBottomSheetController nameSheet;
   TrilhaModel newTrail;
   TrilhaModel followTrail;
+  bool update = false;
   ConnectivityResult connectivityResult;
 
   @action

@@ -284,6 +284,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         icon: Icon(Icons.edit),
                         onPressed: () {
                           Navigator.pop(context);
+                          mapController.update = true;
                           Modular.to.pushNamed('/map/editor');
                         },
                       ),

@@ -134,6 +134,31 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               return _map();
             },
           ),
+          //StopButton
+          AnimatedPositioned(
+            bottom: 10,
+            right: changeButton ? 145.0 : 10.0,
+            duration: const Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(Size(50, 50)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(360))),
+              ),
+              onPressed: () {
+                changeButton = false;
+                paused = false;
+                store.createdTrails.add(store.followTrail);
+                store.trilhaRepository.saveRecordedTrail(store.followTrail);
+                subscription.cancel();
+                Modular.to.pushNamed('/usertrail');
+              },
+              child: Icon(Icons.stop),
+            ),
+          ),
           //PauseButton
           AnimatedPositioned(
             bottom: 10,
@@ -159,32 +184,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 });
               },
               child: (!paused) ? Icon(Icons.pause) : Icon(Icons.play_arrow),
-            ),
-          ),
-
-          //StopButton
-          AnimatedPositioned(
-            bottom: 10,
-            right: changeButton ? 145.0 : 10.0,
-            duration: const Duration(seconds: 1),
-            curve: Curves.fastOutSlowIn,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(Size(50, 50)),
-                backgroundColor: MaterialStateProperty.all(Colors.blue),
-                elevation: MaterialStateProperty.all(0),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(360))),
-              ),
-              onPressed: () {
-                changeButton = false;
-                paused = false;
-                store.createdTrails.add(store.followTrail);
-                store.trilhaRepository.saveRoute(store.followTrail);
-                subscription.cancel();
-                Modular.to.pushNamed('/usertrail');
-              },
-              child: Icon(Icons.stop),
             ),
           ),
 

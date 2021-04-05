@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/saved_routes.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/saved_trilhas.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_trilhas.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:dio/dio.dart';
@@ -19,6 +19,7 @@ class TrilhaRepository {
   TrilhaRepository(this.dio, this.sharedPrefs);
   SavedTrilhas savedTrilhas;
   SavedRoutes savedRoutes;
+  SavedRoutes recordedTrails;
 
   int n = 10000;
 
@@ -45,6 +46,29 @@ class TrilhaRepository {
     await sharedPrefs.save('savedTrilhas', savedTrilhas);
   }
 
+  Future<List<TrilhaModel>> getRecordedTrails() async {
+    List<TrilhaModel> trilhas = [];
+
+    if (recordedTrails == null) {
+      try {
+        recordedTrails =
+            SavedRoutes.fromJson(await sharedPrefs.read('recordedTrails'));
+      } catch (e) {
+        recordedTrails = SavedRoutes([]);
+      }
+    }
+
+    for (var i = 0; i < recordedTrails.codes.length; i++) {
+      var json =
+          await sharedPrefs.read('recorded trail ${recordedTrails.codes[i]}');
+      TrilhaModel trilha = TrilhaModel(recordedTrails.codes[i], 'aux');
+      var aux = TrilhaModelJson.fromJson(json);
+      trilha.fromJson(aux);
+      trilhas.add(trilha);
+    }
+    return trilhas;
+  }
+
   Future<List<TrilhaModel>> getStorageRoutes() async {
     List<TrilhaModel> trilhas = [];
 
@@ -53,7 +77,6 @@ class TrilhaRepository {
         savedRoutes =
             SavedRoutes.fromJson(await sharedPrefs.read('savedRoutes'));
       } catch (e) {
-        print(e);
         savedRoutes = SavedRoutes([]);
       }
     }
@@ -169,6 +192,28 @@ class TrilhaRepository {
             pow(lon[0] - routePoints[i + 1].longitude, 2));
   }
 
+  Future saveRecordedTrail(TrilhaModel model) async {
+    if (recordedTrails == null) {
+      try {
+        recordedTrails =
+            SavedRoutes.fromJson(await sharedPrefs.read('recordedTrails'));
+      } catch (Exception) {
+        recordedTrails = SavedRoutes([]);
+      }
+    }
+
+    var numero = model.codt;
+
+    TrilhaModelJson trilha = model.toJson();
+    sharedPrefs.save('recorded trail $numero', trilha.toJson());
+
+    recordedTrails.codes.add(numero);
+    try {
+      sharedPrefs.remove('recordedTrails');
+    } catch (e) {}
+    sharedPrefs.save('recordedTrails', recordedTrails);
+  }
+
   Future saveRoute(TrilhaModel model) async {
     if (savedRoutes == null) {
       try {
@@ -252,8 +297,6 @@ class TrilhaRepository {
         layercod++;
       }
     } catch (e) {}
-    // InfoRepository infoRepository = Modular.get<InfoRepository>();
-    // infoRepository.updateDesnivel(list);
     return list;
   }
 }

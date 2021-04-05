@@ -139,7 +139,7 @@ class _DrawerPageState extends State<DrawerPage> {
             ),
             title: Observer(builder: (_) {
               Color cor;
-              cor = (draw.value == 2) ? Colors.white : Colors.black;
+              cor = (draw.value == 10) ? Colors.white : Colors.black;
               return Text(
                 'Trilhas',
                 style: TextStyle(
@@ -151,7 +151,7 @@ class _DrawerPageState extends State<DrawerPage> {
             }),
             dense: true,
             onTap: () {
-              if (draw.value != 2) {
+              if (draw.value != 10) {
                 Navigator.pop(context);
                 Modular.to.pushNamed("/usertrail");
               }
