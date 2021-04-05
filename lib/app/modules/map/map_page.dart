@@ -32,7 +32,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   bool tracking, changeButton = false, paused = false;
   StreamSubscription<LocationData> subscription;
   Location location = new Location();
-  double opacity = 0.0;
 
   void initState() {
     tracking = false;
@@ -203,7 +202,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 if (tracking) {
                   setState(() {
                     changeButton = !changeButton;
-                    opacity = opacity == 0 ? 1.0 : 0.0;
                   });
                 } else {
                   store.followTrail =

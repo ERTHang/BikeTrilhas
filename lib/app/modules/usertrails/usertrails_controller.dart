@@ -112,7 +112,7 @@ abstract class _UsertrailsControllerBase with Store {
                           "",
                           totalDistance(trilha.polylineCoordinates[0]),
                           0,
-                          'Ciclovia');
+                          'Trilha');
                     }
                     Navigator.pop(context);
                   }),

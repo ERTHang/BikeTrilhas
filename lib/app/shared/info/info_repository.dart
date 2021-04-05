@@ -284,7 +284,6 @@ class InfoRepository {
   }
 
   Future<bool> uploadTrilha(
-    int codt,
     List<LatLng> geometria,
     String nome,
     String descricao,
@@ -296,7 +295,7 @@ class InfoRepository {
     String subtipo,
     double comprimento,
     double desnivel,
-    String cidade,
+    int cidade,
   ) async {
     int cidCod, tipCod, difCod, subtipInt;
     List<int> supInt = [];

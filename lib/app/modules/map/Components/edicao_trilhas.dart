@@ -1,3 +1,4 @@
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
@@ -39,9 +40,39 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
     _regController = TextEditingController();
   }
 
+  getTrilha(codt) {
+    return mapController.createdTrails
+        .where((element) => element.codt == codt)
+        .first;
+  }
+
   exit(DadosTrilhaModel m) async {
-    await _infoRepository.updateDadosTrilha(m.codt, m.nome, m.descricao, m.tipo,
-        m.dificuldade, m.superficies, m.bairros, m.regioes, m.subtipo);
+    if (mapController.update) {
+      await _infoRepository.updateDadosTrilha(
+          m.codt,
+          m.nome,
+          m.descricao,
+          m.tipo,
+          m.dificuldade,
+          m.superficies,
+          m.bairros,
+          m.regioes,
+          m.subtipo);
+    } else {
+      await _infoRepository.uploadTrilha(
+          getTrilha(m.codt).polylineCoordinates[0],
+          m.nome,
+          m.descricao,
+          m.tipo,
+          m.dificuldade,
+          m.superficies,
+          m.bairros,
+          m.regioes,
+          m.subtipo,
+          m.comprimento,
+          m.desnivel,
+          1);
+    }
     Modular.to.pop();
   }
 
