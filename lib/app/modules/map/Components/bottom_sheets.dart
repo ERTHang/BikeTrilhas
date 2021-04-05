@@ -842,7 +842,7 @@ bottomSheetTempTrail(
                 color: Colors.red,
               ),
               onPressed: () {
-                mapController.createdTrails.remove(trilha);
+                mapController.createdRoutes.remove(trilha);
 
                 mapController.trilhaRepository.deleteTrilha(trilha.codt);
 

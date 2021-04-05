@@ -148,16 +148,15 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 ),
                 onPressed: () {
                   if (tracking) {
-                    store.createdTrails.add(store.followRoute);
-                    store.trilhaRepository.saveRoute(store.followRoute);
-                    store.followRoute = null;
+                    store.createdTrails.add(store.followTrail);
+                    store.trilhaRepository.saveRoute(store.followTrail);
                     subscription.cancel();
                     Modular.to.pushNamed('/usertrail');
                   } else {
-                    store.followRoute =
+                    store.followTrail =
                         TrilhaModel(2000000 + n, 'followRoute $n');
 
-                    store.followRoute.polylineCoordinates = [
+                    store.followTrail.polylineCoordinates = [
                       [store.position.value.target]
                     ];
                     checkPermission(location);
@@ -168,7 +167,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                           latitude: position.latitude,
                           longitude: position.longitude));
                       setState(() {
-                        store.followRoute.polylineCoordinates.last
+                        store.followTrail.polylineCoordinates.last
                             .add(LatLng(position.latitude, position.longitude));
                       });
                     });

@@ -46,7 +46,7 @@ abstract class _UserroutesControllerBase with Store {
       state();
       return;
     }
-    mapController.createdTrails.add(newTrail);
+    mapController.createdRoutes.add(newTrail);
     state();
   }
 
@@ -56,12 +56,12 @@ abstract class _UserroutesControllerBase with Store {
 
     if (checkedStorage == null) {
       checkedStorage = 1;
-      mapController.createdTrails.clear();
-      mapController.createdTrails
+      mapController.createdRoutes.clear();
+      mapController.createdRoutes
           .addAll(await mapController.trilhaRepository.getStorageRoutes());
     }
 
-    for (var trilha in mapController.createdTrails) {
+    for (var trilha in mapController.createdRoutes) {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,

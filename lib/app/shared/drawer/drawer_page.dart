@@ -115,7 +115,7 @@ class _DrawerPageState extends State<DrawerPage> {
               Color cor;
               cor = (draw.value == 2) ? Colors.white : Colors.black;
               return Text(
-                'Suas rotas',
+                'Rotas',
                 style: TextStyle(
                     height: 1.8,
                     fontSize: 18,
@@ -126,9 +126,34 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () {
               if (draw.value != 2) {
-                draw.value = 2;
                 Navigator.pop(context);
                 Modular.to.pushNamed("/userroute");
+              }
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.track_changes_rounded,
+              color: Colors.black,
+              size: 40,
+            ),
+            title: Observer(builder: (_) {
+              Color cor;
+              cor = (draw.value == 2) ? Colors.white : Colors.black;
+              return Text(
+                'Trilhas',
+                style: TextStyle(
+                    height: 1.8,
+                    fontSize: 18,
+                    color: cor,
+                    fontWeight: FontWeight.bold),
+              );
+            }),
+            dense: true,
+            onTap: () {
+              if (draw.value != 2) {
+                Navigator.pop(context);
+                Modular.to.pushNamed("/usertrail");
               }
             },
           ),
