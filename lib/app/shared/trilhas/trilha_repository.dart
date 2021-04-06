@@ -35,6 +35,12 @@ class TrilhaRepository {
 
 //Deletar trilha
   Future<void> deleteTrail(int codigo) async {
+    try {
+      savedTrilhas =
+          SavedTrilhas.fromJson(await sharedPrefs.read('savedTrilhas'));
+    } catch (Exception) {
+      savedTrilhas = SavedTrilhas([]);
+    }
     sharedPrefs.remove('trilha $codigo');
     for (var i = 0; i < savedTrilhas.codes.length; i++) {
       if (savedTrilhas.codes[i] == codigo) {
