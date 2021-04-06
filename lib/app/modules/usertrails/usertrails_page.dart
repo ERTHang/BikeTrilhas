@@ -55,11 +55,13 @@ class _UsertrailsPageState
               mapType: MapType.normal,
               initialCameraPosition: (mapController.followTrail != null)
                   ? CameraPosition(
-                      target: mapController.followTrail.waypoints[0].posicao,
+                      target: mapController.followTrail.polylineCoordinates[0]
+                          [0],
                       zoom: 14)
                   : store.mapController.position.value,
               onMapCreated: (GoogleMapController mapcontroller) {
                 if (store.tappedTrilha != null) {
+                  store.uploadTrilha(context, store.mapController.followTrail);
                   bottomSheetTempTrail(store.mapController.followTrail,
                       store.scaffoldState, store.state);
                 }

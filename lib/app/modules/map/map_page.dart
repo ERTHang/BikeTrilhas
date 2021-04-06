@@ -148,8 +148,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     borderRadius: BorderRadius.circular(360))),
               ),
               onPressed: () {
-                changeButton = false;
-                paused = false;
+                setState(() {
+                  tracking = false;
+                  changeButton = false;
+                  paused = false;
+                });
                 store.createdTrails.add(store.followTrail);
                 store.trilhaRepository.saveRecordedTrail(store.followTrail);
                 subscription.cancel();

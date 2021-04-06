@@ -239,6 +239,10 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                         value: _difValue,
                         icon: Icon(Icons.arrow_downward),
                         iconSize: 24,
+                        hint: Text(
+                          'Dificuldade',
+                          style: TextStyle(color: Colors.red),
+                        ),
                         elevation: 16,
                         style: TextStyle(color: Colors.blue),
                         underline: Container(
@@ -269,6 +273,11 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                     child: Center(
                       child: DropdownButton<String>(
                         value: _subtipoValue,
+                        hint: Text(
+                          'Subtipo',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        // disabledHint: Text('Subtipo'),
                         icon: Icon(Icons.arrow_downward),
                         iconSize: 24,
                         elevation: 16,
@@ -295,7 +304,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                         }).toList(),
                       ),
                     ),
-                    visible: _subtipoValue.isNotEmpty,
+                    visible: _tipoValue == 'Ciclovia',
                   ),
                 ],
               ),

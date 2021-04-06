@@ -9,6 +9,7 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 
@@ -79,7 +80,7 @@ abstract class _UsertrailsControllerBase with Store {
     state();
   }
 
-  uploadTrilha(context, trilhaRepository, TrilhaModel trilha) async {
+  uploadTrilha(context, TrilhaModel trilha) async {
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -113,6 +114,8 @@ abstract class _UsertrailsControllerBase with Store {
                           totalDistance(trilha.polylineCoordinates[0]),
                           0,
                           'Trilha');
+                      Navigator.pop(context);
+                      Modular.to.pushNamed('/map/editor');
                     }
                     Navigator.pop(context);
                   }),

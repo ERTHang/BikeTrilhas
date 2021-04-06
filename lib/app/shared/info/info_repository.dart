@@ -283,7 +283,7 @@ class InfoRepository {
         .data;
   }
 
-  Future<bool> uploadTrilha(
+  Future<int> uploadTrilha(
     List<LatLng> geometria,
     String nome,
     String descricao,
@@ -358,7 +358,7 @@ class InfoRepository {
       "bairros": baiInt,
       "regioes": regInt,
       "subtip_cod": subtipInt,
-      "geometria": geoString
+      "geometria": [geoString]
     }))
         .data;
   }
