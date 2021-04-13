@@ -7,6 +7,7 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
@@ -933,8 +934,13 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
                   await deleteTrilha(codt);
                   await trilhaRepository.deleteTrail(codt);
                   await allToDadosTrilhaModel();
+                  if (mapController.connectivityResult ==
+                      ConnectivityResult.none) {
+                    mapController.trilhas.value.remove(trilha);
+                  }
+                  mapController.getPolylines();
+                  mapController.state();
                   Navigator.pop(context);
-                  bottomSheetTrilha(trilha);
                 }),
           ],
         ),
