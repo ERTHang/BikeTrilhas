@@ -260,4 +260,45 @@ abstract class _MapControllerBase with Store {
         : (trilhasFiltradas.contains(trilha.codt) ||
             tappedTrilha == trilha.codt);
   }
+
+  Future<String> nomeTrilha(context) async {
+    TextEditingController _nameController = TextEditingController();
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            actions: [
+              FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    createdTrails.add(followTrail);
+                    trilhaRepository.saveRecordedTrail(followTrail);
+                    Navigator.pop(context);
+                    Modular.to.pushNamed('/usertrail');
+                    return;
+                  }),
+            ],
+            title: Text("Nome"),
+            content: SingleChildScrollView(
+              child: TextField(
+                controller: _nameController,
+                onChanged: (value) {
+                  followTrail.nome = value;
+                },
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

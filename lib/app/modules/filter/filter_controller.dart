@@ -53,8 +53,8 @@ abstract class _FilterControllerBase with Store {
       }
     }
 
-    for (var i = 0; i < _data[6].booleans.length; i++) {
-      if (_data[6].booleans[i]) {
+    for (var i = 0; i < _data[1].booleans.length; i++) {
+      if (_data[1].booleans[i]) {
         subtipo.add(i + 1);
       }
     }

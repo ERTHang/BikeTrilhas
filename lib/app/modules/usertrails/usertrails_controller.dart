@@ -20,7 +20,6 @@ class UsertrailsController = _UsertrailsControllerBase
 
 abstract class _UsertrailsControllerBase with Store {
   _UsertrailsControllerBase(this.mapController, this.drawerClassController) {
-    drawerClassController.value = 10;
     if (mapController.followTrail != null) {
       tappedTrilha = mapController.followTrail.codt;
     }
@@ -49,7 +48,6 @@ abstract class _UsertrailsControllerBase with Store {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-          consumeTapEvents: (mapController.trilhasFiltradas != [0]),
           polylineId: PolylineId("rota $i " + trilha.codt.toString()),
           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
           onTap: () {

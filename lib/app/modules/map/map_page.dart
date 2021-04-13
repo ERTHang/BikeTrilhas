@@ -153,10 +153,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   changeButton = false;
                   paused = false;
                 });
-                store.createdTrails.add(store.followTrail);
-                store.trilhaRepository.saveRecordedTrail(store.followTrail);
                 subscription.cancel();
-                Modular.to.pushNamed('/usertrail');
+                store.nomeTrilha(context);
               },
               child: Icon(Icons.stop),
             ),
@@ -179,6 +177,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 if (paused) {
                   subscription.pause();
                 } else {
+                  store.followTrail.polylineCoordinates.add([]);
                   subscription.resume();
                 }
                 setState(() {
