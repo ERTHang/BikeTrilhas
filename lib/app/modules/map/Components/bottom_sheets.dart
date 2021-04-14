@@ -218,6 +218,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       ],
                     ),
                   ),
+
                   //Botão para remover trilha
                   Positioned(
                     top: 5,
