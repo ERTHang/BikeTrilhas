@@ -934,7 +934,10 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
                   await trilhaRepository.deleteTrail(codt);
                   await allToDadosTrilhaModel();
                   Navigator.pop(context);
-                  bottomSheetTrilha(trilha);
+                  //mapController.tappedTrilha = null;
+                  //mapController.tappedWaypoint = null;
+                  mapController.sheet.close();
+                  mapController.state();
                 }),
           ],
         ),
@@ -980,8 +983,9 @@ salvarTrilhaMsg(msg, context, trilhaRepository, trilha) async {
                     mapController.modelTrilha.superficies,
                   );
                   await allToDadosTrilhaModel();
+                  mapController.sheet.close();
+                  mapController.state();
                   Navigator.pop(context);
-                  bottomSheetTrilha(trilha);
                 }),
           ],
         ),
