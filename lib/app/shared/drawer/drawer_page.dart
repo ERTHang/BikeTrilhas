@@ -1,3 +1,6 @@
+import 'dart:core';
+import 'dart:core';
+
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
@@ -41,7 +44,7 @@ class _DrawerPageState extends State<DrawerPage> {
             ),
           ),
           Text(
-            auth.user.displayName.toLowerCase(),
+            toCamelCase(auth.user.displayName),
             textAlign: TextAlign.center,
             style: TextStyle(
                 height: 1.8,
@@ -114,7 +117,7 @@ class _DrawerPageState extends State<DrawerPage> {
               Color cor;
               cor = (draw.value == 2) ? Colors.white : Colors.black;
               return Text(
-                'Suas rotas',
+                'Suas Rotas',
                 style: TextStyle(
                     height: 1.8,
                     fontSize: 18,
@@ -189,5 +192,16 @@ class _DrawerPageState extends State<DrawerPage> {
         ],
       ),
     ));
+  }
+
+  String toCamelCase(String str) {
+    String s = str
+        .replaceAllMapped(
+            RegExp(
+                r'[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+'),
+            (Match m) =>
+                "${m[0][0].toUpperCase()}${m[0].substring(1).toLowerCase()}")
+        .replaceAll(RegExp(r'(_|-|\s)+'), ' ');
+    return s[0].toUpperCase() + s.substring(1);
   }
 }
