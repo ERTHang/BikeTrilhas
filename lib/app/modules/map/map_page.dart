@@ -29,7 +29,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController mapController;
   int n = 0;
-  bool tracking;
+  bool tracking, changeButton = false, paused = false;
   StreamSubscription<LocationData> subscription;
   Location location = new Location();
 
@@ -133,55 +133,107 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               return _map();
             },
           ),
+          //StopButton
+          AnimatedPositioned(
+            bottom: 10,
+            right: changeButton ? 145.0 : 10.0,
+            duration: const Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(Size(50, 50)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(360))),
+              ),
+              onPressed: () {
+                setState(() {
+                  tracking = false;
+                  changeButton = false;
+                  paused = false;
+                });
+                subscription.cancel();
+                store.nomeTrilha(context);
+              },
+              child: Icon(Icons.stop),
+            ),
+          ),
+          //PauseButton
+          AnimatedPositioned(
+            bottom: 10,
+            right: changeButton ? 80.0 : 10.0,
+            duration: const Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(Size(50, 50)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(360))),
+              ),
+              onPressed: () {
+                if (paused) {
+                  subscription.pause();
+                } else {
+                  store.followTrail.polylineCoordinates.add([]);
+                  subscription.resume();
+                }
+                setState(() {
+                  paused = !paused;
+                });
+              },
+              child: (!paused) ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+            ),
+          ),
+
           // UserRoute
           Positioned(
             bottom: 10,
             right: 10,
-            child: ButtonTheme(
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(Size(50, 50)),
-                  backgroundColor: MaterialStateProperty.all(Colors.blue),
-                  elevation: MaterialStateProperty.all(5),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(360))),
-                ),
-                onPressed: () {
-                  if (tracking) {
-                    store.createdTrails.add(store.followRoute);
-                    store.trilhaRepository.saveRoute(store.followRoute);
-                    store.followRoute = null;
-                    subscription.cancel();
-                    Modular.to.pushNamed('/usertrail');
-                  } else {
-                    store.followRoute =
-                        TrilhaModel(2000000 + n, 'followRoute $n');
+            child: ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(Size(50, 50)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                elevation: MaterialStateProperty.all(5),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(360))),
+              ),
+              onPressed: () {
+                if (tracking) {
+                  setState(() {
+                    changeButton = !changeButton;
+                  });
+                } else {
+                  store.followTrail =
+                      TrilhaModel(2000000 + n, 'followRoute $n');
 
-                    store.followRoute.polylineCoordinates = [
-                      [store.position.value.target]
-                    ];
-                    checkPermission(location);
-                    subscription =
-                        location.onLocationChanged.listen((position) {
-                      // ignore: missing_required_param
-                      centerScreen(Position(
-                          latitude: position.latitude,
-                          longitude: position.longitude));
-                      setState(() {
-                        store.followRoute.polylineCoordinates.last
-                            .add(LatLng(position.latitude, position.longitude));
-                      });
+                  store.followTrail.polylineCoordinates = [
+                    [store.position.value.target]
+                  ];
+                  checkPermission(location);
+                  subscription = location.onLocationChanged.listen((position) {
+                    // ignore: missing_required_param
+                    centerScreen(Position(
+                        latitude: position.latitude,
+                        longitude: position.longitude));
+                    setState(() {
+                      store.followTrail.polylineCoordinates.last
+                          .add(LatLng(position.latitude, position.longitude));
                     });
-                  }
+                  });
                   setState(() {
                     tracking = !tracking;
                   });
-                },
-                child: Icon(
-                  Icons.track_changes,
-                  color: (tracking) ? Colors.green : Colors.white,
-                  size: 30,
-                ),
+                }
+              },
+              child: Icon(
+                Icons.track_changes,
+                color: (tracking)
+                    ? ((paused) ? Colors.red : Colors.green)
+                    : Colors.white,
+                size: 30,
               ),
             ),
           ),

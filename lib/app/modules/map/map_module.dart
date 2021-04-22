@@ -1,4 +1,4 @@
-import 'package:biketrilhas_modular/app/modules/map/Components/edicao_rotas.dart';
+import 'package:biketrilhas_modular/app/modules/map/Components/edicao_trilhas.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/edicao_waypoints.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
@@ -15,7 +15,7 @@ class MapModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ChildRoute(Modular.initialRoute, child: (_, args) => MapPage()),
-    ChildRoute('editor', child: (_, args) => EdicaoRotas()),
+    ChildRoute('editor', child: (_, args) => EdicaoTrilhas()),
     ChildRoute('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
   ];
 }

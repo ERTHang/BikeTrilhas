@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
@@ -46,13 +47,15 @@ abstract class _MapControllerBase with Store {
   final scaffoldState = GlobalKey<ScaffoldState>();
   int tappedTrilha;
   int tappedWaypoint;
+  List<TrilhaModel> createdRoutes = [];
   List<TrilhaModel> createdTrails = [];
   List<LatLng> routePoints = [];
   Function state;
   PersistentBottomSheetController sheet;
   PersistentBottomSheetController nameSheet;
   TrilhaModel newTrail;
-  TrilhaModel followRoute;
+  TrilhaModel followTrail;
+  bool update = false;
   ConnectivityResult connectivityResult;
 
   @action
@@ -133,23 +136,23 @@ abstract class _MapControllerBase with Store {
       state();
       return;
     }
-    createdTrails.add(newTrail);
+    createdRoutes.add(newTrail);
     state();
-    Modular.to.pushNamed('/usertrail');
+    Modular.to.pushNamed('/userroute');
   }
 
   @action
-  getPolylines() {
+  getPolylines() async {
     polylines.clear();
     markers.clear();
-    if (followRoute != null) {
-      for (var i = 0; i < followRoute.polylineCoordinates.length; i++) {
+    if (followTrail != null) {
+      for (var i = 0; i < followTrail.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
           zIndex: 3,
           consumeTapEvents: false,
-          polylineId: PolylineId("rota $i " + followRoute.codt.toString()),
+          polylineId: PolylineId("rota $i " + followTrail.codt.toString()),
           color: Colors.yellow,
-          points: followRoute.polylineCoordinates[i],
+          points: followTrail.polylineCoordinates[i],
           width: 3,
         );
         polylines.add(pol);
@@ -178,10 +181,7 @@ abstract class _MapControllerBase with Store {
           },
           points: trilha.polylineCoordinates[i],
           width: 3,
-          visible: (trilhasFiltradas.isEmpty || trilha.codt >= 2000000)
-              ? true
-              : (trilhasFiltradas.contains(trilha.codt) ||
-                  tappedTrilha == trilha.codt),
+          visible: isVisible(trilha),
         );
         polylines.add(pol);
       }
@@ -194,9 +194,13 @@ abstract class _MapControllerBase with Store {
                   tappedTrilha == trilha.codt),
           markerId: MarkerId(waypoint.codigo.toString()),
           position: waypoint.posicao,
-          onTap: () {
+          onTap: () async {
             tappedTrilha = null;
-            bottomSheetWaypoint(waypoint.codigo);
+            if (await isOnline()) {
+              bottomSheetWaypoint(waypoint.codigo);
+            }else{
+              bottomSheetWaypointOffline(waypoint.codigo);
+            }
             tappedWaypoint = waypoint.codigo;
             state();
           },
@@ -204,10 +208,7 @@ abstract class _MapControllerBase with Store {
               ? markerIconTapped
               : markerIcon,
           anchor: Offset(0.5, 0.5),
-          visible: (trilhasFiltradas.isEmpty)
-              ? true
-              : (trilhasFiltradas.contains(trilha.codt) ||
-                  tappedTrilha == trilha.codt),
+          visible: isVisible(trilha),
         );
         markers.add(mar);
       }
@@ -238,5 +239,70 @@ abstract class _MapControllerBase with Store {
     typeFilter =
         await filterRepository.getFiltered([typeValue], [], [], [], [], [], []);
     typeNum = typeValue;
+  }
+
+  bool isInRadius(double lat1, double lon1, double lat2, double lon2) {
+    var p = 0.017453292519943295;
+    var a = 0.5 -
+        cos((lat2 - lat1) * p) / 2 +
+        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
+    var distanceInKM = 12742 * asin(sqrt(a));
+    return distanceInKM <= 1000;
+  }
+
+  bool isVisible(TrilhaModel trilha) {
+    var user = position.value.target;
+    if (!isInRadius(
+        user.latitude,
+        user.longitude,
+        trilha.polylineCoordinates[0][0].latitude,
+        trilha.polylineCoordinates[0][0].longitude)) {
+      return false;
+    }
+    return (trilhasFiltradas.isEmpty || trilha.codt >= 2000000)
+        ? true
+        : (trilhasFiltradas.contains(trilha.codt) ||
+            tappedTrilha == trilha.codt);
+  }
+
+  Future<String> nomeTrilha(context) async {
+    TextEditingController _nameController = TextEditingController();
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            actions: [
+              FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    createdTrails.add(followTrail);
+                    trilhaRepository.saveRecordedTrail(followTrail);
+                    Navigator.pop(context);
+                    Modular.to.pushNamed('/usertrail');
+                    return;
+                  }),
+            ],
+            title: Text("Nome"),
+            content: SingleChildScrollView(
+              child: TextField(
+                controller: _nameController,
+                onChanged: (value) {
+                  followTrail.nome = value;
+                },
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

@@ -6,10 +6,11 @@ class DadosTrilhaModel {
   double desnivel;
   String tipo;
   String dificuldade;
-  List<String> bairros;
-  List<String> regioes;
-  List<String> superficies;
+  List<String> bairros = [];
+  List<String> regioes = [];
+  List<String> superficies = [];
   String subtipo;
 
-  DadosTrilhaModel(this.codt, this.nome, this.descricao, this.comprimento, this.desnivel, this.tipo);
+  DadosTrilhaModel(this.codt, this.nome, this.descricao, this.comprimento,
+      this.desnivel, this.tipo);
 }

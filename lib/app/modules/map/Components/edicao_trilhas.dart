@@ -1,15 +1,16 @@
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-class EdicaoRotas extends StatefulWidget {
+class EdicaoTrilhas extends StatefulWidget {
   @override
-  _EdicaoRotasState createState() => _EdicaoRotasState();
+  _EdicaoTrilhasState createState() => _EdicaoTrilhasState();
 }
 
-class _EdicaoRotasState extends State<EdicaoRotas> {
+class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
   TextEditingController _nameController;
   TextEditingController _descController;
   TextEditingController _supController;
@@ -39,9 +40,39 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
     _regController = TextEditingController();
   }
 
+  getTrilha(codt) {
+    return mapController.createdTrails
+        .where((element) => element.codt == codt)
+        .first;
+  }
+
   exit(DadosTrilhaModel m) async {
-    await _infoRepository.updateDadosTrilha(m.codt, m.nome, m.descricao, m.tipo,
-        m.dificuldade, m.superficies, m.bairros, m.regioes, m.subtipo);
+    if (mapController.update) {
+      await _infoRepository.updateDadosTrilha(
+          m.codt,
+          m.nome,
+          m.descricao,
+          m.tipo,
+          m.dificuldade,
+          m.superficies,
+          m.bairros,
+          m.regioes,
+          m.subtipo);
+    } else {
+      await _infoRepository.uploadTrilha(
+          getTrilha(m.codt).polylineCoordinates[0],
+          m.nome,
+          m.descricao,
+          m.tipo,
+          m.dificuldade,
+          m.superficies,
+          m.bairros,
+          m.regioes,
+          m.subtipo,
+          m.comprimento,
+          m.desnivel,
+          1);
+    }
     Modular.to.pop();
   }
 
@@ -83,7 +114,7 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.blue),
           title: Text(
-            'Editar Rota',
+            'Editar Trilha',
             style: TextStyle(color: Colors.blue),
           ),
           centerTitle: true,
@@ -208,6 +239,10 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
                         value: _difValue,
                         icon: Icon(Icons.arrow_downward),
                         iconSize: 24,
+                        hint: Text(
+                          'Dificuldade',
+                          style: TextStyle(color: Colors.red),
+                        ),
                         elevation: 16,
                         style: TextStyle(color: Colors.blue),
                         underline: Container(
@@ -238,6 +273,11 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
                     child: Center(
                       child: DropdownButton<String>(
                         value: _subtipoValue,
+                        hint: Text(
+                          'Subtipo',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        // disabledHint: Text('Subtipo'),
                         icon: Icon(Icons.arrow_downward),
                         iconSize: 24,
                         elevation: 16,
@@ -264,7 +304,7 @@ class _EdicaoRotasState extends State<EdicaoRotas> {
                         }).toList(),
                       ),
                     ),
-                    visible: _subtipoValue.isNotEmpty,
+                    visible: _tipoValue == 'Ciclovia',
                   ),
                 ],
               ),

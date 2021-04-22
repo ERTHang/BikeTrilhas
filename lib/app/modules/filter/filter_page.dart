@@ -42,12 +42,12 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         },
         children: <ExpansionPanel>[
           tipo(),
-          dificuldade(),
+          subtipo(),
           regiao(),
           bairro(),
           superficie(),
           categoria(),
-          subtipo(),
+          dificuldade(),
         ]);
   }
 
@@ -145,7 +145,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
   ExpansionPanel dificuldade() {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
-        return header(_data[1], onTap: (Item item) {
+        return header(_data[6], onTap: (Item item) {
           item.value = null;
         });
       },
@@ -153,99 +153,99 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         children: <Widget>[
           ListTile(
             leading: Radio(
-              groupValue: _data[1].value,
+              groupValue: _data[6].value,
               value: 'Fácil',
               onChanged: (value) {
                 setState(() {
-                  _data[1].modified = 1;
-                  _data[1].value = value;
-                  _data[1].modifiedValue.clear();
-                  _data[1].modifiedValue.add(value);
+                  _data[6].modified = 1;
+                  _data[6].value = value;
+                  _data[6].modifiedValue.clear();
+                  _data[6].modifiedValue.add(value);
                 });
               },
             ),
             title: Text('Fácil'),
             onTap: () {
               setState(() {
-                _data[1].modified = 1;
-                _data[1].value = 'Fácil';
-                _data[1].modifiedValue.clear();
-                _data[1].modifiedValue.add(_data[1].value);
+                _data[6].modified = 1;
+                _data[6].value = 'Fácil';
+                _data[6].modifiedValue.clear();
+                _data[6].modifiedValue.add(_data[6].value);
               });
             },
           ),
           ListTile(
             leading: Radio(
-              groupValue: _data[1].value,
+              groupValue: _data[6].value,
               value: 'Médio',
               onChanged: (value) {
                 setState(() {
-                  _data[1].modified = 2;
-                  _data[1].value = value;
-                  _data[1].modifiedValue.clear();
-                  _data[1].modifiedValue.add(_data[1].value);
+                  _data[6].modified = 2;
+                  _data[6].value = value;
+                  _data[6].modifiedValue.clear();
+                  _data[6].modifiedValue.add(_data[6].value);
                 });
               },
             ),
             title: Text('Médio'),
             onTap: () {
               setState(() {
-                _data[1].modified = 2;
-                _data[1].value = 'Médio';
-                _data[1].modifiedValue.clear();
-                _data[1].modifiedValue.add(_data[1].value);
+                _data[6].modified = 2;
+                _data[6].value = 'Médio';
+                _data[6].modifiedValue.clear();
+                _data[6].modifiedValue.add(_data[6].value);
               });
             },
           ),
           ListTile(
             leading: Radio(
-              groupValue: _data[1].value,
+              groupValue: _data[6].value,
               value: 'Difícil',
               onChanged: (value) {
                 setState(() {
-                  _data[1].modified = 3;
-                  _data[1].value = value;
-                  _data[1].modifiedValue.clear();
-                  _data[1].modifiedValue.add(_data[1].value);
+                  _data[6].modified = 3;
+                  _data[6].value = value;
+                  _data[6].modifiedValue.clear();
+                  _data[6].modifiedValue.add(_data[6].value);
                 });
               },
             ),
             title: Text('Difícil'),
             onTap: () {
               setState(() {
-                _data[1].modified = 3;
-                _data[1].value = 'Difícil';
-                _data[1].modifiedValue.clear();
-                _data[1].modifiedValue.add(_data[1].value);
+                _data[6].modified = 3;
+                _data[6].value = 'Difícil';
+                _data[6].modifiedValue.clear();
+                _data[6].modifiedValue.add(_data[6].value);
               });
             },
           ),
           ListTile(
             leading: Radio(
-              groupValue: _data[1].value,
+              groupValue: _data[6].value,
               value: 'Muito Difícil',
               onChanged: (value) {
                 setState(() {
-                  _data[1].modified = 4;
-                  _data[1].value = value;
-                  _data[1].modifiedValue.clear();
-                  _data[1].modifiedValue.add(_data[1].value);
+                  _data[6].modified = 4;
+                  _data[6].value = value;
+                  _data[6].modifiedValue.clear();
+                  _data[6].modifiedValue.add(_data[6].value);
                 });
               },
             ),
             title: Text('Muito Difícil'),
             onTap: () {
               setState(() {
-                _data[1].modified = 4;
-                _data[1].value = 'Muito Difícil';
-                _data[1].modifiedValue.clear();
-                _data[1].modifiedValue.add(_data[1].value);
+                _data[6].modified = 4;
+                _data[6].value = 'Muito Difícil';
+                _data[6].modifiedValue.clear();
+                _data[6].modifiedValue.add(_data[6].value);
               });
             },
           ),
         ],
       ),
-      isExpanded: _data[1].isExpanded,
+      isExpanded: _data[6].isExpanded,
     );
   }
 
@@ -393,19 +393,19 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
   ExpansionPanel subtipo() {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
-        return header(_data[6], onTap: (Item item) {
+        return header(_data[1], onTap: (Item item) {
           item.booleans = [false, false, false, false];
         });
       },
       body: Column(
         children: <Widget>[
-          tile(6, 0, 'Ciclovia'),
-          tile(6, 1, 'Ciclorrota'),
-          tile(6, 2, 'Compartilhada'),
-          tile(6, 3, 'Ciclofaixa'),
+          tile(1, 0, 'Ciclovia'),
+          tile(1, 1, 'Ciclorrota'),
+          tile(1, 2, 'Compartilhada'),
+          tile(1, 3, 'Ciclofaixa'),
         ],
       ),
-      isExpanded: _data[6].isExpanded,
+      isExpanded: _data[1].isExpanded,
     );
   }
 
@@ -518,7 +518,10 @@ List<Item> generateItems() {
                   ? 'Ciclovia'
                   : 'Cicloturismo'
         ]),
-    Item(expandedValue: 'Dificuldade', modifiedValue: []),
+    Item(
+        expandedValue: 'Subtipos',
+        modifiedValue: [],
+        booleans: [false, false, false, false]),
     Item(
         expandedValue: 'Regiões',
         modifiedValue: [],
@@ -590,10 +593,7 @@ List<Item> generateItems() {
       false,
       false
     ]),
-    Item(
-        expandedValue: 'Subtipos',
-        modifiedValue: [],
-        booleans: [false, false, false, false])
+    Item(expandedValue: 'Dificuldade', modifiedValue: []),
   ];
 }
 
