@@ -25,7 +25,7 @@ class TrilhaRepository {
 
   void deleteRecordedTrail(int codigo) {
     sharedPrefs.remove('recorded trail $codigo');
-    for (var i = 0; i < savedRoutes.codes.length; i++) {
+    for (var i = 0; i < recordedTrails.codes.length; i++) {
       if (recordedTrails.codes[i] == codigo) {
         recordedTrails.codes.removeAt(i);
       }

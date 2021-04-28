@@ -110,6 +110,8 @@ abstract class _UsertrailsControllerBase with Store {
                         totalDistance(trilha.polylineCoordinates[0]),
                         0,
                         'Trilha');
+                    mapController.followTrail = null;
+                    mapController.state();
                     Navigator.pop(context);
                     Modular.to.pushNamed('/map/editor');
                   }),
