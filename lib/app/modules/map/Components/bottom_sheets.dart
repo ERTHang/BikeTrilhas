@@ -1,4 +1,5 @@
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
@@ -6,6 +7,7 @@ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -583,6 +585,7 @@ bottomSheetWaypoint(int codt) async {
                 Container(
                   color: Colors.white,
                   width: MediaQuery.of(context).size.width,
+                  height: 100,
                   padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1086,6 +1089,22 @@ bottomSheetTempTrail(
               ],
             ),
           ),
+          Visibility(
+            child: Positioned(
+              bottom: 44,
+              right: 44,
+              child: IconButton(
+                icon: Icon(
+                  Icons.upload_rounded,
+                  color: Colors.blue,
+                ),
+                onPressed: () {
+                  checkUpload(context, trilha);
+                },
+              ),
+            ),
+            visible: trilha.codt >= 2000000,
+          ),
           Positioned(
             bottom: 44,
             right: 10,
@@ -1095,14 +1114,24 @@ bottomSheetTempTrail(
                 color: Colors.red,
               ),
               onPressed: () {
-                mapController.createdRoutes.remove(trilha);
+                if (trilha.codt >= 2000000) {
+                  mapController.createdTrails.remove(trilha);
 
-                mapController.trilhaRepository.deleteTrilha(trilha.codt);
+                  mapController.trilhaRepository
+                      .deleteRecordedTrail(trilha.codt);
 
-                mapController.getPolylines();
-                mapController.sheet = null;
-                state();
-                Navigator.of(context).pop();
+                  mapController.sheet = null;
+                  state();
+                  Navigator.of(context).pop();
+                } else {
+                  mapController.createdRoutes.remove(trilha);
+
+                  mapController.trilhaRepository.deleteRoute(trilha.codt);
+
+                  mapController.sheet = null;
+                  state();
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ),
@@ -1185,14 +1214,12 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
                   await deleteTrilha(codt);
                   await trilhaRepository.deleteTrail(codt);
                   await allToDadosTrilhaModel();
-                  if (mapController.connectivityResult ==
-                      ConnectivityResult.none) {
+                  if (await isOnline()) {
                     mapController.trilhas.value.remove(trilha);
                   }
                   mapController.getPolylines();
                   mapController.state();
                   Navigator.pop(context);
-                  //
                   mapController.sheet.close();
                   mapController.state();
                   //
@@ -1281,4 +1308,13 @@ Map<String, dynamic> wayPointToJson(DadosWaypointModel waypoint) {
     'imagens': waypoint.imagens,
     'categorias': waypoint.categorias,
   };
+}
+
+checkUpload(context, trilha) async {
+  if (!await isOnline()) {
+    alert(context, "Dispositivo Offline");
+  } else {
+    UsertrailsController usertrailsController = Modular.get();
+    usertrailsController.uploadTrilha(context, trilha);
+  }
 }
