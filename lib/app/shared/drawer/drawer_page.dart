@@ -1,3 +1,4 @@
+
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
@@ -43,7 +44,7 @@ class _DrawerPageState extends State<DrawerPage> {
             ),
           ),
           Text(
-            auth.user.displayName.toLowerCase(),
+            toCamelCase(auth.user.displayName),
             textAlign: TextAlign.center,
             style: TextStyle(
                 height: 1.8,
@@ -216,5 +217,16 @@ class _DrawerPageState extends State<DrawerPage> {
         ],
       ),
     ));
+  }
+
+  String toCamelCase(String str) {
+    String s = str
+        .replaceAllMapped(
+            RegExp(
+                r'[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+'),
+            (Match m) =>
+                "${m[0][0].toUpperCase()}${m[0].substring(1).toLowerCase()}")
+        .replaceAll(RegExp(r'(_|-|\s)+'), ' ');
+    return s[0].toUpperCase() + s.substring(1);
   }
 }

@@ -60,6 +60,7 @@ class TrilhaRepository {
       }
     }
     await sharedPrefs.remove('savedTrilhas');
+    print("Trilha removida!");
     await sharedPrefs.save('savedTrilhas', savedTrilhas);
   }
 
@@ -88,7 +89,6 @@ class TrilhaRepository {
 
   Future<List<TrilhaModel>> getStorageRoutes() async {
     List<TrilhaModel> trilhas = [];
-
     if (savedRoutes == null) {
       try {
         savedRoutes =

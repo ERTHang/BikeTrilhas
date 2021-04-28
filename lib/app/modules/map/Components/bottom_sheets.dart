@@ -221,6 +221,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       ],
                     ),
                   ),
+
                   //Botão para remover trilha
                   Positioned(
                     top: 5,
@@ -1289,7 +1290,6 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
                   );
                   await allToDadosTrilhaModel();
                   Navigator.pop(context);
-                  bottomSheetTrilha(trilha);
                 }),
           ],
         ),
