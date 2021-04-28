@@ -319,7 +319,7 @@ class InfoRepository {
     if (difCod == null) {
       difCod = 1;
     }
-
+    
     for (var i = 1; i <= this.superficies.length; i++) {
       if (superficies.contains(this.superficies[i - 1].sup_nome)) {
         supInt.add(i);
@@ -344,7 +344,6 @@ class InfoRepository {
         break;
       }
     }
-
     if (subtipInt == null) subtipInt = 1;
 
     var geoString = "";
@@ -443,16 +442,35 @@ class InfoRepository {
   }
 
   Future<DadosWaypointModel> getDadosWaypoint(int codwp) async {
-    var result = (await dio.get('/server/naogeografico',
-            queryParameters: {"tipo": "waypoint", "cod": codwp}))
-        .data[0];
-    DadosWaypointModel model = DadosWaypointModel(codwp, result['cod'],
-        result['nome'], result['descricao'], result['numeroDeImagens']);
-    for (var i = 1; i <= model.numImagens; i++) {
-      model.imagens.add(URL_BASE + 'server/byteimage/$i/$codwp');
-    }
-    model.categorias = getCategoria(result['categoriaWaypoint']);
+    if (await isOnline()) {
+      var result = (await dio.get('/server/naogeografico',
+              queryParameters: {"tipo": "waypoint", "cod": codwp}))
+          .data[0];
+      DadosWaypointModel model = DadosWaypointModel(codwp, result['cod'],
+          result['nome'], result['descricao'], result['numeroDeImagens']);
+      for (var i = 1; i <= model.numImagens; i++) {
+        model.imagens.add(URL_BASE + 'server/byteimage/$i/$codwp');
+      }
+      model.categorias = getCategoria(result['categoriaWaypoint']);
 
-    return model;
+      return model;
+    }else{
+      var json = await sharedPrefs.read(codwp.toString());
+      DadosWaypointModel aux = dadosWaypointModelfromJson(json);
+      return aux;
+    }
   }
+}
+
+dadosWaypointModelfromJson(json){
+  int numImagens = json['numImagens']; 
+  DadosWaypointModel model = DadosWaypointModel(json['codwp'],json['codt'],json['nome'],json['descricao'],numImagens);
+  //var imagens = 'images/bola.png';
+  //print('>>>>>>>> $imagens');
+  if(numImagens >= 1){
+    model.imagens = ['images/bola.png'];
+  }
+  //model.categorias = json['categorias'];
+  //print('${model.imagens}');
+  return model;
 }

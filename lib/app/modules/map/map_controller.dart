@@ -142,7 +142,7 @@ abstract class _MapControllerBase with Store {
   }
 
   @action
-  getPolylines() {
+  getPolylines() async {
     polylines.clear();
     markers.clear();
     if (followTrail != null) {
@@ -194,9 +194,13 @@ abstract class _MapControllerBase with Store {
                   tappedTrilha == trilha.codt),
           markerId: MarkerId(waypoint.codigo.toString()),
           position: waypoint.posicao,
-          onTap: () {
+          onTap: () async {
             tappedTrilha = null;
-            bottomSheetWaypoint(waypoint.codigo);
+            if (await isOnline()) {
+              bottomSheetWaypoint(waypoint.codigo);
+            }else{
+              bottomSheetWaypointOffline(waypoint.codigo);
+            }
             tappedWaypoint = waypoint.codigo;
             state();
           },
