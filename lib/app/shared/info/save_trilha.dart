@@ -1,6 +1,6 @@
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 
 //codigosTrilhasSalvas irá guardar valores inteiros dos códigos das trilhas salvas
@@ -135,9 +135,7 @@ allToDadosTrilhaModel() async {
       }
     } else if (codigosTrilhasSalvas.length < dadosTrilhasModel.length) {
       dadosTrilhasModel = [];
-      for (int i = 0;
-          i < codigosTrilhasSalvas.length;
-          i++) {
+      for (int i = 0; i < codigosTrilhasSalvas.length; i++) {
         Map<String, dynamic> mapa =
             await sharedPrefs.read(codigosTrilhasSalvas[i].toString());
         DadosTrilhaModel trilha = DadosTrilhaModel(

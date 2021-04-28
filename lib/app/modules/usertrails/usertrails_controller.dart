@@ -4,10 +4,9 @@ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dar
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -42,12 +41,15 @@ abstract class _UsertrailsControllerBase with Store {
     if (checkedTrails == null) {
       checkedTrails = 1;
       mapController.createdTrails.clear();
+      mapController.createdTrails
+          .addAll(await mapController.trilhaRepository.getRecordedTrails());
     }
 
     for (var trilha in mapController.createdTrails) {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
+          consumeTapEvents: true,
           polylineId: PolylineId("rota $i " + trilha.codt.toString()),
           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
           onTap: () {
@@ -100,22 +102,16 @@ abstract class _UsertrailsControllerBase with Store {
               FlatButton(
                   child: Text('Sim'),
                   onPressed: () {
-                    if (mapController.connectivityResult ==
-                        ConnectivityResult.none) {
-                      alert(context, "Dispositivo Offline");
-                    } else {
-                      mapController.update = false;
-                      mapController.modelTrilha = DadosTrilhaModel(
-                          trilha.codt,
-                          trilha.nome,
-                          "",
-                          totalDistance(trilha.polylineCoordinates[0]),
-                          0,
-                          'Trilha');
-                      Navigator.pop(context);
-                      Modular.to.pushNamed('/map/editor');
-                    }
+                    mapController.update = false;
+                    mapController.modelTrilha = DadosTrilhaModel(
+                        trilha.codt,
+                        trilha.nome,
+                        "",
+                        totalDistance(trilha.polylineCoordinates[0]),
+                        0,
+                        'Trilha');
                     Navigator.pop(context);
+                    Modular.to.pushNamed('/map/editor');
                   }),
             ],
           ),
@@ -138,6 +134,6 @@ abstract class _UsertrailsControllerBase with Store {
       total += distance(lista[i].latitude, lista[i].longitude,
           lista[i + 1].latitude, lista[i + 1].longitude);
     }
-    return total;
+    return num.parse(total.toStringAsFixed(2));
   }
 }
