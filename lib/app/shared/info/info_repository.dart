@@ -1,10 +1,13 @@
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
-import 'package:dio/dio.dart';
-import '../utils/constants.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:dio/dio.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../utils/constants.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 
 var connectivityResult;
@@ -20,6 +23,7 @@ class InfoRepository {
   List<Regiao> regioes = [];
   List<Superficie> superficies = [];
   List<Dificuldade> dificuldades = [];
+  List<Cidade> cidades = [];
 
   Future<bool> getModels() async {
     var result;
@@ -32,6 +36,10 @@ class InfoRepository {
       return false;
     }
     try {
+      result = await dio.get('/server/cidade');
+      for (var json in (result.data as List)) {
+        cidades.add(Cidade(json["cidCod"], json["cidNome"]));
+      }
       result = await dio.get('/server/bairro');
       for (var json in (result.data as List)) {
         bairros.add(Bairro(json["baiCod"], json["baiNome"]));
@@ -60,6 +68,14 @@ class InfoRepository {
       return false;
     }
     return true;
+  }
+
+  List<String> getCidades() {
+    List<String> list = [];
+    for (var cid in cidades) {
+      list.add(cid.cid_nome);
+    }
+    return list;
   }
 
   List<String> getCategorias() {
@@ -177,6 +193,15 @@ class InfoRepository {
     return '';
   }
 
+  String getCidade(cod) {
+    for (var cid in cidades) {
+      if (cod == cid.cid_cod) {
+        return cid.cid_nome;
+      }
+    }
+    return '';
+  }
+
   Future<bool> updateDadosWaypoint(int codwp, int codt, String descricao,
       String nome, List<String> categorias) async {
     List<int> catInt = [];
@@ -261,6 +286,94 @@ class InfoRepository {
         .data;
   }
 
+  Future<int> uploadTrilha(
+    List<LatLng> geometria,
+    String nome,
+    String descricao,
+    String tipo,
+    String dif,
+    List<String> superficies,
+    List<String> bairros,
+    List<String> regioes,
+    String subtipo,
+    double comprimento,
+    double desnivel,
+    int cidade,
+  ) async {
+    int cidCod, tipCod, difCod, subtipInt;
+    List<int> supInt = [];
+    List<int> baiInt = [];
+    List<int> regInt = [];
+    tipCod = (tipo == 'Ciclovia')
+        ? 2
+        : (tipo == 'Trilha')
+            ? 1
+            : 3;
+
+    for (var i = 1; i <= this.dificuldades.length; i++) {
+      if (dif == this.dificuldades[i - 1].dif_nome) {
+        difCod = i;
+      }
+    }
+
+    if (difCod == null) {
+      difCod = 1;
+    }
+    
+    for (var i = 1; i <= this.superficies.length; i++) {
+      if (superficies.contains(this.superficies[i - 1].sup_nome)) {
+        supInt.add(i);
+      }
+    }
+
+    for (var i = 1; i <= this.bairros.length; i++) {
+      if (bairros.contains(this.bairros[i - 1].bai_nome)) {
+        baiInt.add(i);
+      }
+    }
+
+    for (var i = 1; i <= this.regioes.length; i++) {
+      if (regioes.contains(this.regioes[i - 1].reg_nome)) {
+        regInt.add(i);
+      }
+    }
+
+    for (var i = 1; i <= this.subtipos.length; i++) {
+      if (subtipo == subtipos[i - 1].subtip_nome) {
+        subtipInt = i;
+        break;
+      }
+    }
+    if (subtipInt == null) subtipInt = 1;
+
+    var geoString = "";
+    for (var ponto in geometria) {
+      if (geoString != "") {
+        geoString += ", ";
+      }
+      geoString += "${ponto.longitude} ${ponto.latitude}";
+    }
+
+    var result = (await dio.post('/server/trilhatemp', data: {
+      "comprimento": comprimento,
+      "desnivel": desnivel,
+      "nome": nome,
+      "descricao": descricao,
+      "tip_cod": tipCod,
+      "dif_cod": difCod,
+      "cid_cod": cidCod,
+      "superficies": supInt,
+      "bairros": baiInt,
+      "regioes": regInt,
+      "subtip_cod": subtipInt,
+      "geometria": [geoString]
+    }));
+    if (result.statusCode == 200) {
+      mapController.trilhas.value.add(TrilhaModel(result.data, nome));
+    }
+    return result.data;
+  }
+
   //Verificar se esta online ou offline
   Future<DadosTrilhaModel> getDadosTrilha(int codt) async {
     if (await isOnline()) {
@@ -299,7 +412,7 @@ class InfoRepository {
           result['desnivel'],
           result['tipo'],
         );
-
+        print(result['bairros']);
         model.regioes = getRegiaoTrilhasOffline(result['regioes']);
         model.superficies = getSuperficieTrilhasOffline(result['superficies']);
         model.bairros = getBairrosTrilhasOffline(result['bairros']);
@@ -328,78 +441,36 @@ class InfoRepository {
     }
   }
 
-  void updateDesnivel(List<TrilhaModel> cods) async {
-    DadosTrilhaModel aux;
-    double totalElevation = 0;
-    int difCod;
-    int n = 0;
-    int tipCod;
-
-    for (var cod in cods) {
-      aux = await getDadosTrilha(cod.codt);
-      for (var i = 1; i <= this.dificuldades.length; i++) {
-        if (aux.dificuldade == this.dificuldades[i - 1].dif_nome) {
-          difCod = i;
-        }
-      }
-
-      tipCod = (aux.tipo == 'Ciclovia')
-          ? 2
-          : (aux.tipo == 'Trilha')
-              ? 1
-              : 3;
-
-      if (aux.desnivel == 0) {
-        String location = "";
-        for (var coordList in cod.polylineCoordinates) {
-          for (var coord in coordList) {
-            n++;
-            if (location.length == 0) {
-              location = "${coord.latitude},${coord.longitude}";
-            } else {
-              location = location + "|${coord.latitude},${coord.longitude}";
-            }
-          }
-        }
-        Dio elevationDio = Dio();
-        String url =
-            "https://maps.googleapis.com/maps/api/elevation/json?locations=$location&key=AIzaSyAntIVRGjlCV7KDl9LyWyC-9IehpPTIEzM";
-        var elevationPoints = (await elevationDio.get(url)).data['results'];
-        for (var result in elevationPoints) {
-          totalElevation += result['elevation'];
-        }
-      }
-      await dio.put('/server/dados/${cod.codt}', data: {
-        "codt": cod.codt,
-        "descricao": aux.descricao,
-        "nome": aux.nome,
-        "difCod": difCod,
-        "tipo": tipCod,
-        "desnivel": totalElevation / n,
-      });
-    }
-  }
-
   Future<DadosWaypointModel> getDadosWaypoint(int codwp) async {
-    var result = (await dio.get('/server/naogeografico',
-            queryParameters: {"tipo": "waypoint", "cod": codwp}))
-        .data[0];
-    DadosWaypointModel model = DadosWaypointModel(codwp, result['cod'],
-        result['nome'], result['descricao'], result['numeroDeImagens']);
-    for (var i = 1; i <= model.numImagens; i++) {
-      model.imagens.add(URL_BASE + '/server/byteimage/$i/$codwp');
-    }
-    model.categorias = getCategoria(result['categoriaWaypoint']);
+    if (await isOnline()) {
+      var result = (await dio.get('/server/naogeografico',
+              queryParameters: {"tipo": "waypoint", "cod": codwp}))
+          .data[0];
+      DadosWaypointModel model = DadosWaypointModel(codwp, result['cod'],
+          result['nome'], result['descricao'], result['numeroDeImagens']);
+      for (var i = 1; i <= model.numImagens; i++) {
+        model.imagens.add(URL_BASE + 'server/byteimage/$i/$codwp');
+      }
+      model.categorias = getCategoria(result['categoriaWaypoint']);
 
-    return model;
+      return model;
+    }else{
+      var json = await sharedPrefs.read(codwp.toString());
+      DadosWaypointModel aux = dadosWaypointModelfromJson(json);
+      return aux;
+    }
   }
 }
 
-//Retorna os dados de como o usuario está conectado com a internet ou offline
-isOnline() async {
-  connectivityResult = await (Connectivity().checkConnectivity());
-  if (connectivityResult == ConnectivityResult.none) {
-    return false;
+dadosWaypointModelfromJson(json){
+  int numImagens = json['numImagens']; 
+  DadosWaypointModel model = DadosWaypointModel(json['codwp'],json['codt'],json['nome'],json['descricao'],numImagens);
+  //var imagens = 'images/bola.png';
+  //print('>>>>>>>> $imagens');
+  if(numImagens >= 1){
+    model.imagens = ['images/bola.png'];
   }
-  return true;
+  //model.categorias = json['categorias'];
+  //print('${model.imagens}');
+  return model;
 }

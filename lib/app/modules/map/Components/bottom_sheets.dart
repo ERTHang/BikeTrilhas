@@ -1,4 +1,5 @@
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
@@ -6,7 +7,9 @@ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
@@ -285,6 +288,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         icon: Icon(Icons.edit),
                         onPressed: () {
                           Navigator.pop(context);
+                          mapController.update = true;
                           Modular.to.pushNamed('/map/editor');
                         },
                       ),
@@ -452,8 +456,12 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       icon: icone,
                       iconSize: 25,
                       onPressed: () async {
-                        salvarTrilhaMsg('Deseja salvar a trilha ${trilha.nome}',
-                            context, trilhaRepository, trilha);
+                        salvarTrilhaMsg(
+                          'Deseja salvar a trilha ${trilha.nome}',
+                          context,
+                          trilhaRepository,
+                          trilha,
+                        );
                       },
                     ),
                   ),
@@ -578,6 +586,7 @@ bottomSheetWaypoint(int codt) async {
                 Container(
                   color: Colors.white,
                   width: MediaQuery.of(context).size.width,
+                  height: 100,
                   padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -800,6 +809,253 @@ bottomSheetWaypoint(int codt) async {
   }
 }
 
+bottomSheetWaypointOffline(int codt) async {
+  mapController.modelTrilha = null;
+  mapController.sheet =
+      mapController.scaffoldState.currentState.showBottomSheet((context) {
+    return FutureBuilder(
+      future: getDataWaypoint(codt),
+      builder: (context, snapshot) {
+        Widget wid;
+        if (snapshot.hasData) {
+          String categorias = '';
+          if (mapController.modelWaypoint.categorias.isNotEmpty) {
+            categorias = mapController.modelWaypoint.categorias[0];
+            for (var i = 1;
+                i < mapController.modelWaypoint.categorias.length;
+                i++) {
+              categorias += ', ' + mapController.modelWaypoint.categorias[i];
+            }
+          }
+          wid = ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              child: Stack(children: <Widget>[
+                Container(
+                  color: Colors.white,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      RichText(
+                          text: TextSpan(
+                              text: 'Nome: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                              children: <TextSpan>[
+                            TextSpan(
+                                text: mapController.modelWaypoint.nome,
+                                style: TextStyle(fontWeight: FontWeight.normal))
+                          ])),
+                      Visibility(
+                        visible:
+                            mapController.modelWaypoint.descricao.isNotEmpty,
+                        child: RichText(
+                            text: TextSpan(
+                                text: 'Descrição: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: mapController.modelWaypoint.descricao,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                      ),
+                      Visibility(
+                        visible: categorias.isNotEmpty,
+                        child: RichText(
+                            text: TextSpan(
+                                text: 'Categorias: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                                children: <TextSpan>[
+                              TextSpan(
+                                  text: categorias,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.normal))
+                            ])),
+                      ),
+                      Visibility(
+                        visible: mapController.modelWaypoint.imagens.isNotEmpty,
+                        child: RichText(
+                            text: TextSpan(
+                          text: mapController.modelWaypoint.imagens.length == 1
+                              ? 'Imagem: '
+                              : 'Imagens: ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        )),
+                      ),
+                      Visibility(
+                          visible:
+                              mapController.modelWaypoint.imagens.length >= 1,
+                          maintainState: false,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                                children: mapController.modelWaypoint.imagens
+                                    .map((e) => GestureDetector(
+                                          child: Hero(
+                                            tag: e,
+                                            child: Image.asset(
+                                              e,
+                                              height: 80,
+                                              width: 80,
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            showDialog(
+                                                context: mapController
+                                                    .scaffoldState
+                                                    .currentContext,
+                                                builder: (_) {
+                                                  return SimpleDialog(
+                                                    contentPadding:
+                                                        EdgeInsets.all(0),
+                                                    children: <Widget>[
+                                                      Container(
+                                                        child: Stack(
+                                                          children: <Widget>[
+                                                            PhotoView(
+                                                              imageProvider:
+                                                                  CachedNetworkImageProvider(
+                                                                      e),
+                                                              minScale:
+                                                                  PhotoViewComputedScale
+                                                                      .covered,
+                                                            ),
+                                                            Positioned(
+                                                              top: 5,
+                                                              right: 5,
+                                                              child: IconButton(
+                                                                  icon: Icon(
+                                                                    Icons.close,
+                                                                    color: Colors
+                                                                        .red,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  }),
+                                                            ),
+                                                          ],
+                                                          fit: StackFit.expand,
+                                                        ),
+                                                        height: MediaQuery.of(
+                                                                    mapController
+                                                                        .scaffoldState
+                                                                        .currentContext)
+                                                                .size
+                                                                .height *
+                                                            0.7,
+                                                        width: MediaQuery.of(
+                                                                    mapController
+                                                                        .scaffoldState
+                                                                        .currentContext)
+                                                                .size
+                                                                .width *
+                                                            0.7,
+                                                      ),
+                                                    ],
+                                                  );
+                                                });
+                                          },
+                                        ))
+                                    .toList()),
+                          )),
+                    ],
+                  ),
+                ),
+                Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_downward),
+                      color: Colors.blue,
+                      onPressed: () {
+                        mapController.sheet = null;
+                        Navigator.pop(context);
+                        mapController.nameSheet = mapController
+                            .scaffoldState.currentState
+                            .showBottomSheet((context) {
+                          return ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20)),
+                              child: Container(
+                                color: Colors.white,
+                                width: MediaQuery.of(mapController
+                                            .scaffoldState.currentContext)
+                                        .size
+                                        .width *
+                                    0.8,
+                                child: ListTile(
+                                  title: Text(mapController.modelWaypoint.nome),
+                                  onTap: () {
+                                    mapController.nameSheet = null;
+                                    bottomSheetWaypoint(codt);
+                                  },
+                                ),
+                              ));
+                        });
+                      },
+                    )),
+                Positioned(
+                    bottom: 44,
+                    right: 10,
+                    child: IconButton(
+                      color: Colors.blue,
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Modular.to.pushNamed('/map/editorwaypoint');
+                      },
+                    ))
+              ]));
+        } else {
+          wid = ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+              child: Container(
+                color: Colors.white,
+                height:
+                    MediaQuery.of(mapController.scaffoldState.currentContext)
+                            .size
+                            .height *
+                        0.1,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ));
+        }
+        return wid;
+      },
+    );
+  }, backgroundColor: Colors.transparent);
+  final auxSheet = mapController.sheet;
+  final auxNameSheet = mapController.nameSheet;
+  if (auxSheet != null) {
+    auxSheet.closed.whenComplete(() {
+      mapController.tappedWaypoint = null;
+      mapController.sheet = null;
+    });
+  }
+  if (auxNameSheet != null) {
+    auxNameSheet.closed.whenComplete(() {
+      mapController.tappedWaypoint = null;
+      mapController.nameSheet = null;
+    });
+  }
+}
+
 bottomSheetTempTrail(
     TrilhaModel trilha, GlobalKey<ScaffoldState> keyState, Function state) {
   mapController.modelTrilha = null;
@@ -834,6 +1090,22 @@ bottomSheetTempTrail(
               ],
             ),
           ),
+          Visibility(
+            child: Positioned(
+              bottom: 44,
+              right: 44,
+              child: IconButton(
+                icon: Icon(
+                  Icons.upload_rounded,
+                  color: Colors.blue,
+                ),
+                onPressed: () {
+                  checkUpload(context, trilha);
+                },
+              ),
+            ),
+            visible: trilha.codt >= 2000000,
+          ),
           Positioned(
             bottom: 44,
             right: 10,
@@ -843,14 +1115,24 @@ bottomSheetTempTrail(
                 color: Colors.red,
               ),
               onPressed: () {
-                mapController.createdTrails.remove(trilha);
+                if (trilha.codt >= 2000000) {
+                  mapController.createdTrails.remove(trilha);
 
-                mapController.trilhaRepository.deleteTrilha(trilha.codt);
+                  mapController.trilhaRepository
+                      .deleteRecordedTrail(trilha.codt);
 
-                mapController.getPolylines();
-                mapController.sheet = null;
-                state();
-                Navigator.of(context).pop();
+                  mapController.sheet = null;
+                  state();
+                  Navigator.of(context).pop();
+                } else {
+                  mapController.createdRoutes.remove(trilha);
+
+                  mapController.trilhaRepository.deleteRoute(trilha.codt);
+
+                  mapController.sheet = null;
+                  state();
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ),
@@ -933,11 +1215,15 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
                   await deleteTrilha(codt);
                   await trilhaRepository.deleteTrail(codt);
                   await allToDadosTrilhaModel();
+                  if (await isOnline()) {
+                    mapController.trilhas.value.remove(trilha);
+                  }
+                  mapController.getPolylines();
+                  mapController.state();
                   Navigator.pop(context);
-                  //mapController.tappedTrilha = null;
-                  //mapController.tappedWaypoint = null;
                   mapController.sheet.close();
                   mapController.state();
+                  //
                 }),
           ],
         ),
@@ -946,7 +1232,27 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
   );
 }
 
-salvarTrilhaMsg(msg, context, trilhaRepository, trilha) async {
+salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
+  List<DadosWaypointModel> dadosWaypointModel = [];
+  int qntWaypoints = trilha.waypoints.length;
+  if (qntWaypoints > 0) {
+    for (int i = 0; i < qntWaypoints; i++) {
+      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
+      dadosWaypointModel.add(o);
+    }
+  }
+  for (int i = 0; i < dadosWaypointModel.length; i++) {
+    print('>> ${dadosWaypointModel[i].codwp.toString()}');
+    var wayPointJson = wayPointToJson(dadosWaypointModel[i]);
+    if (!(await sharedPrefs.haveKey('${dadosWaypointModel[i].codwp}'))) {
+      await sharedPrefs.save(
+          dadosWaypointModel[i].codwp.toString(), wayPointJson);
+      print('Ola');
+    } else {
+      print('Ja possui a chave');
+    }
+  }
+
   await getPrefs(context);
   await showDialog(
     context: context,
@@ -990,4 +1296,25 @@ salvarTrilhaMsg(msg, context, trilhaRepository, trilha) async {
       );
     },
   );
+}
+
+Map<String, dynamic> wayPointToJson(DadosWaypointModel waypoint) {
+  return {
+    'codwp': waypoint.codwp,
+    'codt': waypoint.codt,
+    'nome': waypoint.nome,
+    'descricao': waypoint.descricao,
+    'numImagens': waypoint.numImagens,
+    'imagens': waypoint.imagens,
+    'categorias': waypoint.categorias,
+  };
+}
+
+checkUpload(context, trilha) async {
+  if (!await isOnline()) {
+    alert(context, "Dispositivo Offline");
+  } else {
+    UsertrailsController usertrailsController = Modular.get();
+    usertrailsController.uploadTrilha(context, trilha);
+  }
 }

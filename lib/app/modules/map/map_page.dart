@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:background_location/background_location.dart' as bglocation;
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
+import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +31,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController mapController;
   int n = 0;
-  bool tracking;
+  bool tracking, changeButton = false, paused = false;
   StreamSubscription<LocationData> subscription;
   Location location = new Location();
 
@@ -133,55 +135,125 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               return _map();
             },
           ),
+          //StopButton
+          AnimatedPositioned(
+            bottom: 10,
+            right: changeButton ? 145.0 : 10.0,
+            duration: const Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(Size(50, 50)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(360))),
+              ),
+              onPressed: () {
+                setState(() {
+                  tracking = false;
+                  changeButton = false;
+                  paused = false;
+                });
+                bglocation.BackgroundLocation.stopLocationService();
+                store.nomeTrilha(context);
+              },
+              child: Icon(Icons.stop),
+            ),
+          ),
+          //PauseButton
+          AnimatedPositioned(
+            bottom: 10,
+            right: changeButton ? 80.0 : 10.0,
+            duration: const Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(Size(50, 50)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                elevation: MaterialStateProperty.all(0),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(360))),
+              ),
+              onPressed: () {
+                if (!paused) {
+                  bglocation.BackgroundLocation.stopLocationService();
+                } else {
+                  store.followTrail.polylineCoordinates.add([]);
+                  bglocation.BackgroundLocation.startLocationService(
+                      distanceFilter: 6);
+                }
+                setState(() {
+                  paused = !paused;
+                });
+              },
+              child: (!paused) ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+            ),
+          ),
+
           // UserRoute
           Positioned(
             bottom: 10,
             right: 10,
-            child: ButtonTheme(
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(Size(50, 50)),
-                  backgroundColor: MaterialStateProperty.all(Colors.blue),
-                  elevation: MaterialStateProperty.all(5),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(360))),
-                ),
-                onPressed: () {
-                  if (tracking) {
-                    store.createdTrails.add(store.followRoute);
-                    store.trilhaRepository.saveRoute(store.followRoute);
-                    store.followRoute = null;
-                    subscription.cancel();
-                    Modular.to.pushNamed('/usertrail');
-                  } else {
-                    store.followRoute =
-                        TrilhaModel(2000000 + n, 'followRoute $n');
+            child: ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(Size(50, 50)),
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                elevation: MaterialStateProperty.all(5),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(360))),
+              ),
+              onPressed: () {
+                if (tracking) {
+                  setState(() {
+                    changeButton = !changeButton;
+                  });
+                } else {
+                  store.followTrail =
+                      TrilhaModel(2000000 + n, 'followRoute $n');
+                  n++;
 
-                    store.followRoute.polylineCoordinates = [
-                      [store.position.value.target]
-                    ];
-                    checkPermission(location);
-                    subscription =
-                        location.onLocationChanged.listen((position) {
-                      // ignore: missing_required_param
-                      centerScreen(Position(
-                          latitude: position.latitude,
-                          longitude: position.longitude));
-                      setState(() {
-                        store.followRoute.polylineCoordinates.last
-                            .add(LatLng(position.latitude, position.longitude));
+                  store.followTrail.polylineCoordinates = [[]];
+                  addInitialLocation(
+                      store.followTrail.polylineCoordinates.last);
+                  bglocation.BackgroundLocation.getPermissions(
+                    onGranted: () {
+                      bglocation.BackgroundLocation.setAndroidNotification(
+                        title: "Gravando trilha",
+                        message:
+                            "Estamos obtendo sua localização para gravar a trilha",
+                        icon: "images/res/mipmap-xxxhdpi/launcher_icon.png",
+                      );
+                      bglocation.BackgroundLocation.startLocationService(
+                          distanceFilter: 6);
+                      bglocation.BackgroundLocation.getLocationUpdates(
+                          (bglocation.Location location) {
+                        // ignore: missing_required_param
+                        centerScreen(Position(
+                            longitude: location.longitude,
+                            latitude: location.latitude));
+                        setState(() {
+                          store.followTrail.polylineCoordinates.last.add(
+                              LatLng(location.latitude, location.longitude));
+                        });
                       });
-                    });
-                  }
+                    },
+                    onDenied: () {
+                      alert(
+                          context, "Permissões negedas, impossível continuar");
+                    },
+                  );
                   setState(() {
                     tracking = !tracking;
                   });
-                },
-                child: Icon(
-                  Icons.track_changes,
-                  color: (tracking) ? Colors.green : Colors.white,
-                  size: 30,
-                ),
+                }
+              },
+              child: Icon(
+                Icons.track_changes,
+                color: (tracking)
+                    ? ((paused) ? Colors.yellow : Colors.green)
+                    : Colors.white,
+                size: 30,
               ),
             ),
           ),
@@ -401,4 +473,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   }
 
   await(Future<ConnectivityResult> checkConnectivity) {}
+}
+
+addInitialLocation(List<LatLng> lista) async {
+  GeolocatorService()
+      .getInitialLocation()
+      .then((value) => lista.add(LatLng(value.latitude, value.longitude)));
 }

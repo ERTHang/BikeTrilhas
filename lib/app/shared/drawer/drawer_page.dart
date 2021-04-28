@@ -1,10 +1,10 @@
-import 'dart:core';
-import 'dart:core';
 
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -98,7 +98,7 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () async {
               if (draw.value != 1) {
-                if (await isOnline() == true) {
+                if (await isOnline()) {
                   Navigator.pop(context);
                   Modular.to.pushNamed('/filter');
                 } else {
@@ -117,7 +117,7 @@ class _DrawerPageState extends State<DrawerPage> {
               Color cor;
               cor = (draw.value == 2) ? Colors.white : Colors.black;
               return Text(
-                'Suas Rotas',
+                'Rotas',
                 style: TextStyle(
                     height: 1.8,
                     fontSize: 18,
@@ -128,7 +128,32 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () {
               if (draw.value != 2) {
-                draw.value = 2;
+                Navigator.pop(context);
+                Modular.to.pushNamed("/userroute");
+              }
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.track_changes_rounded,
+              color: Colors.black,
+              size: 40,
+            ),
+            title: Observer(builder: (_) {
+              Color cor;
+              cor = (draw.value == 10) ? Colors.white : Colors.black;
+              return Text(
+                'Trilhas',
+                style: TextStyle(
+                    height: 1.8,
+                    fontSize: 18,
+                    color: cor,
+                    fontWeight: FontWeight.bold),
+              );
+            }),
+            dense: true,
+            onTap: () {
+              if (draw.value != 10) {
                 Navigator.pop(context);
                 Modular.to.pushNamed("/usertrail");
               }

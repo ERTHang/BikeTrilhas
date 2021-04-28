@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
-import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,12 +22,12 @@ class _UsertrailsPageState
 
   @override
   Widget build(BuildContext context) {
-    controller.state = _func;
-    controller.getPolylines();
+    store.state = _func;
+    store.getPolylines();
     return Scaffold(
-        key: controller.scaffoldState,
+        key: store.scaffoldState,
         appBar: AppBar(
-          title: Text('Suas Rotas'),
+          title: Text('Suas Trilhas'),
           centerTitle: true,
         ),
         body: Stack(
@@ -36,144 +36,40 @@ class _UsertrailsPageState
             GoogleMap(
               onTap: (latlng) {
                 setState(() {
-                  if (controller.mapController.sheet != null) {
-                    controller.mapController.sheet.close();
-                    controller.mapController.sheet = null;
-                    controller.tappedTrilha = null;
+                  if (store.mapController.sheet != null) {
+                    store.mapController.sheet.close();
+                    store.mapController.sheet = null;
+                    store.tappedTrilha = null;
                   }
-                  if (controller.mapController.nameSheet != null) {
-                    controller.mapController.nameSheet.close();
-                    controller.mapController.nameSheet = null;
-                    controller.tappedTrilha = null;
-                  }
-                  if (routeState != 0) {
-                    controller.routeMarkers.add(Marker(
-                        markerId: MarkerId('destino $routeState'),
-                        position: latlng));
-                    controller.routePoints.add(latlng);
-                    destinos++;
-                    routeState++;
+                  if (store.mapController.nameSheet != null) {
+                    store.mapController.nameSheet.close();
+                    store.mapController.nameSheet = null;
+                    store.tappedTrilha = null;
                   }
                 });
               },
               mapToolbarEnabled: false,
               myLocationButtonEnabled: false,
               myLocationEnabled: true,
-              polylines: controller.polylines,
-              markers: (routeState == 0)
-                  ? controller.markers
-                  : controller.routeMarkers,
+              polylines: store.polylines,
+              markers: (routeState == 0) ? store.markers : store.routeMarkers,
               mapType: MapType.normal,
-              initialCameraPosition: (mapController.newTrail != null)
+              initialCameraPosition: (mapController.followTrail != null)
                   ? CameraPosition(
-                      target: mapController.newTrail.waypoints[0].posicao,
+                      target: mapController.followTrail.polylineCoordinates[0]
+                          [0],
                       zoom: 14)
-                  : controller.mapController.position.value,
+                  : store.mapController.position.value,
               onMapCreated: (GoogleMapController mapcontroller) {
-                if (controller.tappedTrilha != null) {
-                  bottomSheetTempTrail(controller.mapController.newTrail,
-                      controller.scaffoldState, controller.state);
+                if (store.tappedTrilha != null) {
+                  checkUpload();
+                  bottomSheetTempTrail(store.mapController.followTrail,
+                      store.scaffoldState, store.state);
                 }
-                controller.mapController.newTrail = null;
+                store.mapController.followTrail = null;
+                store.mapController.state();
                 _controller.complete(mapcontroller);
               },
-            ),
-            Visibility(
-              child: Positioned(
-                bottom: 0,
-                left: 0,
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 500),
-                  height: (routeState == 0) ? 0 : 40,
-                  // width: (routeState == 0) ? 0 : 100,
-                  width: 90,
-                  curve: Curves.easeIn,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.only(topRight: Radius.circular(24)),
-                    color: (routeState >= 2) ? Colors.red : Colors.blue,
-                  ),
-                  child: Center(
-                    child: AnimatedCrossFade(
-                      firstChild: Text(
-                        (routeState == 0) ? '' : 'Origem',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                      secondChild: Text(
-                        'Destino $destinos',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                      crossFadeState: (routeState >= 2)
-                          ? CrossFadeState.showSecond
-                          : CrossFadeState.showFirst,
-                      duration: Duration(milliseconds: 500),
-                    ),
-                  ),
-                ),
-              ),
-              maintainState: false,
-            ),
-            Positioned(
-              bottom: 0,
-              child: Visibility(
-                child: RaisedButton(
-                  color: Colors.green,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24)),
-                  child: Text(
-                    "Criar",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () {
-                    routeState = 0;
-                    controller.getRoute();
-                  },
-                ),
-                visible: routeState > 2,
-                maintainSize: false,
-                maintainSemantics: false,
-                maintainInteractivity: false,
-              ),
-            ),
-            //botao rota
-            Positioned(
-              top: 5,
-              right: 5,
-              child: IconButton(
-                onPressed: () {
-                  controller.routePoints.clear();
-                  controller.routeMarkers.clear();
-                  destinos = 0;
-                  if (controller.mapController.sheet != null) {
-                    controller.mapController.sheet.close();
-                    controller.mapController.sheet = null;
-                    controller.tappedTrilha = null;
-                  }
-                  if (controller.mapController.nameSheet != null) {
-                    controller.mapController.nameSheet.close();
-                    controller.mapController.nameSheet = null;
-                    controller.tappedTrilha = null;
-                  }
-                  if (routeState == 0) {
-                    setState(() {
-                      routeState = 1;
-                    });
-                  } else {
-                    setState(() {
-                      controller.getPolylines();
-                      routeState = 0;
-                    });
-                  }
-                },
-                icon: Icon(
-                  (routeState == 0) ? Icons.directions : Icons.close,
-                  color: (routeState == 0) ? Colors.blue : Colors.red,
-                  size: 40,
-                ),
-              ),
             ),
           ],
         ));
@@ -181,5 +77,11 @@ class _UsertrailsPageState
 
   void _func() {
     setState(() {});
+  }
+
+  checkUpload() async {
+    if (await isOnline()) {
+      store.uploadTrilha(context, store.mapController.followTrail);
+    }
   }
 }
