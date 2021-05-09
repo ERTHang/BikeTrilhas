@@ -4,8 +4,8 @@ import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../utils/constants.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
@@ -287,19 +287,18 @@ class InfoRepository {
   }
 
   Future<int> uploadTrilha(
-    List<LatLng> geometria,
-    String nome,
-    String descricao,
-    String tipo,
-    String dif,
-    List<String> superficies,
-    List<String> bairros,
-    List<String> regioes,
-    String subtipo,
-    double comprimento,
-    double desnivel,
-    int cidade,
-  ) async {
+      List<LatLng> geometria,
+      String nome,
+      String descricao,
+      String tipo,
+      String dif,
+      List<String> superficies,
+      List<String> bairros,
+      List<String> regioes,
+      String subtipo,
+      double comprimento,
+      double desnivel,
+      int cidade) async {
     int cidCod, tipCod, difCod, subtipInt;
     List<int> supInt = [];
     List<int> baiInt = [];
@@ -319,7 +318,7 @@ class InfoRepository {
     if (difCod == null) {
       difCod = 1;
     }
-    
+
     for (var i = 1; i <= this.superficies.length; i++) {
       if (superficies.contains(this.superficies[i - 1].sup_nome)) {
         supInt.add(i);
@@ -368,9 +367,10 @@ class InfoRepository {
       "subtip_cod": subtipInt,
       "geometria": [geoString]
     }));
-    if (result.statusCode == 200) {
+    if (result.statusCode < 300) {
       mapController.trilhas.value.add(TrilhaModel(result.data, nome));
     }
+    mapController.createdTrails.clear();
     return result.data;
   }
 
@@ -454,7 +454,7 @@ class InfoRepository {
       model.categorias = getCategoria(result['categoriaWaypoint']);
 
       return model;
-    }else{
+    } else {
       var json = await sharedPrefs.read(codwp.toString());
       DadosWaypointModel aux = dadosWaypointModelfromJson(json);
       return aux;
@@ -462,12 +462,13 @@ class InfoRepository {
   }
 }
 
-dadosWaypointModelfromJson(json){
-  int numImagens = json['numImagens']; 
-  DadosWaypointModel model = DadosWaypointModel(json['codwp'],json['codt'],json['nome'],json['descricao'],numImagens);
+dadosWaypointModelfromJson(json) {
+  int numImagens = json['numImagens'];
+  DadosWaypointModel model = DadosWaypointModel(
+      json['codwp'], json['codt'], json['nome'], json['descricao'], numImagens);
   //var imagens = 'images/bola.png';
   //print('>>>>>>>> $imagens');
-  if(numImagens >= 1){
+  if (numImagens >= 1) {
     model.imagens = ['images/bola.png'];
   }
   //model.categorias = json['categorias'];

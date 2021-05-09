@@ -26,7 +26,10 @@ class _UserroutesPageState
     return Scaffold(
         key: controller.scaffoldState,
         appBar: AppBar(
-          title: Text('Suas Rotas'),
+          title: Text(
+            'Suas Rotas',
+            style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+          ),
           centerTitle: true,
         ),
         body: Stack(

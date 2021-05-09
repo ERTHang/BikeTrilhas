@@ -60,13 +60,13 @@ abstract class _FilterControllerBase with Store {
     }
 
     var filtros = await filterRepository.getFiltered([_data[0].modified],
-        [_data[1].modified], regiao, bairro, superficie, categoria, subtipo);
+        [_data[6].modified], regiao, bairro, superficie, categoria, subtipo);
     if (superficie.isNotEmpty ||
         bairro.isNotEmpty ||
         categoria.isNotEmpty ||
         regiao.isNotEmpty ||
         subtipo.isNotEmpty ||
-        _data[1].modified != 0) {
+        _data[6].modified != 0) {
       mapController.filtrar(
           filtros, false, value != mapController.typeNum, value);
     } else {

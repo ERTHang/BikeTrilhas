@@ -18,7 +18,10 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Filtros'),
+          title: Text(
+            'Filtros',
+            style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+          ),
           centerTitle: true,
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

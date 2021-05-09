@@ -58,6 +58,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.bairros,
           m.regioes,
           m.subtipo);
+      alertEdit(context, "Trilha editada com sucesso");
     } else {
       await _infoRepository.uploadTrilha(
           getTrilha(m.codt).polylineCoordinates[0],
@@ -72,8 +73,8 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.comprimento,
           m.desnivel,
           1);
+      alertEdit(context, "Upload realizado com sucesso");
     }
-    Modular.to.pop();
   }
 
   @override
@@ -528,4 +529,30 @@ class _RegContentState extends State<RegContent> {
       },
     );
   }
+}
+
+alertEdit(BuildContext context, String msg) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text("Sucesso"),
+          content: Text(
+            msg,
+          ),
+          actions: <Widget>[
+            FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Modular.to.pop();
+                })
+          ],
+        ),
+      );
+    },
+  );
 }

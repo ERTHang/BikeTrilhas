@@ -10,7 +10,6 @@ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -117,9 +116,9 @@ abstract class _MapControllerBase with Store {
             'Necessitamos da localização do usuário para o funcionamento do aplicativo');
       }
     }
-
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    var pos = await Geolocator.getLastKnownPosition();
+    print(pos);
+    return pos;
   }
 
   getRoute() async {
@@ -198,7 +197,7 @@ abstract class _MapControllerBase with Store {
             tappedTrilha = null;
             if (await isOnline()) {
               bottomSheetWaypoint(waypoint.codigo);
-            }else{
+            } else {
               bottomSheetWaypointOffline(waypoint.codigo);
             }
             tappedWaypoint = waypoint.codigo;

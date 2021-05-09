@@ -27,7 +27,10 @@ class _UsertrailsPageState
     return Scaffold(
         key: store.scaffoldState,
         appBar: AppBar(
-          title: Text('Suas Trilhas'),
+          title: Text(
+            'Suas Trilhas',
+            style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+          ),
           centerTitle: true,
         ),
         body: Stack(

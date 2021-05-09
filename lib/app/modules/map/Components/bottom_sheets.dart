@@ -912,6 +912,7 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
                     mapController.modelTrilha.superficies,
                   );
                   await allToDadosTrilhaModel();
+                  mapController.sheet.setState(() => {});
                   Navigator.pop(context);
                 }),
           ],
