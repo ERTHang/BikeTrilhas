@@ -9,7 +9,6 @@ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -57,7 +56,7 @@ abstract class _MapControllerBase with Store {
   TrilhaModel newTrail;
   TrilhaModel followTrail;
   bool update = false;
-  int distanceValue = 100;
+  ConnectivityResult connectivityResult;
 
   @action
   _MapControllerBase(
@@ -70,7 +69,8 @@ abstract class _MapControllerBase with Store {
     position = getUserPos().asObservable();
     filterClear = false;
     typeNum = 2;
-    if (await isOnline()) {
+    connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult != ConnectivityResult.none) {
       trilhas = trilhaRepository
           .getAllTrilhas()
           .timeout(Duration(seconds: 10))
@@ -247,7 +247,7 @@ abstract class _MapControllerBase with Store {
         cos((lat2 - lat1) * p) / 2 +
         cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
     var distanceInKM = 12742 * asin(sqrt(a));
-    return distanceInKM <= distanceValue;
+    return distanceInKM <= 1000;
   }
 
   bool isVisible(TrilhaModel trilha) {
