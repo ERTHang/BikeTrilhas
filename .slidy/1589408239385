@@ -1,0 +1,4 @@
+lib/app/shared/drawer/drawer_page.dart
+test/app/shared/drawer/drawer_page_test.dart
+lib/app/shared/drawer/drawer_controller.dart
+test/app/shared/drawer/drawer_controller_test.dart

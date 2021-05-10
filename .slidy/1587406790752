@@ -1,0 +1,5 @@
+lib/app/modules/camera/camera_module.dart
+lib/app/modules/camera/camera_page.dart
+test/app/modules/camera/camera_page_test.dart
+lib/app/modules/camera/camera_controller.dart
+test/app/modules/camera/camera_controller_test.dart

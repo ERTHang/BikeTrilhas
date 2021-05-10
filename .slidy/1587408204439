@@ -1,0 +1,4 @@
+lib/app/camera_loader/camera_loader_page.dart
+test/app/camera_loader/camera_loader_page_test.dart
+lib/app/camera_loader/camera_loader_controller.dart
+test/app/camera_loader/camera_loader_controller_test.dart

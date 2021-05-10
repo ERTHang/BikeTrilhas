@@ -1,0 +1,5 @@
+lib/app/modules/usertrails/usertrails_module.dart
+lib/app/modules/usertrails/usertrails_page.dart
+test/app/modules/usertrails/usertrails_page_test.dart
+lib/app/modules/usertrails/usertrails_controller.dart
+test/app/modules/usertrails/usertrails_controller_test.dart
