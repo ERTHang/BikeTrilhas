@@ -1209,22 +1209,6 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
 }
 
 salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
-  List<DadosWaypointModel> dadosWaypointModel = [];
-  int qntWaypoints = trilha.waypoints.length;
-  if (qntWaypoints > 0) {
-    for (int i = 0; i < qntWaypoints; i++) {
-      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
-      dadosWaypointModel.add(o);
-    }
-  }
-  for (int i = 0; i < dadosWaypointModel.length; i++) {
-    if (!(await sharedPrefs.haveKey('${dadosWaypointModel[i].codwp}'))) {
-      var wayPointJson = await wayPointToJson(dadosWaypointModel[i]);
-      await sharedPrefs.save(
-          dadosWaypointModel[i].codwp.toString(), wayPointJson);
-    }
-  }
-
   await getPrefs(context);
   await showDialog(
     context: context,
@@ -1247,6 +1231,24 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
             FlatButton(
                 child: Text('OK'),
                 onPressed: () async {
+                  List<DadosWaypointModel> dadosWaypointModel = [];
+                  int qntWaypoints = trilha.waypoints.length;
+                  if (qntWaypoints > 0) {
+                    for (int i = 0; i < qntWaypoints; i++) {
+                      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
+                      dadosWaypointModel.add(o);
+                    }
+                  }
+                  for (int i = 0; i < dadosWaypointModel.length; i++) {
+                    if (!(await sharedPrefs
+                        .haveKey('${dadosWaypointModel[i].codwp}'))) {
+                      var wayPointJson =
+                          await wayPointToJson(dadosWaypointModel[i]);
+                      await sharedPrefs.save(
+                          dadosWaypointModel[i].codwp.toString(), wayPointJson);
+                    }
+                  }
+
                   trilhaRepository.saveTrilha(trilha);
                   SaveTrilha(
                     context,
