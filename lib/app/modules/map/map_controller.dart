@@ -56,7 +56,7 @@ abstract class _MapControllerBase with Store {
   TrilhaModel newTrail;
   TrilhaModel followTrail;
   bool update = false;
-  ConnectivityResult connectivityResult;
+  int distanceValue = 100;
 
   @action
   _MapControllerBase(
@@ -69,8 +69,7 @@ abstract class _MapControllerBase with Store {
     position = getUserPos().asObservable();
     filterClear = false;
     typeNum = 2;
-    connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult != ConnectivityResult.none) {
+    if (await isOnline()) {
       trilhas = trilhaRepository
           .getAllTrilhas()
           .timeout(Duration(seconds: 10))
@@ -198,7 +197,7 @@ abstract class _MapControllerBase with Store {
             tappedTrilha = null;
             if (await isOnline()) {
               bottomSheetWaypoint(waypoint.codigo);
-            }else{
+            } else {
               bottomSheetWaypointOffline(waypoint.codigo);
             }
             tappedWaypoint = waypoint.codigo;
@@ -247,7 +246,7 @@ abstract class _MapControllerBase with Store {
         cos((lat2 - lat1) * p) / 2 +
         cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
     var distanceInKM = 12742 * asin(sqrt(a));
-    return distanceInKM <= 1000;
+    return distanceInKM <= distanceValue;
   }
 
   bool isVisible(TrilhaModel trilha) {

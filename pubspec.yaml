@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
+  background_location:
   location: ^4.1.1
   flutter_polyline_points: ^0.2.1
   url_launcher:
@@ -38,7 +39,6 @@ dependencies:
   mobx: ^1.2.1+4
   flutter_modular: ^3.0.1
   connectivity:
-  image_downloader: ^0.20.1
   flutter:
     sdk: flutter
 
