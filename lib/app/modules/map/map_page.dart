@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:background_location/background_location.dart' as bglocation;
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
+import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -153,7 +155,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   changeButton = false;
                   paused = false;
                 });
-                subscription.cancel();
+                bglocation.BackgroundLocation.stopLocationService();
                 store.nomeTrilha(context);
               },
               child: Icon(Icons.stop),
@@ -174,11 +176,12 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     borderRadius: BorderRadius.circular(360))),
               ),
               onPressed: () {
-                if (paused) {
-                  subscription.pause();
+                if (!paused) {
+                  bglocation.BackgroundLocation.stopLocationService();
                 } else {
                   store.followTrail.polylineCoordinates.add([]);
-                  subscription.resume();
+                  bglocation.BackgroundLocation.startLocationService(
+                      distanceFilter: 6);
                 }
                 setState(() {
                   paused = !paused;
@@ -208,21 +211,38 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 } else {
                   store.followTrail =
                       TrilhaModel(2000000 + n, 'followRoute $n');
+                  n++;
 
-                  store.followTrail.polylineCoordinates = [
-                    [store.position.value.target]
-                  ];
-                  checkPermission(location);
-                  subscription = location.onLocationChanged.listen((position) {
-                    // ignore: missing_required_param
-                    centerScreen(Position(
-                        latitude: position.latitude,
-                        longitude: position.longitude));
-                    setState(() {
-                      store.followTrail.polylineCoordinates.last
-                          .add(LatLng(position.latitude, position.longitude));
-                    });
-                  });
+                  store.followTrail.polylineCoordinates = [[]];
+                  addInitialLocation(
+                      store.followTrail.polylineCoordinates.last);
+                  bglocation.BackgroundLocation.getPermissions(
+                    onGranted: () {
+                      bglocation.BackgroundLocation.setAndroidNotification(
+                        title: "Gravando trilha",
+                        message:
+                            "Estamos obtendo sua localização para gravar a trilha",
+                        icon: "images/res/mipmap-xxxhdpi/launcher_icon.png",
+                      );
+                      bglocation.BackgroundLocation.startLocationService(
+                          distanceFilter: 6);
+                      bglocation.BackgroundLocation.getLocationUpdates(
+                          (bglocation.Location location) {
+                        // ignore: missing_required_param
+                        centerScreen(Position(
+                            longitude: location.longitude,
+                            latitude: location.latitude));
+                        setState(() {
+                          store.followTrail.polylineCoordinates.last.add(
+                              LatLng(location.latitude, location.longitude));
+                        });
+                      });
+                    },
+                    onDenied: () {
+                      alert(
+                          context, "Permissões negedas, impossível continuar");
+                    },
+                  );
                   setState(() {
                     tracking = !tracking;
                   });
@@ -231,7 +251,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               child: Icon(
                 Icons.track_changes,
                 color: (tracking)
-                    ? ((paused) ? Colors.red : Colors.green)
+                    ? ((paused) ? Colors.yellow : Colors.green)
                     : Colors.white,
                 size: 30,
               ),
@@ -347,7 +367,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             ),
           ),
           Visibility(
-            visible: ADMIN.contains(auth.user.email),
+            visible: admin == 1,
             child: Positioned(
               bottom: 70,
               right: 10,
@@ -359,7 +379,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 child: RaisedButton(
                   color: Colors.blue,
                   onPressed: () {
-                    // Modular.to.pushNamed('/photo'); //desabilitado devido à bugs do plugin
+                    Modular.to.pushNamed('/fotos');
                   },
                   child: Icon(
                     Icons.camera_alt,
@@ -453,4 +473,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   }
 
   await(Future<ConnectivityResult> checkConnectivity) {}
+}
+
+addInitialLocation(List<LatLng> lista) async {
+  GeolocatorService()
+      .getInitialLocation()
+      .then((value) => lista.add(LatLng(value.latitude, value.longitude)));
 }

@@ -1,10 +1,15 @@
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../utils/constants.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 
 var connectivityResult;
@@ -284,19 +289,19 @@ class InfoRepository {
   }
 
   Future<int> uploadTrilha(
-    List<LatLng> geometria,
-    String nome,
-    String descricao,
-    String tipo,
-    String dif,
-    List<String> superficies,
-    List<String> bairros,
-    List<String> regioes,
-    String subtipo,
-    double comprimento,
-    double desnivel,
-    int cidade,
-  ) async {
+      List<LatLng> geometria,
+      String nome,
+      String descricao,
+      String tipo,
+      String dif,
+      List<String> superficies,
+      List<String> bairros,
+      List<String> regioes,
+      String subtipo,
+      double comprimento,
+      double desnivel,
+      int cidade) async {
+    var auth = Modular.get<AuthController>();
     int cidCod, tipCod, difCod, subtipInt;
     List<int> supInt = [];
     List<int> baiInt = [];
@@ -311,6 +316,10 @@ class InfoRepository {
       if (dif == this.dificuldades[i - 1].dif_nome) {
         difCod = i;
       }
+    }
+
+    if (difCod == null) {
+      difCod = 1;
     }
 
     for (var i = 1; i <= this.superficies.length; i++) {
@@ -337,6 +346,7 @@ class InfoRepository {
         break;
       }
     }
+    if (subtipInt == null) subtipInt = 1;
 
     var geoString = "";
     for (var ponto in geometria) {
@@ -346,7 +356,7 @@ class InfoRepository {
       geoString += "${ponto.longitude} ${ponto.latitude}";
     }
 
-    return (await dio.post('/server/trilhatemp', data: {
+    var result = (await dio.post('/server/trilhatemp', data: {
       "comprimento": comprimento,
       "desnivel": desnivel,
       "nome": nome,
@@ -358,9 +368,14 @@ class InfoRepository {
       "bairros": baiInt,
       "regioes": regInt,
       "subtip_cod": subtipInt,
-      "geometria": [geoString]
-    }))
-        .data;
+      "geometria": [geoString],
+      "email": auth.user.email
+    }));
+    if (result.statusCode < 300) {
+      mapController.trilhas.value.add(TrilhaModel(result.data, nome));
+    }
+    mapController.createdTrails.clear();
+    return result.data;
   }
 
   //Verificar se esta online ou offline
@@ -401,7 +416,7 @@ class InfoRepository {
           result['desnivel'],
           result['tipo'],
         );
-
+        print(result['bairros']);
         model.regioes = getRegiaoTrilhasOffline(result['regioes']);
         model.superficies = getSuperficieTrilhasOffline(result['superficies']);
         model.bairros = getBairrosTrilhasOffline(result['bairros']);
@@ -459,13 +474,4 @@ dadosWaypointModelfromJson(json) {
     model.imagens = [json['imagens'][0].toString()];
   }
   return model;
-}
-
-//Retorna os dados de como o usuario está conectado com a internet ou offline
-isOnline() async {
-  connectivityResult = await (Connectivity().checkConnectivity());
-  if (connectivityResult == ConnectivityResult.none) {
-    return false;
-  }
-  return true;
 }

@@ -37,29 +37,35 @@ class _PhotoPageState extends ModularState<PhotoPage, PhotoController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Observer(
-        builder: (_) {
-          if (controller.initializeControllerFuture.error != null) {
-            return Center(
-              child: Text('Erro'),
-            );
-          }
-          if (controller.initializeControllerFuture == null) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return CameraPreview(controller.controller);
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera),
-        elevation: 5,
-        onPressed: () {
-          controller.takeShot();
-        },
-      ),
+      body: Observer(builder: (_) {
+        if (controller.initializeControllerFuture.error != null) {
+          return Center(
+            child: Text('Erro'),
+          );
+        }
+        if (controller.initializeControllerFuture == null) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return new Container(
+          height: MediaQuery.of(context).size.height,
+          child: new CameraPreview(store.controller,
+              child: Positioned(
+                bottom: 10,
+                left: 5,
+                right: 5,
+                child: FloatingActionButton(
+                  child: Icon(Icons.camera),
+                  elevation: 5,
+                  onPressed: () {
+                    controller.takeShot();
+                  },
+                ),
+              )),
+        );
+      }),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

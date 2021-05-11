@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -26,7 +27,10 @@ class _UsertrailsPageState
     return Scaffold(
         key: store.scaffoldState,
         appBar: AppBar(
-          title: Text('Suas Trilhas'),
+          title: Text(
+            'Suas Trilhas',
+            style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+          ),
           centerTitle: true,
         ),
         body: Stack(
@@ -61,11 +65,10 @@ class _UsertrailsPageState
                   : store.mapController.position.value,
               onMapCreated: (GoogleMapController mapcontroller) {
                 if (store.tappedTrilha != null) {
-                  store.uploadTrilha(context, store.mapController.followTrail);
+                  checkUpload();
                   bottomSheetTempTrail(store.mapController.followTrail,
                       store.scaffoldState, store.state);
                 }
-                store.mapController.followTrail = null;
                 _controller.complete(mapcontroller);
               },
             ),
@@ -75,5 +78,11 @@ class _UsertrailsPageState
 
   void _func() {
     setState(() {});
+  }
+
+  checkUpload() async {
+    if (await isOnline()) {
+      store.uploadTrilha(context, store.mapController.followTrail);
+    }
   }
 }

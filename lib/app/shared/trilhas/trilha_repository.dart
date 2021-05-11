@@ -23,7 +23,18 @@ class TrilhaRepository {
 
   int n = 10000;
 
-  void deleteTrilha(int codigo) {
+  void deleteRecordedTrail(int codigo) {
+    sharedPrefs.remove('recorded trail $codigo');
+    for (var i = 0; i < recordedTrails.codes.length; i++) {
+      if (recordedTrails.codes[i] == codigo) {
+        recordedTrails.codes.removeAt(i);
+      }
+    }
+    sharedPrefs.remove('recordedTrails');
+    sharedPrefs.save('recordedTrails', recordedTrails);
+  }
+
+  void deleteRoute(int codigo) {
     sharedPrefs.remove('route $codigo');
     for (var i = 0; i < savedRoutes.codes.length; i++) {
       if (savedRoutes.codes[i] == codigo) {
@@ -49,6 +60,7 @@ class TrilhaRepository {
       }
     }
     await sharedPrefs.remove('savedTrilhas');
+    print("Trilha removida!");
     await sharedPrefs.save('savedTrilhas', savedTrilhas);
   }
 
@@ -77,7 +89,6 @@ class TrilhaRepository {
 
   Future<List<TrilhaModel>> getStorageRoutes() async {
     List<TrilhaModel> trilhas = [];
-
     if (savedRoutes == null) {
       try {
         savedRoutes =
