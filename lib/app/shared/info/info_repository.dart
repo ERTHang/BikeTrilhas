@@ -470,12 +470,8 @@ dadosWaypointModelfromJson(json) {
   int numImagens = json['numImagens'];
   DadosWaypointModel model = DadosWaypointModel(
       json['codwp'], json['codt'], json['nome'], json['descricao'], numImagens);
-  //var imagens = 'images/bola.png';
-  //print('>>>>>>>> $imagens');
   if (numImagens >= 1) {
-    model.imagens = ['images/bola.png'];
+    model.imagens = [json['imagens'][0].toString()];
   }
-  //model.categorias = json['categorias'];
-  //print('${model.imagens}');
   return model;
 }

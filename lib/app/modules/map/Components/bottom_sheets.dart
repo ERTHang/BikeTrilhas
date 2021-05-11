@@ -1,3 +1,9 @@
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
@@ -282,7 +288,7 @@ bottomSheetWaypoint(int codt) async {
                 Container(
                   color: Colors.white,
                   width: MediaQuery.of(context).size.width,
-                  height: 100,
+                  height: 170,
                   padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -538,8 +544,9 @@ bottomSheetWaypointOffline(int codt) async {
                                     .map((e) => GestureDetector(
                                           child: Hero(
                                             tag: e,
-                                            child: Image.asset(
-                                              e,
+                                            child: Image.file(
+                                              File(mapController
+                                                  .modelWaypoint.imagens[0]),
                                               height: 80,
                                               width: 80,
                                             ),
@@ -558,9 +565,10 @@ bottomSheetWaypointOffline(int codt) async {
                                                         child: Stack(
                                                           children: <Widget>[
                                                             PhotoView(
-                                                              imageProvider:
-                                                                  CachedNetworkImageProvider(
-                                                                      e),
+                                                              imageProvider: FileImage(
+                                                                  File(mapController
+                                                                      .modelWaypoint
+                                                                      .imagens[0])),
                                                               minScale:
                                                                   PhotoViewComputedScale
                                                                       .covered,
@@ -856,26 +864,6 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
 }
 
 salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
-  List<DadosWaypointModel> dadosWaypointModel = [];
-  int qntWaypoints = trilha.waypoints.length;
-  if (qntWaypoints > 0) {
-    for (int i = 0; i < qntWaypoints; i++) {
-      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
-      dadosWaypointModel.add(o);
-    }
-  }
-  for (int i = 0; i < dadosWaypointModel.length; i++) {
-    print('>> ${dadosWaypointModel[i].codwp.toString()}');
-    var wayPointJson = wayPointToJson(dadosWaypointModel[i]);
-    if (!(await sharedPrefs.haveKey('${dadosWaypointModel[i].codwp}'))) {
-      await sharedPrefs.save(
-          dadosWaypointModel[i].codwp.toString(), wayPointJson);
-      print('Ola');
-    } else {
-      print('Ja possui a chave');
-    }
-  }
-
   await getPrefs(context);
   await showDialog(
     context: context,
@@ -898,6 +886,23 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
             FlatButton(
                 child: Text('OK'),
                 onPressed: () async {
+                  List<DadosWaypointModel> dadosWaypointModel = [];
+                  int qntWaypoints = trilha.waypoints.length;
+                  if (qntWaypoints > 0) {
+                    for (int i = 0; i < qntWaypoints; i++) {
+                      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
+                      dadosWaypointModel.add(o);
+                    }
+                  }
+                  for (int i = 0; i < dadosWaypointModel.length; i++) {
+                    if (!(await sharedPrefs
+                        .haveKey('${dadosWaypointModel[i].codwp}'))) {
+                      var wayPointJson =
+                          await wayPointToJson(dadosWaypointModel[i]);
+                      await sharedPrefs.save(
+                          dadosWaypointModel[i].codwp.toString(), wayPointJson);
+                    }
+                  }
                   trilhaRepository.saveTrilha(trilha);
                   SaveTrilha(
                     context,
@@ -922,14 +927,34 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
   );
 }
 
-Map<String, dynamic> wayPointToJson(DadosWaypointModel waypoint) {
+Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
+  if (waypoint.imagens.length > 0) {
+    List<String> aux = [];
+    var response = await http.get(Uri.parse(waypoint.imagens[0].toString()));
+    Directory documentDirectory = await getApplicationDocumentsDirectory();
+    File file =
+        new File(join(documentDirectory.path, '${waypoint.nome} imagem 0'));
+    file.writeAsBytesSync(response.bodyBytes);
+    aux.add(file.path);
+
+    return {
+      'codwp': waypoint.codwp,
+      'codt': waypoint.codt,
+      'nome': waypoint.nome,
+      'descricao': waypoint.descricao,
+      'numImagens': waypoint.numImagens,
+      'imagens': aux,
+      'categorias': waypoint.categorias,
+    };
+  }
+
   return {
     'codwp': waypoint.codwp,
     'codt': waypoint.codt,
     'nome': waypoint.nome,
     'descricao': waypoint.descricao,
     'numImagens': waypoint.numImagens,
-    'imagens': waypoint.imagens,
+    'imagens': [],
     'categorias': waypoint.categorias,
   };
 }

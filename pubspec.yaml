@@ -39,6 +39,7 @@ dependencies:
   mobx: ^1.2.1+4
   flutter_modular: ^3.0.1
   connectivity:
+  image_downloader: ^0.20.1
   flutter:
     sdk: flutter
 
