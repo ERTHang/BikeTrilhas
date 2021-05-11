@@ -5,10 +5,11 @@ import 'package:biketrilhas_modular/app/modules/photo/Components/loader/loader_p
 class LoaderModule extends Module {
   @override
   final List<Bind> binds = [
-        Bind.singleton((i) => LoaderController()),
-      ];
+    Bind.singleton((i) => LoaderController()),
+  ];
 
+  @override
   final List<ModularRoute> routes = [
-        ChildRoute(Modular.initialRoute, child: (_, args) => LoaderPage()),
-      ];
+    ChildRoute(Modular.initialRoute, child: (_, args) => LoaderPage()),
+  ];
 }

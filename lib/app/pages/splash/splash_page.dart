@@ -20,6 +20,7 @@ class _SplashPageState extends State<SplashPage> {
     disposer = autorun((_) {
       final auth = Modular.get<AuthController>();
       if (auth.status == AuthStatus.login) {
+        auth.loginProcedure();
         Modular.to.pushReplacementNamed('/map');
       } else if (auth.status == AuthStatus.logoff) {
         Modular.to.pushReplacementNamed('/login');

@@ -11,12 +11,12 @@ abstract class _LoaderControllerBase with Store {
   CameraDescription camera;
 
   @action
-  void startCameras(){
+  void startCameras() {
     WidgetsFlutterBinding.ensureInitialized();
 
     availableCameras().then((cameras) {
       camera = cameras.first;
-      Modular.to.pushReplacementNamed('/photo/photo');
+      Modular.to.pushReplacementNamed('/fotos/photo');
     });
   }
 }

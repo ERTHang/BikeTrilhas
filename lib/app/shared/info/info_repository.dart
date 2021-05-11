@@ -1,4 +1,5 @@
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
@@ -6,6 +7,7 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../utils/constants.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
@@ -299,6 +301,7 @@ class InfoRepository {
       double comprimento,
       double desnivel,
       int cidade) async {
+    var auth = Modular.get<AuthController>();
     int cidCod, tipCod, difCod, subtipInt;
     List<int> supInt = [];
     List<int> baiInt = [];
@@ -365,7 +368,8 @@ class InfoRepository {
       "bairros": baiInt,
       "regioes": regInt,
       "subtip_cod": subtipInt,
-      "geometria": [geoString]
+      "geometria": [geoString],
+      "email": auth.user.email
     }));
     if (result.statusCode < 300) {
       mapController.trilhas.value.add(TrilhaModel(result.data, nome));

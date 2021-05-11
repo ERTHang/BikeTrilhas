@@ -367,7 +367,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             ),
           ),
           Visibility(
-            visible: ADMIN.contains(auth.user.email),
+            visible: admin == 1,
             child: Positioned(
               bottom: 70,
               right: 10,
@@ -379,7 +379,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 child: RaisedButton(
                   color: Colors.blue,
                   onPressed: () {
-                    // Modular.to.pushNamed('/photo'); //desabilitado devido à bugs do plugin
+                    Modular.to.pushNamed('/fotos');
                   },
                   child: Icon(
                     Icons.camera_alt,

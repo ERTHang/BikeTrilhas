@@ -5,11 +5,11 @@ import 'package:biketrilhas_modular/app/modules/photo/Components/display/display
 class DisplayModule extends Module {
   @override
   final List<Bind> binds = [
-        Bind.singleton((i) => DisplayController(i.get())),
-      ];
+    Bind.singleton((i) => DisplayController(i.get())),
+  ];
 
   @override
   final List<ModularRoute> routes = [
-        ChildRoute(Modular.initialRoute, child: (_, args) => DisplayPage()),
-      ];
+    ChildRoute(Modular.initialRoute, child: (_, args) => DisplayPage()),
+  ];
 }

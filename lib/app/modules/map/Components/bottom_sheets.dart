@@ -201,7 +201,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       },
                     )),
                 Visibility(
-                  visible: ADMIN.contains(auth.user.email),
+                  visible: admin == 1,
                   child: Positioned(
                     bottom: 44,
                     right: 10,

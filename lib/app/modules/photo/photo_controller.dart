@@ -37,7 +37,7 @@ abstract class _PhotoControllerBase with Store {
 
       path = (await controller.takePicture()).path;
 
-      Modular.to.pushNamed('/photo/display');
+      Modular.to.pushNamed('/fotos/display');
     } catch (e) {
       print(e);
     }

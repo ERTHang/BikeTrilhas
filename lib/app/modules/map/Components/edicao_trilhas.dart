@@ -1,5 +1,6 @@
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
   var _bairros = '';
   var _regioes = '';
   final _mapController = Modular.get<MapController>();
+  final _userTrailsController = Modular.get<UsertrailsController>();
   final _infoRepository = Modular.get<InfoRepository>();
 
   @override
@@ -73,6 +75,9 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.comprimento,
           m.desnivel,
           1);
+      mapController.sheet.close();
+      _userTrailsController.getPolylines();
+      _userTrailsController.state();
       alertEdit(context, "Upload realizado com sucesso");
     }
   }
@@ -548,7 +553,7 @@ alertEdit(BuildContext context, String msg) {
                 child: Text('OK'),
                 onPressed: () {
                   Navigator.pop(context);
-                  Modular.to.pop();
+                  Modular.to.popUntil((route) => route.isFirst);
                 })
           ],
         ),

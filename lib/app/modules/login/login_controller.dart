@@ -21,8 +21,9 @@ abstract class _LoginControllerBase with Store {
       final auth = Modular.get<AuthController>();
       loading = true;
       await auth.loginWithGoogle();
+      await auth.loginProcedure();
       await infoRepository.getModels();
-      Modular.to.pushReplacementNamed('/map');
+      await Modular.to.pushReplacementNamed('/map');
     } catch (e) {
       loading = false;
     }
