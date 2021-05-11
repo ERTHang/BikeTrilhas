@@ -1,4 +1,3 @@
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'filter_controller.dart';
@@ -52,35 +51,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
           superficie(),
           categoria(),
           dificuldade(),
-          distancia()
         ]);
-  }
-
-  ExpansionPanel distancia() {
-    return ExpansionPanel(
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return header(_data[7], onTap: (Item item) {
-          mapController.distanceValue = 100;
-        });
-      },
-      body: Column(
-        children: <Widget>[
-          Slider(
-            value: mapController.distanceValue.toDouble(),
-            min: 50,
-            max: 500,
-            divisions: 9,
-            label: mapController.distanceValue.toString() + ' Km',
-            onChanged: (double value) {
-              setState(() {
-                mapController.distanceValue = value.round();
-              });
-            },
-          )
-        ],
-      ),
-      isExpanded: _data[7].isExpanded,
-    );
   }
 
   ExpansionPanel tipo() {
@@ -626,7 +597,6 @@ List<Item> generateItems() {
       false
     ]),
     Item(expandedValue: 'Dificuldade', modifiedValue: []),
-    Item(expandedValue: 'Distancia', modifiedValue: []),
   ];
 }
 

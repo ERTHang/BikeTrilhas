@@ -4,7 +4,6 @@ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -98,7 +97,7 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () async {
               if (draw.value != 1) {
-                if (await isOnline()) {
+                if (await isOnline() == true) {
                   Navigator.pop(context);
                   Modular.to.pushNamed('/filter');
                 } else {

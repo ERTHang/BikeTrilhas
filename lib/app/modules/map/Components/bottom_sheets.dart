@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
-import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
@@ -7,11 +8,12 @@ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:image_downloader/image_downloader.dart';
 
 final mapController = Modular.get<MapController>();
 var icone;
@@ -282,7 +284,6 @@ bottomSheetWaypoint(int codt) async {
                 Container(
                   color: Colors.white,
                   width: MediaQuery.of(context).size.width,
-                  height: 100,
                   padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -515,6 +516,7 @@ bottomSheetWaypointOffline(int codt) async {
                       Visibility(
                         visible: categorias.isNotEmpty,
                         child: modifiedText('Categorias: ', categorias),
+
                       ),
                       Visibility(
                         visible: mapController.modelWaypoint.imagens.isNotEmpty,
@@ -538,8 +540,9 @@ bottomSheetWaypointOffline(int codt) async {
                                     .map((e) => GestureDetector(
                                           child: Hero(
                                             tag: e,
-                                            child: Image.asset(
-                                              e,
+                                            child: Image.file(
+                                              File(mapController
+                                                  .modelWaypoint.imagens[0]),
                                               height: 80,
                                               width: 80,
                                             ),
@@ -713,22 +716,6 @@ bottomSheetTempTrail(
               ],
             ),
           ),
-          Visibility(
-            child: Positioned(
-              bottom: 44,
-              right: 44,
-              child: IconButton(
-                icon: Icon(
-                  Icons.upload_rounded,
-                  color: Colors.blue,
-                ),
-                onPressed: () {
-                  checkUpload(context, trilha);
-                },
-              ),
-            ),
-            visible: trilha.codt >= 2000000,
-          ),
           Positioned(
             bottom: 44,
             right: 10,
@@ -738,24 +725,14 @@ bottomSheetTempTrail(
                 color: Colors.red,
               ),
               onPressed: () {
-                if (trilha.codt >= 2000000) {
-                  mapController.createdTrails.remove(trilha);
+                mapController.createdRoutes.remove(trilha);
 
-                  mapController.trilhaRepository
-                      .deleteRecordedTrail(trilha.codt);
+                mapController.trilhaRepository.deleteTrilha(trilha.codt);
 
-                  mapController.sheet = null;
-                  state();
-                  Navigator.of(context).pop();
-                } else {
-                  mapController.createdRoutes.remove(trilha);
-
-                  mapController.trilhaRepository.deleteRoute(trilha.codt);
-
-                  mapController.sheet = null;
-                  state();
-                  Navigator.of(context).pop();
-                }
+                mapController.getPolylines();
+                mapController.sheet = null;
+                state();
+                Navigator.of(context).pop();
               },
             ),
           ),
@@ -856,26 +833,6 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
 }
 
 salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
-  List<DadosWaypointModel> dadosWaypointModel = [];
-  int qntWaypoints = trilha.waypoints.length;
-  if (qntWaypoints > 0) {
-    for (int i = 0; i < qntWaypoints; i++) {
-      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
-      dadosWaypointModel.add(o);
-    }
-  }
-  for (int i = 0; i < dadosWaypointModel.length; i++) {
-    print('>> ${dadosWaypointModel[i].codwp.toString()}');
-    var wayPointJson = wayPointToJson(dadosWaypointModel[i]);
-    if (!(await sharedPrefs.haveKey('${dadosWaypointModel[i].codwp}'))) {
-      await sharedPrefs.save(
-          dadosWaypointModel[i].codwp.toString(), wayPointJson);
-      print('Ola');
-    } else {
-      print('Ja possui a chave');
-    }
-  }
-
   await getPrefs(context);
   await showDialog(
     context: context,
@@ -898,6 +855,24 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
             FlatButton(
                 child: Text('OK'),
                 onPressed: () async {
+                  List<DadosWaypointModel> dadosWaypointModel = [];
+                  int qntWaypoints = trilha.waypoints.length;
+                  if (qntWaypoints > 0) {
+                    for (int i = 0; i < qntWaypoints; i++) {
+                      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
+                      dadosWaypointModel.add(o);
+                    }
+                  }
+                  for (int i = 0; i < dadosWaypointModel.length; i++) {
+                    if (!(await sharedPrefs
+                        .haveKey('${dadosWaypointModel[i].codwp}'))) {
+                      var wayPointJson =
+                          await wayPointToJson(dadosWaypointModel[i]);
+                      await sharedPrefs.save(
+                          dadosWaypointModel[i].codwp.toString(), wayPointJson);
+                    }
+                  }
+
                   trilhaRepository.saveTrilha(trilha);
                   SaveTrilha(
                     context,
@@ -922,23 +897,33 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
   );
 }
 
-Map<String, dynamic> wayPointToJson(DadosWaypointModel waypoint) {
+
+Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
+  if (waypoint.imagens.length > 0) {
+    List<String> aux = [];
+    var imageId = await ImageDownloader.downloadImage(
+        "${waypoint.imagens[0].toString()}");
+    String path = await ImageDownloader.findPath(imageId);
+    aux.add(path);
+
+    return {
+      'codwp': waypoint.codwp,
+      'codt': waypoint.codt,
+      'nome': waypoint.nome,
+      'descricao': waypoint.descricao,
+      'numImagens': waypoint.numImagens,
+      'imagens': aux,
+      'categorias': waypoint.categorias,
+    };
+  }
+
   return {
     'codwp': waypoint.codwp,
     'codt': waypoint.codt,
     'nome': waypoint.nome,
     'descricao': waypoint.descricao,
     'numImagens': waypoint.numImagens,
-    'imagens': waypoint.imagens,
+    'imagens': [],
     'categorias': waypoint.categorias,
   };
-}
-
-checkUpload(context, trilha) async {
-  if (!await isOnline()) {
-    alert(context, "Dispositivo Offline");
-  } else {
-    UsertrailsController usertrailsController = Modular.get();
-    usertrailsController.uploadTrilha(context, trilha);
-  }
 }

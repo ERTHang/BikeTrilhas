@@ -64,7 +64,6 @@ abstract class _UserroutesControllerBase with Store {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-          consumeTapEvents: true,
           polylineId: PolylineId("rota $i " + trilha.codt.toString()),
           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
           onTap: () {
@@ -81,7 +80,6 @@ abstract class _UserroutesControllerBase with Store {
             trilha.waypoints.length,
             (index) => Marker(
               markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
-              consumeTapEvents: true,
               position: trilha.waypoints[index].posicao,
               onTap: () {
                 bottomSheetTempTrail(trilha, scaffoldState, state);

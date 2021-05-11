@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../utils/constants.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 
 var connectivityResult;
@@ -318,10 +319,6 @@ class InfoRepository {
       }
     }
 
-    if (difCod == null) {
-      difCod = 1;
-    }
-
     for (var i = 1; i <= this.superficies.length; i++) {
       if (superficies.contains(this.superficies[i - 1].sup_nome)) {
         supInt.add(i);
@@ -356,7 +353,7 @@ class InfoRepository {
       geoString += "${ponto.longitude} ${ponto.latitude}";
     }
 
-    var result = (await dio.post('/server/trilhatemp', data: {
+    return (await dio.post('/server/trilhatemp', data: {
       "comprimento": comprimento,
       "desnivel": desnivel,
       "nome": nome,
@@ -416,7 +413,7 @@ class InfoRepository {
           result['desnivel'],
           result['tipo'],
         );
-        print(result['bairros']);
+
         model.regioes = getRegiaoTrilhasOffline(result['regioes']);
         model.superficies = getSuperficieTrilhasOffline(result['superficies']);
         model.bairros = getBairrosTrilhasOffline(result['bairros']);
@@ -470,12 +467,17 @@ dadosWaypointModelfromJson(json) {
   int numImagens = json['numImagens'];
   DadosWaypointModel model = DadosWaypointModel(
       json['codwp'], json['codt'], json['nome'], json['descricao'], numImagens);
-  //var imagens = 'images/bola.png';
-  //print('>>>>>>>> $imagens');
   if (numImagens >= 1) {
-    model.imagens = ['images/bola.png'];
+    model.imagens = [json['imagens'][0].toString()];
   }
-  //model.categorias = json['categorias'];
-  //print('${model.imagens}');
   return model;
+}
+
+//Retorna os dados de como o usuario está conectado com a internet ou offline
+isOnline() async {
+  connectivityResult = await (Connectivity().checkConnectivity());
+  if (connectivityResult == ConnectivityResult.none) {
+    return false;
+  }
+  return true;
 }
