@@ -45,7 +45,6 @@ Widget modifiedText(titulo, valor) {
 }
 
 bottomSheetTrilha(TrilhaModel trilha) async {
-  final AuthController auth = Modular.get();
   final TrilhaRepository trilhaRepository = Modular.get();
   mapController.sheet =
       mapController.scaffoldState.currentState.showBottomSheet(
@@ -885,46 +884,50 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
                 }),
             FlatButton(
                 child: Text('OK'),
-                onPressed: () async {
-                  List<DadosWaypointModel> dadosWaypointModel = [];
-                  int qntWaypoints = trilha.waypoints.length;
-                  if (qntWaypoints > 0) {
-                    for (int i = 0; i < qntWaypoints; i++) {
-                      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
-                      dadosWaypointModel.add(o);
-                    }
-                  }
-                  for (int i = 0; i < dadosWaypointModel.length; i++) {
-                    if (!(await sharedPrefs
-                        .haveKey('${dadosWaypointModel[i].codwp}'))) {
-                      var wayPointJson =
-                          await wayPointToJson(dadosWaypointModel[i]);
-                      await sharedPrefs.save(
-                          dadosWaypointModel[i].codwp.toString(), wayPointJson);
-                    }
-                  }
-                  trilhaRepository.saveTrilha(trilha);
-                  SaveTrilha(
-                    context,
-                    trilha.codt,
-                    trilha.nome,
-                    mapController.modelTrilha.comprimento,
-                    mapController.modelTrilha.desnivel,
-                    mapController.modelTrilha.tipo,
-                    mapController.modelTrilha.dificuldade,
-                    mapController.modelTrilha.bairros,
-                    mapController.modelTrilha.regioes,
-                    mapController.modelTrilha.superficies,
-                  );
-                  await allToDadosTrilhaModel();
-                  mapController.sheet.setState(() => {});
-                  Navigator.pop(context);
+                onPressed: () {
+                  progress(context, trilha, trilhaRepository);
                 }),
           ],
         ),
       );
     },
   );
+}
+
+progress(context, trilha, trilhaRepository) async {
+  mostrarProgresso(context);
+  List<DadosWaypointModel> dadosWaypointModel = [];
+  int qntWaypoints = trilha.waypoints.length;
+  if (qntWaypoints > 0) {
+    for (int i = 0; i < qntWaypoints; i++) {
+      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
+      dadosWaypointModel.add(o);
+    }
+  }
+  for (int i = 0; i < dadosWaypointModel.length; i++) {
+    if (!(await sharedPrefs.haveKey('${dadosWaypointModel[i].codwp}'))) {
+      var wayPointJson = await wayPointToJson(dadosWaypointModel[i]);
+      await sharedPrefs.save(
+          dadosWaypointModel[i].codwp.toString(), wayPointJson);
+    }
+  }
+  trilhaRepository.saveTrilha(trilha);
+  SaveTrilha(
+    context,
+    trilha.codt,
+    trilha.nome,
+    mapController.modelTrilha.comprimento,
+    mapController.modelTrilha.desnivel,
+    mapController.modelTrilha.tipo,
+    mapController.modelTrilha.dificuldade,
+    mapController.modelTrilha.bairros,
+    mapController.modelTrilha.regioes,
+    mapController.modelTrilha.superficies,
+  );
+  await allToDadosTrilhaModel();
+  mapController.sheet.setState(() => {});
+  Navigator.pop(context);
+  Navigator.pop(context);
 }
 
 Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {

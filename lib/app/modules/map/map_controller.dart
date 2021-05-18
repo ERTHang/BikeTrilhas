@@ -56,7 +56,7 @@ abstract class _MapControllerBase with Store {
   TrilhaModel newTrail;
   TrilhaModel followTrail;
   bool update = false;
-  int distanceValue = 100;
+  int distanceValue = 500;
 
   @action
   _MapControllerBase(

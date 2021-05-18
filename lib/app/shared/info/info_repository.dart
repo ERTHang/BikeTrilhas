@@ -406,8 +406,6 @@ class InfoRepository {
       await getPrefNoAlert();
       if (codigosTrilhasSalvas.contains(codt)) {
         var result = await sharedPrefs.read(codt.toString());
-
-        //print(result['bairros'].toString());
         DadosTrilhaModel model = DadosTrilhaModel(
           codt,
           result['nome'],
@@ -416,29 +414,27 @@ class InfoRepository {
           result['desnivel'],
           result['tipo'],
         );
-        print(result['bairros']);
-        model.regioes = getRegiaoTrilhasOffline(result['regioes']);
-        model.superficies = getSuperficieTrilhasOffline(result['superficies']);
-        model.bairros = getBairrosTrilhasOffline(result['bairros']);
+
+        List<String> bairros = [];
+        for (var b in result['bairros']) {
+          bairros.add(b);
+        }
+
+        List<String> regioes = [];
+        for (var r in result['regioes']) {
+          regioes.add(r);
+        }
+
+        List<String> superficies = [];
+        for (var s in result['superficies']) {
+          superficies.add(s);
+        }
+
+        model.regioes = regioes;
+        model.superficies = superficies;
+        model.bairros = bairros;
         model.dificuldade = result['dificuldade'];
         model.subtipo = '';
-
-        return model;
-      } else {
-        DadosTrilhaModel model = DadosTrilhaModel(
-          null,
-          'Trilha não salva',
-          'Trilha não salva',
-          0,
-          0,
-          'Trilha não salva',
-        );
-
-        model.regioes = ['Trilha não salva'];
-        model.superficies = ['Trilha não salva'];
-        model.bairros = ['Trilha não salva'];
-        model.dificuldade = 'Trilha não salva';
-        model.subtipo = 'Trilha não salva';
 
         return model;
       }
