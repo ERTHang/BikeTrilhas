@@ -1,12 +1,9 @@
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
-import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
@@ -82,7 +79,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                 superficies += ', ' + mapController.modelTrilha.superficies[i];
               }
             }
-            getPrefNoAlert();
+            getPref();
 
             wid = ClipRRect(
               borderRadius: BorderRadius.only(
@@ -133,18 +130,25 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       icon: Icon(Icons.delete_outline_outlined),
                       iconSize: 25,
                       onPressed: () async {
-                        removerTrilhaMsg(
-                            'Deseja excluir a trilha ${trilha.nome}',
-                            trilha.codt,
+                        alertaComEscolha(
                             context,
-                            trilhaRepository,
-                            trilha);
+                            'Remover',
+                            'Deseja remover a trilha ${trilha.nome} ?',
+                            'VOLTAR',
+                            () {
+                              Navigator.pop(context);
+                              return;
+                            },
+                            'OK',
+                            () {
+                              removerTrilha(context, trilha, trilhaRepository,
+                                  trilha.codt);
+                            });
                       },
                     ),
                   ),
                   visible: codigosTrilhasSalvas.contains(trilha.codt),
                 ),
-
                 //Botão para salvar trilha
                 Visibility(
                   child: Positioned(
@@ -155,12 +159,19 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       icon: Icon(Icons.save_alt_outlined),
                       iconSize: 25,
                       onPressed: () async {
-                        salvarTrilhaMsg(
-                          'Deseja salvar a trilha ${trilha.nome}',
-                          context,
-                          trilhaRepository,
-                          trilha,
-                        );
+                        alertaComEscolha(
+                            context,
+                            'Salvar',
+                            'Deseja salvar a trilha ${trilha.nome} ?',
+                            'VOLTAR',
+                            () {
+                              Navigator.pop(context);
+                              return;
+                            },
+                            'OK',
+                            () {
+                              salvarTrilha(context, trilha, trilhaRepository);
+                            });
                       },
                     ),
                   ),
@@ -820,82 +831,9 @@ bottomSheetTempTrail(
   }
 }
 
-removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
-  await showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) {
-      return WillPopScope(
-        onWillPop: () async => false,
-        child: AlertDialog(
-          title: Text("Remover"),
-          content: Text(
-            msg,
-          ),
-          actions: <Widget>[
-            FlatButton(
-                child: Text('VOLTAR'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  return;
-                }),
-            FlatButton(
-                child: Text('OK'),
-                onPressed: () async {
-                  await deleteTrilha(codt);
-                  await trilhaRepository.deleteTrail(codt);
-                  await allToDadosTrilhaModel();
-                  if (!await isOnline()) {
-                    mapController.trilhas.value.remove(trilha);
-                  }
-                  mapController.getPolylines();
-                  mapController.state();
-                  Navigator.pop(context);
-                  mapController.sheet.close();
-                  mapController.state();
-                  //
-                }),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
-  await getPrefs(context);
-  await showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) {
-      return WillPopScope(
-        onWillPop: () async => false,
-        child: AlertDialog(
-          title: Text("Salvar"),
-          content: Text(
-            msg,
-          ),
-          actions: <Widget>[
-            FlatButton(
-                child: Text('VOLTAR'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  return;
-                }),
-            FlatButton(
-                child: Text('OK'),
-                onPressed: () {
-                  progress(context, trilha, trilhaRepository);
-                }),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-progress(context, trilha, trilhaRepository) async {
-  mostrarProgresso(context);
+///Salvar trilha em memória local
+salvarTrilha(context, trilha, trilhaRepository) async {
+  mostrarProgressoLinear(context, 'Salvando');
   List<DadosWaypointModel> dadosWaypointModel = [];
   int qntWaypoints = trilha.waypoints.length;
   if (qntWaypoints > 0) {
@@ -928,6 +866,21 @@ progress(context, trilha, trilhaRepository) async {
   mapController.sheet.setState(() => {});
   Navigator.pop(context);
   Navigator.pop(context);
+}
+
+///Remover trilha da memória local
+removerTrilha(context, trilha, trilhaRepository, codt) async {
+  await deleteTrilha(codt);
+  await trilhaRepository.deleteTrail(codt);
+  await allToDadosTrilhaModel();
+  if (!await isOnline()) {
+    mapController.trilhas.value.remove(trilha);
+  }
+  mapController.getPolylines();
+  mapController.state();
+  Navigator.pop(context);
+  mapController.sheet.close();
+  mapController.state();
 }
 
 Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
@@ -964,7 +917,7 @@ Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
 
 checkUpload(context, trilha) async {
   if (!await isOnline()) {
-    alert(context, "Dispositivo Offline");
+    alert(context, "Dispositivo Offline", 'Trilha');
   } else {
     UsertrailsController usertrailsController = Modular.get();
     usertrailsController.uploadTrilha(context, trilha);

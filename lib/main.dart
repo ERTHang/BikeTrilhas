@@ -10,7 +10,7 @@ import 'app/shared/info/save_trilha.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await getPrefNoAlert();
+  await getPref();
   await Geolocator.checkPermission();
   runApp(ModularApp(
     child: AppWidget(),

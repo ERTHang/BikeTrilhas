@@ -6,7 +6,6 @@ import 'package:biketrilhas_modular/app/shared/info/models.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../utils/constants.dart';
@@ -116,17 +115,6 @@ class InfoRepository {
     return list;
   }
 
-  //getRegiao para trilhas offline
-  List<String> getRegiaoTrilhasOffline(cods) {
-    List<String> list = [];
-    for (var reg in regioes) {
-      if (cods.contains(reg.reg_nome)) {
-        list.add(reg.reg_nome);
-      }
-    }
-    return list;
-  }
-
   String getSubtipo(cod) {
     for (var subtipo in subtipos) {
       if (cod == subtipo.subtip_cod) {
@@ -146,17 +134,6 @@ class InfoRepository {
     return list;
   }
 
-  //getSuperficie para trilhas offline
-  List<String> getSuperficieTrilhasOffline(cods) {
-    List<String> list = [];
-    for (var sup in superficies) {
-      if (cods.contains(sup.sup_nome)) {
-        list.add(sup.sup_nome);
-      }
-    }
-    return list;
-  }
-
   List<String> getBairros() {
     List<String> list = [];
     for (var bai in bairros) {
@@ -169,17 +146,6 @@ class InfoRepository {
     List<String> list = [];
     for (var bai in bairros) {
       if (cods.contains(bai.bai_cod)) {
-        list.add(bai.bai_nome);
-      }
-    }
-    return list;
-  }
-
-  //getBairro para trilhas offline
-  List<String> getBairrosTrilhasOffline(cods) {
-    List<String> list = [];
-    for (var bai in bairros) {
-      if (cods.contains(bai.bai_nome)) {
         list.add(bai.bai_nome);
       }
     }
@@ -378,7 +344,6 @@ class InfoRepository {
     return result.data;
   }
 
-  //Verificar se esta online ou offline
   Future<DadosTrilhaModel> getDadosTrilha(int codt) async {
     if (await isOnline()) {
       var result = (await dio.get('/server/naogeografico',
@@ -403,7 +368,7 @@ class InfoRepository {
 
       return model;
     } else {
-      await getPrefNoAlert();
+      await getPref();
       if (codigosTrilhasSalvas.contains(codt)) {
         var result = await sharedPrefs.read(codt.toString());
         DadosTrilhaModel model = DadosTrilhaModel(
