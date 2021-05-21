@@ -6,9 +6,9 @@ import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_del
 import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
-import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -32,7 +32,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   GoogleMapController mapController;
   int n = 0;
   bool tracking, changeButton = false, paused = false;
-  StreamSubscription<LocationData> subscription;
   Location location = new Location();
 
   void initState() {
@@ -239,8 +238,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                       });
                     },
                     onDenied: () {
-                      alert(
-                          context, "Permissões negedas, impossível continuar");
+                      alert(context, "Permissões negedas, impossível continuar",
+                          'Permissões');
                     },
                   );
                   setState(() {

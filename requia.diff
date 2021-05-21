@@ -1,0 +1,2044 @@
+diff --git a/android/app/src/debug/AndroidManifest.xml b/android/app/src/debug/AndroidManifest.xml
+index fd13b82..96b507c 100644
+--- a/android/app/src/debug/AndroidManifest.xml
++++ b/android/app/src/debug/AndroidManifest.xml
+@@ -8,4 +8,5 @@
+          to allow setting breakpoints, to provide hot reload, etc.
+     -->
+     <uses-permission android:name="android.permission.INTERNET"/>
++    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+ </manifest>
+diff --git a/android/app/src/main/AndroidManifest.xml b/android/app/src/main/AndroidManifest.xml
+index 7f3c74a..7203191 100644
+--- a/android/app/src/main/AndroidManifest.xml
++++ b/android/app/src/main/AndroidManifest.xml
+@@ -10,8 +10,7 @@
+         android:label="Biketrilhas"
+         android:icon="@mipmap/ic_launcher"
+         android:usesCleartextTraffic="true"
+-        android:roundIcon="@mipmap/ic_launcher_round"
+-        android:requestLegacyExternalStorage="true">
++        android:roundIcon="@mipmap/ic_launcher_round">
+         <activity
+             android:name=".MainActivity"
+             android:launchMode="singleTop"
+@@ -33,9 +32,9 @@
+             android:value="AIzaSyAntIVRGjlCV7KDl9LyWyC-9IehpPTIEzM"/>
+     </application>
+     <uses-permission android:name="android.permission.INTERNET"/>
++    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+     <uses-permission android:name="android.permission.CAMERA"/>
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+ </manifest>
+\ No newline at end of file
+diff --git a/lib/app/app_module.dart b/lib/app/app_module.dart
+index 98e6285..61a9ab2 100644
+--- a/lib/app/app_module.dart
++++ b/lib/app/app_module.dart
+@@ -26,7 +26,7 @@ class AppModule extends Module {
+     Bind.singleton((i) => DrawerClassController()),
+     Bind.singleton((i) => AppController()),
+     Bind.singleton((i) => MapController(i.get(), i.get(), i.get())),
+-    Bind.singleton((i) => AuthRepository(i.get<Dio>())),
++    Bind.singleton((i) => AuthRepository()),
+     Bind.singleton((i) => AuthController()),
+     Bind.singleton((i) => InfoRepository(i.get<Dio>())),
+     Bind.singleton((i) => TrilhaRepository(i.get<Dio>(), i.get<SharedPrefs>())),
+@@ -42,7 +42,7 @@ class AppModule extends Module {
+         module: LoginModule(), transition: TransitionType.noTransition),
+     ModuleRoute('/map',
+         module: MapModule(), transition: TransitionType.noTransition),
+-    ModuleRoute('/fotos', module: PhotoModule()),
++    ModuleRoute('/photo', module: PhotoModule()),
+     ModuleRoute('/userroute', module: UserroutesModule()),
+     ModuleRoute('/usertrail', module: UsertrailsModule()),
+     ModuleRoute('/waypoint', module: WaypointsModule()),
+diff --git a/lib/app/modules/filter/filter_controller.dart b/lib/app/modules/filter/filter_controller.dart
+index 5d4f287..7ed47b5 100644
+--- a/lib/app/modules/filter/filter_controller.dart
++++ b/lib/app/modules/filter/filter_controller.dart
+@@ -60,13 +60,13 @@ abstract class _FilterControllerBase with Store {
+     }
+ 
+     var filtros = await filterRepository.getFiltered([_data[0].modified],
+-        [_data[6].modified], regiao, bairro, superficie, categoria, subtipo);
++        [_data[1].modified], regiao, bairro, superficie, categoria, subtipo);
+     if (superficie.isNotEmpty ||
+         bairro.isNotEmpty ||
+         categoria.isNotEmpty ||
+         regiao.isNotEmpty ||
+         subtipo.isNotEmpty ||
+-        _data[6].modified != 0) {
++        _data[1].modified != 0) {
+       mapController.filtrar(
+           filtros, false, value != mapController.typeNum, value);
+     } else {
+diff --git a/lib/app/modules/filter/filter_page.dart b/lib/app/modules/filter/filter_page.dart
+index 35770d9..0ddcf87 100644
+--- a/lib/app/modules/filter/filter_page.dart
++++ b/lib/app/modules/filter/filter_page.dart
+@@ -1,4 +1,3 @@
+-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter_modular/flutter_modular.dart';
+ import 'filter_controller.dart';
+@@ -18,10 +17,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
+   Widget build(BuildContext context) {
+     return Scaffold(
+         appBar: AppBar(
+-          title: Text(
+-            'Filtros',
+-            style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+-          ),
++          title: Text('Filtros'),
+           centerTitle: true,
+         ),
+         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+@@ -52,37 +48,9 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
+           superficie(),
+           categoria(),
+           dificuldade(),
+-          distancia()
+         ]);
+   }
+ 
+-  ExpansionPanel distancia() {
+-    return ExpansionPanel(
+-      headerBuilder: (BuildContext context, bool isExpanded) {
+-        return header(_data[7], onTap: (Item item) {
+-          mapController.distanceValue = 100;
+-        });
+-      },
+-      body: Column(
+-        children: <Widget>[
+-          Slider(
+-            value: mapController.distanceValue.toDouble(),
+-            min: 50,
+-            max: 500,
+-            divisions: 9,
+-            label: mapController.distanceValue.toString() + ' Km',
+-            onChanged: (double value) {
+-              setState(() {
+-                mapController.distanceValue = value.round();
+-              });
+-            },
+-          )
+-        ],
+-      ),
+-      isExpanded: _data[7].isExpanded,
+-    );
+-  }
+-
+   ExpansionPanel tipo() {
+     return ExpansionPanel(
+       headerBuilder: (BuildContext context, bool isExpanded) {
+@@ -626,7 +594,6 @@ List<Item> generateItems() {
+       false
+     ]),
+     Item(expandedValue: 'Dificuldade', modifiedValue: []),
+-    Item(expandedValue: 'Distancia', modifiedValue: []),
+   ];
+ }
+ 
+diff --git a/lib/app/modules/info/info_page.dart b/lib/app/modules/info/info_page.dart
+index 06090b5..119a50c 100644
+--- a/lib/app/modules/info/info_page.dart
++++ b/lib/app/modules/info/info_page.dart
+@@ -17,10 +17,7 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
+   Widget build(BuildContext context) {
+     return Scaffold(
+         appBar: AppBar(
+-          title: Text(
+-            widget.title,
+-            style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+-          ),
++          title: Text(widget.title),
+           centerTitle: true,
+         ),
+         body: Container(
+diff --git a/lib/app/modules/login/login_controller.dart b/lib/app/modules/login/login_controller.dart
+index a020189..192a691 100644
+--- a/lib/app/modules/login/login_controller.dart
++++ b/lib/app/modules/login/login_controller.dart
+@@ -21,9 +21,8 @@ abstract class _LoginControllerBase with Store {
+       final auth = Modular.get<AuthController>();
+       loading = true;
+       await auth.loginWithGoogle();
+-      await auth.loginProcedure();
+       await infoRepository.getModels();
+-      await Modular.to.pushReplacementNamed('/map');
++      Modular.to.pushReplacementNamed('/map');
+     } catch (e) {
+       loading = false;
+     }
+diff --git a/lib/app/modules/map/Components/bottom_sheets.dart b/lib/app/modules/map/Components/bottom_sheets.dart
+index 4d6e9d5..0801eb8 100644
+--- a/lib/app/modules/map/Components/bottom_sheets.dart
++++ b/lib/app/modules/map/Components/bottom_sheets.dart
+@@ -1,11 +1,6 @@
+ import 'dart:io';
+ 
+-import 'package:http/http.dart' as http;
+-import 'package:path/path.dart';
+-import 'package:path_provider/path_provider.dart';
+-
+ import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+-import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
+ import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
+@@ -13,11 +8,12 @@ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
+ import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
+ import 'package:cached_network_image/cached_network_image.dart';
++import 'package:connectivity/connectivity.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter_modular/flutter_modular.dart';
+ import 'package:photo_view/photo_view.dart';
++import 'package:image_downloader/image_downloader.dart';
+ 
+ final mapController = Modular.get<MapController>();
+ var icone;
+@@ -34,16 +30,6 @@ Future<DadosWaypointModel> getDataWaypoint(int codt) async {
+   return mapController.modelWaypoint;
+ }
+ 
+-Widget modifiedText(titulo, valor) {
+-  return RichText(
+-      text: TextSpan(
+-          text: titulo,
+-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+-          children: <TextSpan>[
+-        TextSpan(text: valor, style: TextStyle(fontWeight: FontWeight.normal))
+-      ]));
+-}
+-
+ bottomSheetTrilha(TrilhaModel trilha) async {
+   final AuthController auth = Modular.get();
+   final TrilhaRepository trilhaRepository = Modular.get();
+@@ -84,54 +70,165 @@ bottomSheetTrilha(TrilhaModel trilha) async {
+               }
+             }
+             getPrefNoAlert();
+-
+-            wid = ClipRRect(
+-              borderRadius: BorderRadius.only(
+-                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+-              child: Stack(children: <Widget>[
+-                Container(
+-                  color: Colors.white,
+-                  width: MediaQuery.of(context).size.width,
+-                  padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
+-                  child: Column(
+-                    mainAxisAlignment: MainAxisAlignment.start,
+-                    crossAxisAlignment: CrossAxisAlignment.start,
+-                    mainAxisSize: MainAxisSize.min,
+-                    children: <Widget>[
+-                      modifiedText('Nome: ', mapController.modelTrilha.nome),
+-                      Visibility(
+-                        visible: mapController.modelTrilha.descricao.isNotEmpty,
+-                        child: modifiedText(
+-                            'Descricao: ', mapController.modelTrilha.descricao),
+-                      ),
+-                      modifiedText(
+-                          'Comprimento: ',
+-                          mapController.modelTrilha.comprimento.toString() +
+-                              ' KM'),
+-                      modifiedText('Desnivel: ',
+-                          mapController.modelTrilha.desnivel.toString() + ' m'),
+-                      modifiedText('Tipo: ', mapController.modelTrilha.tipo),
+-                      Visibility(
+-                        visible: mapController.modelTrilha.subtipo.isNotEmpty,
+-                        child: modifiedText(
+-                            'Subtipo: ', mapController.modelTrilha.subtipo),
+-                      ),
+-                      modifiedText('Dificuldade: ',
+-                          mapController.modelTrilha.dificuldade),
+-                      modifiedText('Bairros: ', bairros),
+-                      modifiedText('Regioes: ', regioes),
+-                      modifiedText('Superficies: ', superficies),
+-                    ],
++            if (codigosTrilhasSalvas.contains(trilha.codt)) {
++              icone = Icon(Icons.delete_outline_outlined);
++              wid = ClipRRect(
++                borderRadius: BorderRadius.only(
++                    topLeft: Radius.circular(20),
++                    topRight: Radius.circular(20)),
++                child: Stack(children: <Widget>[
++                  Container(
++                    color: Colors.white,
++                    width: MediaQuery.of(context).size.width,
++                    padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
++                    child: Column(
++                      mainAxisAlignment: MainAxisAlignment.start,
++                      crossAxisAlignment: CrossAxisAlignment.start,
++                      mainAxisSize: MainAxisSize.min,
++                      children: <Widget>[
++                        RichText(
++                            text: TextSpan(
++                                text: 'Nome: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.nome,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        Visibility(
++                          visible:
++                              mapController.modelTrilha.descricao.isNotEmpty,
++                          child: RichText(
++                              text: TextSpan(
++                                  text: 'Descrição: ',
++                                  style: TextStyle(
++                                      fontWeight: FontWeight.bold,
++                                      color: Colors.black),
++                                  children: <TextSpan>[
++                                TextSpan(
++                                    text: mapController.modelTrilha.descricao,
++                                    style: TextStyle(
++                                        fontWeight: FontWeight.normal))
++                              ])),
++                        ),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Comprimento: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.comprimento
++                                          .toString() +
++                                      ' KM',
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Desnível: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.desnivel
++                                          .toString() +
++                                      ' m',
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Tipo: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.tipo,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        Visibility(
++                          visible: mapController.modelTrilha.subtipo.isNotEmpty,
++                          child: RichText(
++                              text: TextSpan(
++                                  text: 'Subtipo: ',
++                                  style: TextStyle(
++                                      fontWeight: FontWeight.bold,
++                                      color: Colors.black),
++                                  children: <TextSpan>[
++                                TextSpan(
++                                    text: mapController.modelTrilha.subtipo,
++                                    style: TextStyle(
++                                        fontWeight: FontWeight.normal))
++                              ])),
++                        ),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Dificuldade: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.dificuldade,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Bairros: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: bairros,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Regiões: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: regioes,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                          text: TextSpan(
++                            text: 'Superficies: ',
++                            style: TextStyle(
++                                fontWeight: FontWeight.bold,
++                                color: Colors.black),
++                            children: <TextSpan>[
++                              TextSpan(
++                                  text: superficies,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ],
++                          ),
++                        ),
++                      ],
++                    ),
+                   ),
+-                ),
+-                //Botão para remover trilha
+-                Visibility(
+-                  child: Positioned(
++                  //Botão para remover trilha
++                  Positioned(
+                     top: 5,
+                     right: 10,
+                     child: IconButton(
+                       color: Colors.blue,
+-                      icon: Icon(Icons.delete_outline_outlined),
++                      icon: icone,
+                       iconSize: 25,
+                       onPressed: () async {
+                         removerTrilhaMsg(
+@@ -143,17 +240,220 @@ bottomSheetTrilha(TrilhaModel trilha) async {
+                       },
+                     ),
+                   ),
+-                  visible: codigosTrilhasSalvas.contains(trilha.codt),
+-                ),
+-
+-                //Botão para salvar trilha
+-                Visibility(
+-                  child: Positioned(
++                  Positioned(
++                      bottom: 10,
++                      right: 10,
++                      child: IconButton(
++                        color: Colors.blue,
++                        icon: Icon(Icons.arrow_downward),
++                        onPressed: () {
++                          mapController.sheet = null;
++                          Navigator.pop(context);
++                          mapController.nameSheet = mapController
++                              .scaffoldState.currentState
++                              .showBottomSheet((context) {
++                            return ClipRRect(
++                                borderRadius: BorderRadius.only(
++                                    topLeft: Radius.circular(20),
++                                    topRight: Radius.circular(20)),
++                                child: Container(
++                                  color: Colors.white,
++                                  width: MediaQuery.of(mapController
++                                              .scaffoldState.currentContext)
++                                          .size
++                                          .width *
++                                      0.8,
++                                  child: ListTile(
++                                    title: Text(mapController.modelTrilha.nome),
++                                    trailing: Icon(
++                                      Icons.arrow_upward,
++                                      color: Colors.blue,
++                                    ),
++                                    onTap: () {
++                                      mapController.nameSheet = null;
++                                      bottomSheetTrilha(trilha);
++                                    },
++                                  ),
++                                ));
++                          }, backgroundColor: Colors.transparent);
++                        },
++                      )),
++                  Visibility(
++                    visible: ADMIN.contains(auth.user.email),
++                    child: Positioned(
++                      bottom: 44,
++                      right: 10,
++                      child: IconButton(
++                        color: Colors.blue,
++                        icon: Icon(Icons.edit),
++                        onPressed: () {
++                          Navigator.pop(context);
++                          mapController.update = true;
++                          Modular.to.pushNamed('/map/editor');
++                        },
++                      ),
++                    ),
++                  ),
++                ]),
++              );
++            } else {
++              wid = ClipRRect(
++                borderRadius: BorderRadius.only(
++                    topLeft: Radius.circular(20),
++                    topRight: Radius.circular(20)),
++                child: Stack(children: <Widget>[
++                  Container(
++                    color: Colors.white,
++                    width: MediaQuery.of(context).size.width,
++                    padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
++                    child: Column(
++                      mainAxisAlignment: MainAxisAlignment.start,
++                      crossAxisAlignment: CrossAxisAlignment.start,
++                      mainAxisSize: MainAxisSize.min,
++                      children: <Widget>[
++                        RichText(
++                            text: TextSpan(
++                                text: 'Nome: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.nome,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        Visibility(
++                          visible:
++                              mapController.modelTrilha.descricao.isNotEmpty,
++                          child: RichText(
++                              text: TextSpan(
++                                  text: 'Descrição: ',
++                                  style: TextStyle(
++                                      fontWeight: FontWeight.bold,
++                                      color: Colors.black),
++                                  children: <TextSpan>[
++                                TextSpan(
++                                    text: mapController.modelTrilha.descricao,
++                                    style: TextStyle(
++                                        fontWeight: FontWeight.normal))
++                              ])),
++                        ),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Comprimento: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.comprimento
++                                          .toString() +
++                                      ' KM',
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Desnível: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.desnivel
++                                          .toString() +
++                                      ' m',
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Tipo: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.tipo,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        Visibility(
++                          visible: mapController.modelTrilha.subtipo.isNotEmpty,
++                          child: RichText(
++                              text: TextSpan(
++                                  text: 'Subtipo: ',
++                                  style: TextStyle(
++                                      fontWeight: FontWeight.bold,
++                                      color: Colors.black),
++                                  children: <TextSpan>[
++                                TextSpan(
++                                    text: mapController.modelTrilha.subtipo,
++                                    style: TextStyle(
++                                        fontWeight: FontWeight.normal))
++                              ])),
++                        ),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Dificuldade: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelTrilha.dificuldade,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Bairros: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: bairros,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                            text: TextSpan(
++                                text: 'Regiões: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: regioes,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
++                        RichText(
++                          text: TextSpan(
++                            text: 'Superficies: ',
++                            style: TextStyle(
++                                fontWeight: FontWeight.bold,
++                                color: Colors.black),
++                            children: <TextSpan>[
++                              TextSpan(
++                                  text: superficies,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ],
++                          ),
++                        ),
++                      ],
++                    ),
++                  ),
++                  //Botão para salvar trilha
++                  Positioned(
+                     top: 5,
+                     right: 10,
+                     child: IconButton(
+                       color: Colors.blue,
+-                      icon: Icon(Icons.save_alt_outlined),
++                      icon: icone,
+                       iconSize: 25,
+                       onPressed: () async {
+                         salvarTrilhaMsg(
+@@ -165,66 +465,64 @@ bottomSheetTrilha(TrilhaModel trilha) async {
+                       },
+                     ),
+                   ),
+-                  visible: !codigosTrilhasSalvas.contains(trilha.codt),
+-                ),
+-
+-                Positioned(
+-                    bottom: 10,
+-                    right: 10,
+-                    child: IconButton(
+-                      color: Colors.blue,
+-                      icon: Icon(Icons.arrow_downward),
+-                      onPressed: () {
+-                        mapController.sheet = null;
+-                        Navigator.pop(context);
+-                        mapController.nameSheet = mapController
+-                            .scaffoldState.currentState
+-                            .showBottomSheet((context) {
+-                          return ClipRRect(
+-                              borderRadius: BorderRadius.only(
+-                                  topLeft: Radius.circular(20),
+-                                  topRight: Radius.circular(20)),
+-                              child: Container(
+-                                color: Colors.white,
+-                                width: MediaQuery.of(mapController
+-                                            .scaffoldState.currentContext)
+-                                        .size
+-                                        .width *
+-                                    0.8,
+-                                child: ListTile(
+-                                  title: Text(mapController.modelTrilha.nome),
+-                                  trailing: Icon(
+-                                    Icons.arrow_upward,
+-                                    color: Colors.blue,
++                  Positioned(
++                      bottom: 10,
++                      right: 10,
++                      child: IconButton(
++                        color: Colors.blue,
++                        icon: Icon(Icons.arrow_downward),
++                        onPressed: () {
++                          mapController.sheet = null;
++                          Navigator.pop(context);
++                          mapController.nameSheet = mapController
++                              .scaffoldState.currentState
++                              .showBottomSheet((context) {
++                            return ClipRRect(
++                                borderRadius: BorderRadius.only(
++                                    topLeft: Radius.circular(20),
++                                    topRight: Radius.circular(20)),
++                                child: Container(
++                                  color: Colors.white,
++                                  width: MediaQuery.of(mapController
++                                              .scaffoldState.currentContext)
++                                          .size
++                                          .width *
++                                      0.8,
++                                  child: ListTile(
++                                    title: Text(mapController.modelTrilha.nome),
++                                    trailing: Icon(
++                                      Icons.arrow_upward,
++                                      color: Colors.blue,
++                                    ),
++                                    onTap: () {
++                                      mapController.nameSheet = null;
++                                      bottomSheetTrilha(trilha);
++                                    },
+                                   ),
+-                                  onTap: () {
+-                                    mapController.nameSheet = null;
+-                                    bottomSheetTrilha(trilha);
+-                                  },
+-                                ),
+-                              ));
+-                        }, backgroundColor: Colors.transparent);
+-                      },
+-                    )),
+-                Visibility(
+-                  visible: admin == 1,
+-                  child: Positioned(
+-                    bottom: 44,
+-                    right: 10,
+-                    child: IconButton(
+-                      color: Colors.blue,
+-                      icon: Icon(Icons.edit),
+-                      onPressed: () {
+-                        Navigator.pop(context);
+-                        mapController.update = true;
+-                        Modular.to.pushNamed('/map/editor');
+-                      },
++                                ));
++                          }, backgroundColor: Colors.transparent);
++                        },
++                      )),
++                  Visibility(
++                    visible: ADMIN.contains(auth.user.email),
++                    child: Positioned(
++                      bottom: 44,
++                      right: 10,
++                      child: IconButton(
++                        color: Colors.blue,
++                        icon: Icon(Icons.edit),
++                        onPressed: () {
++                          Navigator.pop(context);
++                          Modular.to.pushNamed('/map/editor');
++                        },
++                      ),
+                     ),
+                   ),
+-                ),
+-              ]),
+-            );
++                ]),
++              );
++            }
+           } else {
++            icone = Icon(Icons.save_alt_outlined);
+             wid = ClipRRect(
+               borderRadius: BorderRadius.only(
+                   topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+@@ -288,23 +586,53 @@ bottomSheetWaypoint(int codt) async {
+                 Container(
+                   color: Colors.white,
+                   width: MediaQuery.of(context).size.width,
+-                  height: 170,
+                   padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
+                   child: Column(
+                     mainAxisAlignment: MainAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     mainAxisSize: MainAxisSize.min,
+                     children: <Widget>[
+-                      modifiedText('Nome: ', mapController.modelWaypoint.nome),
++                      RichText(
++                          text: TextSpan(
++                              text: 'Nome: ',
++                              style: TextStyle(
++                                  fontWeight: FontWeight.bold,
++                                  color: Colors.black),
++                              children: <TextSpan>[
++                            TextSpan(
++                                text: mapController.modelWaypoint.nome,
++                                style: TextStyle(fontWeight: FontWeight.normal))
++                          ])),
+                       Visibility(
+                         visible:
+                             mapController.modelWaypoint.descricao.isNotEmpty,
+-                        child: modifiedText('Descricao: ',
+-                            mapController.modelWaypoint.descricao),
++                        child: RichText(
++                            text: TextSpan(
++                                text: 'Descrição: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelWaypoint.descricao,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
+                       ),
+                       Visibility(
+                         visible: categorias.isNotEmpty,
+-                        child: modifiedText('Categoria: ', categorias),
++                        child: RichText(
++                            text: TextSpan(
++                                text: 'Categorias: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: categorias,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
+                       ),
+                       Visibility(
+                         visible: mapController.modelWaypoint.imagens.isNotEmpty,
+@@ -511,16 +839,47 @@ bottomSheetWaypointOffline(int codt) async {
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     mainAxisSize: MainAxisSize.min,
+                     children: <Widget>[
+-                      modifiedText('Nome: ', mapController.modelWaypoint.nome),
++                      RichText(
++                          text: TextSpan(
++                              text: 'Nome: ',
++                              style: TextStyle(
++                                  fontWeight: FontWeight.bold,
++                                  color: Colors.black),
++                              children: <TextSpan>[
++                            TextSpan(
++                                text: mapController.modelWaypoint.nome,
++                                style: TextStyle(fontWeight: FontWeight.normal))
++                          ])),
+                       Visibility(
+                         visible:
+                             mapController.modelWaypoint.descricao.isNotEmpty,
+-                        child: modifiedText('Descricao: ',
+-                            mapController.modelWaypoint.descricao),
++                        child: RichText(
++                            text: TextSpan(
++                                text: 'Descrição: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: mapController.modelWaypoint.descricao,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
+                       ),
+                       Visibility(
+                         visible: categorias.isNotEmpty,
+-                        child: modifiedText('Categorias: ', categorias),
++                        child: RichText(
++                            text: TextSpan(
++                                text: 'Categorias: ',
++                                style: TextStyle(
++                                    fontWeight: FontWeight.bold,
++                                    color: Colors.black),
++                                children: <TextSpan>[
++                              TextSpan(
++                                  text: categorias,
++                                  style:
++                                      TextStyle(fontWeight: FontWeight.normal))
++                            ])),
+                       ),
+                       Visibility(
+                         visible: mapController.modelWaypoint.imagens.isNotEmpty,
+@@ -565,10 +924,9 @@ bottomSheetWaypointOffline(int codt) async {
+                                                         child: Stack(
+                                                           children: <Widget>[
+                                                             PhotoView(
+-                                                              imageProvider: FileImage(
+-                                                                  File(mapController
+-                                                                      .modelWaypoint
+-                                                                      .imagens[0])),
++                                                              imageProvider:
++                                                                  CachedNetworkImageProvider(
++                                                                      e),
+                                                               minScale:
+                                                                   PhotoViewComputedScale
+                                                                       .covered,
+@@ -717,25 +1075,20 @@ bottomSheetTempTrail(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               mainAxisSize: MainAxisSize.min,
+               children: <Widget>[
+-                modifiedText('Nome: ', trilha.nome),
+-              ],
+-            ),
+-          ),
+-          Visibility(
+-            child: Positioned(
+-              bottom: 44,
+-              right: 44,
+-              child: IconButton(
+-                icon: Icon(
+-                  Icons.upload_rounded,
+-                  color: Colors.blue,
++                RichText(
++                  text: TextSpan(
++                    text: 'Nome: ',
++                    style: TextStyle(
++                        fontWeight: FontWeight.bold, color: Colors.black),
++                    children: <TextSpan>[
++                      TextSpan(
++                          text: trilha.nome,
++                          style: TextStyle(fontWeight: FontWeight.normal))
++                    ],
++                  ),
+                 ),
+-                onPressed: () {
+-                  checkUpload(context, trilha);
+-                },
+-              ),
++              ],
+             ),
+-            visible: trilha.codt >= 2000000,
+           ),
+           Positioned(
+             bottom: 44,
+@@ -746,24 +1099,14 @@ bottomSheetTempTrail(
+                 color: Colors.red,
+               ),
+               onPressed: () {
+-                if (trilha.codt >= 2000000) {
+-                  mapController.createdTrails.remove(trilha);
++                mapController.createdRoutes.remove(trilha);
+ 
+-                  mapController.trilhaRepository
+-                      .deleteRecordedTrail(trilha.codt);
+-
+-                  mapController.sheet = null;
+-                  state();
+-                  Navigator.of(context).pop();
+-                } else {
+-                  mapController.createdRoutes.remove(trilha);
++                mapController.trilhaRepository.deleteTrilha(trilha.codt);
+ 
+-                  mapController.trilhaRepository.deleteRoute(trilha.codt);
+-
+-                  mapController.sheet = null;
+-                  state();
+-                  Navigator.of(context).pop();
+-                }
++                mapController.getPolylines();
++                mapController.sheet = null;
++                state();
++                Navigator.of(context).pop();
+               },
+             ),
+           ),
+@@ -846,12 +1189,14 @@ removerTrilhaMsg(msg, codt, context, trilhaRepository, trilha) async {
+                   await deleteTrilha(codt);
+                   await trilhaRepository.deleteTrail(codt);
+                   await allToDadosTrilhaModel();
+-                  if (!await isOnline()) {
++                  if (mapController.connectivityResult ==
++                      ConnectivityResult.none) {
+                     mapController.trilhas.value.remove(trilha);
+                   }
+                   mapController.getPolylines();
+                   mapController.state();
+                   Navigator.pop(context);
++                  //
+                   mapController.sheet.close();
+                   mapController.state();
+                   //
+@@ -903,6 +1248,7 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
+                           dadosWaypointModel[i].codwp.toString(), wayPointJson);
+                     }
+                   }
++
+                   trilhaRepository.saveTrilha(trilha);
+                   SaveTrilha(
+                     context,
+@@ -917,8 +1263,8 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
+                     mapController.modelTrilha.superficies,
+                   );
+                   await allToDadosTrilhaModel();
+-                  mapController.sheet.setState(() => {});
+                   Navigator.pop(context);
++                  bottomSheetTrilha(trilha);
+                 }),
+           ],
+         ),
+@@ -930,12 +1276,10 @@ salvarTrilhaMsg(msg, context, trilhaRepository, TrilhaModel trilha) async {
+ Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
+   if (waypoint.imagens.length > 0) {
+     List<String> aux = [];
+-    var response = await http.get(Uri.parse(waypoint.imagens[0].toString()));
+-    Directory documentDirectory = await getApplicationDocumentsDirectory();
+-    File file =
+-        new File(join(documentDirectory.path, '${waypoint.nome} imagem 0'));
+-    file.writeAsBytesSync(response.bodyBytes);
+-    aux.add(file.path);
++    var imageId = await ImageDownloader.downloadImage(
++        "${waypoint.imagens[0].toString()}");
++    String path = await ImageDownloader.findPath(imageId);
++    aux.add(path);
+ 
+     return {
+       'codwp': waypoint.codwp,
+@@ -958,12 +1302,3 @@ Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
+     'categorias': waypoint.categorias,
+   };
+ }
+-
+-checkUpload(context, trilha) async {
+-  if (!await isOnline()) {
+-    alert(context, "Dispositivo Offline");
+-  } else {
+-    UsertrailsController usertrailsController = Modular.get();
+-    usertrailsController.uploadTrilha(context, trilha);
+-  }
+-}
+diff --git a/lib/app/modules/map/Components/edicao_trilhas.dart b/lib/app/modules/map/Components/edicao_trilhas.dart
+index 5f21a46..e0b0d27 100644
+--- a/lib/app/modules/map/Components/edicao_trilhas.dart
++++ b/lib/app/modules/map/Components/edicao_trilhas.dart
+@@ -1,6 +1,5 @@
+ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+ import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+-import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
+ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+ import 'package:flutter/material.dart';
+@@ -24,7 +23,6 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
+   var _bairros = '';
+   var _regioes = '';
+   final _mapController = Modular.get<MapController>();
+-  final _userTrailsController = Modular.get<UsertrailsController>();
+   final _infoRepository = Modular.get<InfoRepository>();
+ 
+   @override
+@@ -60,7 +58,6 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
+           m.bairros,
+           m.regioes,
+           m.subtipo);
+-      alertEdit(context, "Trilha editada com sucesso");
+     } else {
+       await _infoRepository.uploadTrilha(
+           getTrilha(m.codt).polylineCoordinates[0],
+@@ -75,11 +72,8 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
+           m.comprimento,
+           m.desnivel,
+           1);
+-      mapController.sheet.close();
+-      _userTrailsController.getPolylines();
+-      _userTrailsController.state();
+-      alertEdit(context, "Upload realizado com sucesso");
+     }
++    Modular.to.pop();
+   }
+ 
+   @override
+@@ -535,29 +529,3 @@ class _RegContentState extends State<RegContent> {
+     );
+   }
+ }
+-
+-alertEdit(BuildContext context, String msg) {
+-  showDialog(
+-    context: context,
+-    barrierDismissible: false,
+-    builder: (context) {
+-      return WillPopScope(
+-        onWillPop: () async => false,
+-        child: AlertDialog(
+-          title: Text("Sucesso"),
+-          content: Text(
+-            msg,
+-          ),
+-          actions: <Widget>[
+-            FlatButton(
+-                child: Text('OK'),
+-                onPressed: () {
+-                  Navigator.pop(context);
+-                  Modular.to.popUntil((route) => route.isFirst);
+-                })
+-          ],
+-        ),
+-      );
+-    },
+-  );
+-}
+diff --git a/lib/app/modules/map/map_controller.dart b/lib/app/modules/map/map_controller.dart
+index cf6acab..9a53124 100644
+--- a/lib/app/modules/map/map_controller.dart
++++ b/lib/app/modules/map/map_controller.dart
+@@ -9,7 +9,7 @@ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
+-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
++import 'package:connectivity/connectivity.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter/services.dart';
+ import 'package:flutter_modular/flutter_modular.dart';
+@@ -56,7 +56,7 @@ abstract class _MapControllerBase with Store {
+   TrilhaModel newTrail;
+   TrilhaModel followTrail;
+   bool update = false;
+-  int distanceValue = 100;
++  ConnectivityResult connectivityResult;
+ 
+   @action
+   _MapControllerBase(
+@@ -69,7 +69,8 @@ abstract class _MapControllerBase with Store {
+     position = getUserPos().asObservable();
+     filterClear = false;
+     typeNum = 2;
+-    if (await isOnline()) {
++    connectivityResult = await (Connectivity().checkConnectivity());
++    if (connectivityResult != ConnectivityResult.none) {
+       trilhas = trilhaRepository
+           .getAllTrilhas()
+           .timeout(Duration(seconds: 10))
+@@ -116,9 +117,9 @@ abstract class _MapControllerBase with Store {
+             'Necessitamos da localização do usuário para o funcionamento do aplicativo');
+       }
+     }
+-    var pos = await Geolocator.getLastKnownPosition();
+-    print(pos);
+-    return pos;
++
++    return await Geolocator.getCurrentPosition(
++        desiredAccuracy: LocationAccuracy.high);
+   }
+ 
+   getRoute() async {
+@@ -197,7 +198,7 @@ abstract class _MapControllerBase with Store {
+             tappedTrilha = null;
+             if (await isOnline()) {
+               bottomSheetWaypoint(waypoint.codigo);
+-            } else {
++            }else{
+               bottomSheetWaypointOffline(waypoint.codigo);
+             }
+             tappedWaypoint = waypoint.codigo;
+@@ -246,7 +247,7 @@ abstract class _MapControllerBase with Store {
+         cos((lat2 - lat1) * p) / 2 +
+         cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
+     var distanceInKM = 12742 * asin(sqrt(a));
+-    return distanceInKM <= distanceValue;
++    return distanceInKM <= 1000;
+   }
+ 
+   bool isVisible(TrilhaModel trilha) {
+diff --git a/lib/app/modules/map/map_page.dart b/lib/app/modules/map/map_page.dart
+index beee8f1..efc9006 100644
+--- a/lib/app/modules/map/map_page.dart
++++ b/lib/app/modules/map/map_page.dart
+@@ -1,12 +1,10 @@
+ import 'dart:async';
+ 
+-import 'package:background_location/background_location.dart' as bglocation;
+ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+ import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
+ import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.dart';
+ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
+-import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+ import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+ import 'package:flutter/material.dart';
+@@ -155,7 +153,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
+                   changeButton = false;
+                   paused = false;
+                 });
+-                bglocation.BackgroundLocation.stopLocationService();
++                subscription.cancel();
+                 store.nomeTrilha(context);
+               },
+               child: Icon(Icons.stop),
+@@ -176,12 +174,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
+                     borderRadius: BorderRadius.circular(360))),
+               ),
+               onPressed: () {
+-                if (!paused) {
+-                  bglocation.BackgroundLocation.stopLocationService();
++                if (paused) {
++                  subscription.pause();
+                 } else {
+                   store.followTrail.polylineCoordinates.add([]);
+-                  bglocation.BackgroundLocation.startLocationService(
+-                      distanceFilter: 6);
++                  subscription.resume();
+                 }
+                 setState(() {
+                   paused = !paused;
+@@ -211,38 +208,21 @@ class _MapPageState extends ModularState<MapPage, MapController> {
+                 } else {
+                   store.followTrail =
+                       TrilhaModel(2000000 + n, 'followRoute $n');
+-                  n++;
+ 
+-                  store.followTrail.polylineCoordinates = [[]];
+-                  addInitialLocation(
+-                      store.followTrail.polylineCoordinates.last);
+-                  bglocation.BackgroundLocation.getPermissions(
+-                    onGranted: () {
+-                      bglocation.BackgroundLocation.setAndroidNotification(
+-                        title: "Gravando trilha",
+-                        message:
+-                            "Estamos obtendo sua localização para gravar a trilha",
+-                        icon: "images/res/mipmap-xxxhdpi/launcher_icon.png",
+-                      );
+-                      bglocation.BackgroundLocation.startLocationService(
+-                          distanceFilter: 6);
+-                      bglocation.BackgroundLocation.getLocationUpdates(
+-                          (bglocation.Location location) {
+-                        // ignore: missing_required_param
+-                        centerScreen(Position(
+-                            longitude: location.longitude,
+-                            latitude: location.latitude));
+-                        setState(() {
+-                          store.followTrail.polylineCoordinates.last.add(
+-                              LatLng(location.latitude, location.longitude));
+-                        });
+-                      });
+-                    },
+-                    onDenied: () {
+-                      alert(
+-                          context, "Permissões negedas, impossível continuar");
+-                    },
+-                  );
++                  store.followTrail.polylineCoordinates = [
++                    [store.position.value.target]
++                  ];
++                  checkPermission(location);
++                  subscription = location.onLocationChanged.listen((position) {
++                    // ignore: missing_required_param
++                    centerScreen(Position(
++                        latitude: position.latitude,
++                        longitude: position.longitude));
++                    setState(() {
++                      store.followTrail.polylineCoordinates.last
++                          .add(LatLng(position.latitude, position.longitude));
++                    });
++                  });
+                   setState(() {
+                     tracking = !tracking;
+                   });
+@@ -251,7 +231,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
+               child: Icon(
+                 Icons.track_changes,
+                 color: (tracking)
+-                    ? ((paused) ? Colors.yellow : Colors.green)
++                    ? ((paused) ? Colors.red : Colors.green)
+                     : Colors.white,
+                 size: 30,
+               ),
+@@ -367,7 +347,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
+             ),
+           ),
+           Visibility(
+-            visible: admin == 1,
++            visible: ADMIN.contains(auth.user.email),
+             child: Positioned(
+               bottom: 70,
+               right: 10,
+@@ -379,7 +359,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
+                 child: RaisedButton(
+                   color: Colors.blue,
+                   onPressed: () {
+-                    Modular.to.pushNamed('/fotos');
++                    // Modular.to.pushNamed('/photo'); //desabilitado devido à bugs do plugin
+                   },
+                   child: Icon(
+                     Icons.camera_alt,
+@@ -474,9 +454,3 @@ class _MapPageState extends ModularState<MapPage, MapController> {
+ 
+   await(Future<ConnectivityResult> checkConnectivity) {}
+ }
+-
+-addInitialLocation(List<LatLng> lista) async {
+-  GeolocatorService()
+-      .getInitialLocation()
+-      .then((value) => lista.add(LatLng(value.latitude, value.longitude)));
+-}
+diff --git a/lib/app/modules/photo/Components/display/display_module.dart b/lib/app/modules/photo/Components/display/display_module.dart
+index c91f6f3..4ce7577 100644
+--- a/lib/app/modules/photo/Components/display/display_module.dart
++++ b/lib/app/modules/photo/Components/display/display_module.dart
+@@ -5,11 +5,11 @@ import 'package:biketrilhas_modular/app/modules/photo/Components/display/display
+ class DisplayModule extends Module {
+   @override
+   final List<Bind> binds = [
+-    Bind.singleton((i) => DisplayController(i.get())),
+-  ];
++        Bind.singleton((i) => DisplayController(i.get())),
++      ];
+ 
+   @override
+   final List<ModularRoute> routes = [
+-    ChildRoute(Modular.initialRoute, child: (_, args) => DisplayPage()),
+-  ];
++        ChildRoute(Modular.initialRoute, child: (_, args) => DisplayPage()),
++      ];
+ }
+diff --git a/lib/app/modules/photo/Components/loader/loader_controller.dart b/lib/app/modules/photo/Components/loader/loader_controller.dart
+index 04c910d..c99a60a 100644
+--- a/lib/app/modules/photo/Components/loader/loader_controller.dart
++++ b/lib/app/modules/photo/Components/loader/loader_controller.dart
+@@ -11,12 +11,12 @@ abstract class _LoaderControllerBase with Store {
+   CameraDescription camera;
+ 
+   @action
+-  void startCameras() {
++  void startCameras(){
+     WidgetsFlutterBinding.ensureInitialized();
+ 
+     availableCameras().then((cameras) {
+       camera = cameras.first;
+-      Modular.to.pushReplacementNamed('/fotos/photo');
++      Modular.to.pushReplacementNamed('/photo/photo');
+     });
+   }
+ }
+diff --git a/lib/app/modules/photo/Components/loader/loader_module.dart b/lib/app/modules/photo/Components/loader/loader_module.dart
+index 6da90cc..8add7c9 100644
+--- a/lib/app/modules/photo/Components/loader/loader_module.dart
++++ b/lib/app/modules/photo/Components/loader/loader_module.dart
+@@ -5,11 +5,10 @@ import 'package:biketrilhas_modular/app/modules/photo/Components/loader/loader_p
+ class LoaderModule extends Module {
+   @override
+   final List<Bind> binds = [
+-    Bind.singleton((i) => LoaderController()),
+-  ];
++        Bind.singleton((i) => LoaderController()),
++      ];
+ 
+-  @override
+   final List<ModularRoute> routes = [
+-    ChildRoute(Modular.initialRoute, child: (_, args) => LoaderPage()),
+-  ];
++        ChildRoute(Modular.initialRoute, child: (_, args) => LoaderPage()),
++      ];
+ }
+diff --git a/lib/app/modules/photo/photo_controller.dart b/lib/app/modules/photo/photo_controller.dart
+index 102a8ae..10a9f73 100644
+--- a/lib/app/modules/photo/photo_controller.dart
++++ b/lib/app/modules/photo/photo_controller.dart
+@@ -37,7 +37,7 @@ abstract class _PhotoControllerBase with Store {
+ 
+       path = (await controller.takePicture()).path;
+ 
+-      Modular.to.pushNamed('/fotos/display');
++      Modular.to.pushNamed('/photo/display');
+     } catch (e) {
+       print(e);
+     }
+diff --git a/lib/app/modules/photo/photo_module.dart b/lib/app/modules/photo/photo_module.dart
+index c88eaec..3c03389 100644
+--- a/lib/app/modules/photo/photo_module.dart
++++ b/lib/app/modules/photo/photo_module.dart
+@@ -1,8 +1,7 @@
+ import 'package:biketrilhas_modular/app/modules/photo/Components/display/display_controller.dart';
+-import 'package:biketrilhas_modular/app/modules/photo/Components/display/display_module.dart';
+ import 'package:biketrilhas_modular/app/modules/photo/Components/display/display_page.dart';
+ import 'package:biketrilhas_modular/app/modules/photo/Components/loader/loader_controller.dart';
+-import 'package:biketrilhas_modular/app/modules/photo/Components/loader/loader_page.dart';
++import 'package:biketrilhas_modular/app/modules/photo/Components/loader/loader_module.dart';
+ import 'package:biketrilhas_modular/app/modules/photo/photo_controller.dart';
+ import 'package:flutter_modular/flutter_modular.dart';
+ import 'package:biketrilhas_modular/app/modules/photo/photo_page.dart';
+@@ -10,15 +9,14 @@ import 'package:biketrilhas_modular/app/modules/photo/photo_page.dart';
+ class PhotoModule extends Module {
+   @override
+   final List<Bind> binds = [
+-    Bind.singleton((i) => PhotoController(i.get())),
+-    Bind.singleton((i) => LoaderController()),
+-    Bind.singleton((i) => DisplayController(i.get())),
+-  ];
++        Bind.singleton((i) => PhotoController(i.get())),
++        Bind.singleton((i) => LoaderController()),
++        Bind.singleton((i) => DisplayController(i.get())),
++      ];
+ 
+-  @override
+   final List<ModularRoute> routes = [
+-    ChildRoute(Modular.initialRoute, child: (_, args) => LoaderPage()),
+-    ChildRoute('/photo', child: (_, args) => PhotoPage()),
+-    ModuleRoute('/display', module: DisplayModule()),
+-  ];
++        ModuleRoute(Modular.initialRoute, module: LoaderModule()),
++        ChildRoute('/photo', child: (_, args) => PhotoPage()),
++        ChildRoute('/display', child: (_, args) => DisplayPage()),
++      ];
+ }
+diff --git a/lib/app/modules/photo/photo_page.dart b/lib/app/modules/photo/photo_page.dart
+index 66ff4d0..e68b78c 100644
+--- a/lib/app/modules/photo/photo_page.dart
++++ b/lib/app/modules/photo/photo_page.dart
+@@ -37,35 +37,29 @@ class _PhotoPageState extends ModularState<PhotoPage, PhotoController> {
+   @override
+   Widget build(BuildContext context) {
+     return Scaffold(
+-      body: Observer(builder: (_) {
+-        if (controller.initializeControllerFuture.error != null) {
+-          return Center(
+-            child: Text('Erro'),
+-          );
+-        }
+-        if (controller.initializeControllerFuture == null) {
+-          return Center(
+-            child: CircularProgressIndicator(),
+-          );
+-        }
+-        return new Container(
+-          height: MediaQuery.of(context).size.height,
+-          child: new CameraPreview(store.controller,
+-              child: Positioned(
+-                bottom: 10,
+-                left: 5,
+-                right: 5,
+-                child: FloatingActionButton(
+-                  child: Icon(Icons.camera),
+-                  elevation: 5,
+-                  onPressed: () {
+-                    controller.takeShot();
+-                  },
+-                ),
+-              )),
+-        );
+-      }),
+-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
++      body: Observer(
++        builder: (_) {
++          if (controller.initializeControllerFuture.error != null) {
++            return Center(
++              child: Text('Erro'),
++            );
++          }
++          if (controller.initializeControllerFuture == null) {
++            return Center(
++              child: CircularProgressIndicator(),
++            );
++          }
++          return CameraPreview(controller.controller);
++        },
++      ),
++      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
++      floatingActionButton: FloatingActionButton(
++        child: Icon(Icons.camera),
++        elevation: 5,
++        onPressed: () {
++          controller.takeShot();
++        },
++      ),
+     );
+   }
+ }
+diff --git a/lib/app/modules/userroutes/userroutes_controller.dart b/lib/app/modules/userroutes/userroutes_controller.dart
+index 1a97e09..5f68424 100644
+--- a/lib/app/modules/userroutes/userroutes_controller.dart
++++ b/lib/app/modules/userroutes/userroutes_controller.dart
+@@ -64,7 +64,6 @@ abstract class _UserroutesControllerBase with Store {
+       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
+         Polyline pol = Polyline(
+           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
+-          consumeTapEvents: true,
+           polylineId: PolylineId("rota $i " + trilha.codt.toString()),
+           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
+           onTap: () {
+@@ -81,7 +80,6 @@ abstract class _UserroutesControllerBase with Store {
+             trilha.waypoints.length,
+             (index) => Marker(
+               markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
+-              consumeTapEvents: true,
+               position: trilha.waypoints[index].posicao,
+               onTap: () {
+                 bottomSheetTempTrail(trilha, scaffoldState, state);
+diff --git a/lib/app/modules/userroutes/userroutes_page.dart b/lib/app/modules/userroutes/userroutes_page.dart
+index 01cc17c..c3baf7e 100644
+--- a/lib/app/modules/userroutes/userroutes_page.dart
++++ b/lib/app/modules/userroutes/userroutes_page.dart
+@@ -26,10 +26,7 @@ class _UserroutesPageState
+     return Scaffold(
+         key: controller.scaffoldState,
+         appBar: AppBar(
+-          title: Text(
+-            'Suas Rotas',
+-            style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+-          ),
++          title: Text('Suas Rotas'),
+           centerTitle: true,
+         ),
+         body: Stack(
+diff --git a/lib/app/modules/usertrails/usertrails_controller.dart b/lib/app/modules/usertrails/usertrails_controller.dart
+index cc6cc7a..dde789e 100644
+--- a/lib/app/modules/usertrails/usertrails_controller.dart
++++ b/lib/app/modules/usertrails/usertrails_controller.dart
+@@ -4,9 +4,10 @@ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dar
+ import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
++import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+ import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
++import 'package:connectivity/connectivity.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter_modular/flutter_modular.dart';
+ import 'package:google_maps_flutter/google_maps_flutter.dart';
+@@ -41,15 +42,12 @@ abstract class _UsertrailsControllerBase with Store {
+     if (checkedTrails == null) {
+       checkedTrails = 1;
+       mapController.createdTrails.clear();
+-      mapController.createdTrails
+-          .addAll(await mapController.trilhaRepository.getRecordedTrails());
+     }
+ 
+     for (var trilha in mapController.createdTrails) {
+       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
+         Polyline pol = Polyline(
+           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
+-          consumeTapEvents: true,
+           polylineId: PolylineId("rota $i " + trilha.codt.toString()),
+           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
+           onTap: () {
+@@ -102,18 +100,22 @@ abstract class _UsertrailsControllerBase with Store {
+               FlatButton(
+                   child: Text('Sim'),
+                   onPressed: () {
+-                    mapController.update = false;
+-                    mapController.modelTrilha = DadosTrilhaModel(
+-                        trilha.codt,
+-                        trilha.nome,
+-                        "",
+-                        totalDistance(trilha.polylineCoordinates[0]),
+-                        0,
+-                        'Trilha');
+-                    mapController.followTrail = null;
+-                    mapController.state();
++                    if (mapController.connectivityResult ==
++                        ConnectivityResult.none) {
++                      alert(context, "Dispositivo Offline");
++                    } else {
++                      mapController.update = false;
++                      mapController.modelTrilha = DadosTrilhaModel(
++                          trilha.codt,
++                          trilha.nome,
++                          "",
++                          totalDistance(trilha.polylineCoordinates[0]),
++                          0,
++                          'Trilha');
++                      Navigator.pop(context);
++                      Modular.to.pushNamed('/map/editor');
++                    }
+                     Navigator.pop(context);
+-                    Modular.to.pushNamed('/map/editor');
+                   }),
+             ],
+           ),
+@@ -136,6 +138,6 @@ abstract class _UsertrailsControllerBase with Store {
+       total += distance(lista[i].latitude, lista[i].longitude,
+           lista[i + 1].latitude, lista[i + 1].longitude);
+     }
+-    return num.parse(total.toStringAsFixed(2));
++    return total;
+   }
+ }
+diff --git a/lib/app/modules/usertrails/usertrails_page.dart b/lib/app/modules/usertrails/usertrails_page.dart
+index 2cf360f..41eeb7d 100644
+--- a/lib/app/modules/usertrails/usertrails_page.dart
++++ b/lib/app/modules/usertrails/usertrails_page.dart
+@@ -1,7 +1,6 @@
+ import 'dart:async';
+ 
+ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter_modular/flutter_modular.dart';
+ import 'package:google_maps_flutter/google_maps_flutter.dart';
+@@ -27,10 +26,7 @@ class _UsertrailsPageState
+     return Scaffold(
+         key: store.scaffoldState,
+         appBar: AppBar(
+-          title: Text(
+-            'Suas Trilhas',
+-            style: TextStyle(fontFamily: 'Rancho', fontSize: 25),
+-          ),
++          title: Text('Suas Trilhas'),
+           centerTitle: true,
+         ),
+         body: Stack(
+@@ -65,10 +61,11 @@ class _UsertrailsPageState
+                   : store.mapController.position.value,
+               onMapCreated: (GoogleMapController mapcontroller) {
+                 if (store.tappedTrilha != null) {
+-                  checkUpload();
++                  store.uploadTrilha(context, store.mapController.followTrail);
+                   bottomSheetTempTrail(store.mapController.followTrail,
+                       store.scaffoldState, store.state);
+                 }
++                store.mapController.followTrail = null;
+                 _controller.complete(mapcontroller);
+               },
+             ),
+@@ -79,10 +76,4 @@ class _UsertrailsPageState
+   void _func() {
+     setState(() {});
+   }
+-
+-  checkUpload() async {
+-    if (await isOnline()) {
+-      store.uploadTrilha(context, store.mapController.followTrail);
+-    }
+-  }
+ }
+diff --git a/lib/app/pages/splash/splash_page.dart b/lib/app/pages/splash/splash_page.dart
+index 2858c6d..c677ad7 100644
+--- a/lib/app/pages/splash/splash_page.dart
++++ b/lib/app/pages/splash/splash_page.dart
+@@ -20,7 +20,6 @@ class _SplashPageState extends State<SplashPage> {
+     disposer = autorun((_) {
+       final auth = Modular.get<AuthController>();
+       if (auth.status == AuthStatus.login) {
+-        auth.loginProcedure();
+         Modular.to.pushReplacementNamed('/map');
+       } else if (auth.status == AuthStatus.logoff) {
+         Modular.to.pushReplacementNamed('/login');
+diff --git a/lib/app/shared/auth/auth_controller.dart b/lib/app/shared/auth/auth_controller.dart
+index 0e7a3bb..56374f8 100644
+--- a/lib/app/shared/auth/auth_controller.dart
++++ b/lib/app/shared/auth/auth_controller.dart
+@@ -1,5 +1,4 @@
+ import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
+-import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+ import 'package:firebase_auth/firebase_auth.dart';
+ import 'package:flutter_modular/flutter_modular.dart';
+ import 'package:mobx/mobx.dart';
+@@ -36,12 +35,6 @@ abstract class _AuthControllerBase with Store {
+   Future logout() {
+     return _authRepository.getLogout();
+   }
+-
+-  Future loginProcedure() async {
+-    await _authRepository.insertUser(user);
+-    admin = await _authRepository.isAdmin(user.email);
+-    return true;
+-  }
+ }
+ 
+ enum AuthStatus { loading, login, logoff }
+diff --git a/lib/app/shared/auth/repositories/auth_repository.dart b/lib/app/shared/auth/repositories/auth_repository.dart
+index 94a4bb5..2114c5b 100644
+--- a/lib/app/shared/auth/repositories/auth_repository.dart
++++ b/lib/app/shared/auth/repositories/auth_repository.dart
+@@ -1,4 +1,3 @@
+-import 'package:dio/dio.dart';
+ import 'package:firebase_auth/firebase_auth.dart';
+ import 'package:google_sign_in/google_sign_in.dart';
+ 
+@@ -7,9 +6,6 @@ import 'auth_repository_interface.dart';
+ class AuthRepository implements IAuthRepository {
+   final GoogleSignIn _googleSignIn = GoogleSignIn();
+   final FirebaseAuth _auth = FirebaseAuth.instance;
+-  final Dio dio;
+-
+-  AuthRepository(this.dio);
+ 
+   @override
+   Future<User> getGoogleLogin() async {
+@@ -35,19 +31,4 @@ class AuthRepository implements IAuthRepository {
+   Future getLogout() {
+     return _auth.signOut();
+   }
+-
+-  Future<bool> insertUser(User user) async {
+-    var result = await dio.post('server/usuario', data: {
+-      "usuEmail": user.email,
+-      "usuNome": user.displayName,
+-      "deletado": 0,
+-      "admin": 0
+-    });
+-    return result.data;
+-  }
+-
+-  Future<int> isAdmin(String email) async {
+-    var result = await dio.get('server/admin/$email');
+-    return result.data as int;
+-  }
+ }
+diff --git a/lib/app/shared/auth/repositories/auth_repository_interface.dart b/lib/app/shared/auth/repositories/auth_repository_interface.dart
+index 3137991..b2888e1 100644
+--- a/lib/app/shared/auth/repositories/auth_repository_interface.dart
++++ b/lib/app/shared/auth/repositories/auth_repository_interface.dart
+@@ -4,6 +4,4 @@ abstract class IAuthRepository {
+   Future<User> getUser();
+   Future<User> getGoogleLogin();
+   Future getLogout();
+-  Future<int> isAdmin(String email);
+-  Future<bool> insertUser(User user);
+ }
+diff --git a/lib/app/shared/drawer/drawer_page.dart b/lib/app/shared/drawer/drawer_page.dart
+index f687f8a..f38c35c 100644
+--- a/lib/app/shared/drawer/drawer_page.dart
++++ b/lib/app/shared/drawer/drawer_page.dart
+@@ -1,10 +1,8 @@
+-
+ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter_mobx/flutter_mobx.dart';
+ import 'package:flutter_modular/flutter_modular.dart';
+@@ -98,7 +96,7 @@ class _DrawerPageState extends State<DrawerPage> {
+             dense: true,
+             onTap: () async {
+               if (draw.value != 1) {
+-                if (await isOnline()) {
++                if (await isOnline() == true) {
+                   Navigator.pop(context);
+                   Modular.to.pushNamed('/filter');
+                 } else {
+diff --git a/lib/app/shared/info/dados_waypoint_model.dart b/lib/app/shared/info/dados_waypoint_model.dart
+index bac9815..e9220aa 100644
+--- a/lib/app/shared/info/dados_waypoint_model.dart
++++ b/lib/app/shared/info/dados_waypoint_model.dart
+@@ -5,8 +5,7 @@ class DadosWaypointModel {
+   String descricao;
+   int numImagens;
+   List<String> categorias = [];
+-  List<String> imagens = [];
++  List<String> imagens = []; 
+ 
+-  DadosWaypointModel(
+-      this.codwp, this.codt, this.nome, this.descricao, this.numImagens);
+-}
++  DadosWaypointModel(this.codwp, this.codt, this.nome, this.descricao, this.numImagens);
++}
+\ No newline at end of file
+diff --git a/lib/app/shared/info/info_repository.dart b/lib/app/shared/info/info_repository.dart
+index aa62633..2ee8e54 100644
+--- a/lib/app/shared/info/info_repository.dart
++++ b/lib/app/shared/info/info_repository.dart
+@@ -1,15 +1,10 @@
+-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+-import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+ import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
+ import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
+ import 'package:biketrilhas_modular/app/shared/info/models.dart';
+-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
+ import 'package:dio/dio.dart';
+-import 'package:flutter/widgets.dart';
+-import 'package:flutter_modular/flutter_modular.dart';
+ import 'package:google_maps_flutter/google_maps_flutter.dart';
+ import '../utils/constants.dart';
++import 'package:connectivity/connectivity.dart';
+ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
+ 
+ var connectivityResult;
+@@ -289,19 +284,19 @@ class InfoRepository {
+   }
+ 
+   Future<int> uploadTrilha(
+-      List<LatLng> geometria,
+-      String nome,
+-      String descricao,
+-      String tipo,
+-      String dif,
+-      List<String> superficies,
+-      List<String> bairros,
+-      List<String> regioes,
+-      String subtipo,
+-      double comprimento,
+-      double desnivel,
+-      int cidade) async {
+-    var auth = Modular.get<AuthController>();
++    List<LatLng> geometria,
++    String nome,
++    String descricao,
++    String tipo,
++    String dif,
++    List<String> superficies,
++    List<String> bairros,
++    List<String> regioes,
++    String subtipo,
++    double comprimento,
++    double desnivel,
++    int cidade,
++  ) async {
+     int cidCod, tipCod, difCod, subtipInt;
+     List<int> supInt = [];
+     List<int> baiInt = [];
+@@ -318,10 +313,6 @@ class InfoRepository {
+       }
+     }
+ 
+-    if (difCod == null) {
+-      difCod = 1;
+-    }
+-
+     for (var i = 1; i <= this.superficies.length; i++) {
+       if (superficies.contains(this.superficies[i - 1].sup_nome)) {
+         supInt.add(i);
+@@ -346,7 +337,6 @@ class InfoRepository {
+         break;
+       }
+     }
+-    if (subtipInt == null) subtipInt = 1;
+ 
+     var geoString = "";
+     for (var ponto in geometria) {
+@@ -356,7 +346,7 @@ class InfoRepository {
+       geoString += "${ponto.longitude} ${ponto.latitude}";
+     }
+ 
+-    var result = (await dio.post('/server/trilhatemp', data: {
++    return (await dio.post('/server/trilhatemp', data: {
+       "comprimento": comprimento,
+       "desnivel": desnivel,
+       "nome": nome,
+@@ -368,14 +358,9 @@ class InfoRepository {
+       "bairros": baiInt,
+       "regioes": regInt,
+       "subtip_cod": subtipInt,
+-      "geometria": [geoString],
+-      "email": auth.user.email
+-    }));
+-    if (result.statusCode < 300) {
+-      mapController.trilhas.value.add(TrilhaModel(result.data, nome));
+-    }
+-    mapController.createdTrails.clear();
+-    return result.data;
++      "geometria": [geoString]
++    }))
++        .data;
+   }
+ 
+   //Verificar se esta online ou offline
+@@ -416,7 +401,7 @@ class InfoRepository {
+           result['desnivel'],
+           result['tipo'],
+         );
+-        print(result['bairros']);
++
+         model.regioes = getRegiaoTrilhasOffline(result['regioes']);
+         model.superficies = getSuperficieTrilhasOffline(result['superficies']);
+         model.bairros = getBairrosTrilhasOffline(result['bairros']);
+@@ -475,3 +460,12 @@ dadosWaypointModelfromJson(json) {
+   }
+   return model;
+ }
++
++//Retorna os dados de como o usuario está conectado com a internet ou offline
++isOnline() async {
++  connectivityResult = await (Connectivity().checkConnectivity());
++  if (connectivityResult == ConnectivityResult.none) {
++    return false;
++  }
++  return true;
++}
+diff --git a/lib/app/shared/info/save_trilha.dart b/lib/app/shared/info/save_trilha.dart
+index 15fd7f4..37eb35d 100644
+--- a/lib/app/shared/info/save_trilha.dart
++++ b/lib/app/shared/info/save_trilha.dart
+@@ -1,8 +1,6 @@
+ import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
+-import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
+ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+ import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
+-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
+ import 'package:flutter/material.dart';
+ 
+ //codigosTrilhasSalvas irá guardar valores inteiros dos códigos das trilhas salvas
+diff --git a/lib/app/shared/trilhas/trilha_repository.dart b/lib/app/shared/trilhas/trilha_repository.dart
+index 1a4fa30..b34e5b4 100644
+--- a/lib/app/shared/trilhas/trilha_repository.dart
++++ b/lib/app/shared/trilhas/trilha_repository.dart
+@@ -23,18 +23,7 @@ class TrilhaRepository {
+ 
+   int n = 10000;
+ 
+-  void deleteRecordedTrail(int codigo) {
+-    sharedPrefs.remove('recorded trail $codigo');
+-    for (var i = 0; i < recordedTrails.codes.length; i++) {
+-      if (recordedTrails.codes[i] == codigo) {
+-        recordedTrails.codes.removeAt(i);
+-      }
+-    }
+-    sharedPrefs.remove('recordedTrails');
+-    sharedPrefs.save('recordedTrails', recordedTrails);
+-  }
+-
+-  void deleteRoute(int codigo) {
++  void deleteTrilha(int codigo) {
+     sharedPrefs.remove('route $codigo');
+     for (var i = 0; i < savedRoutes.codes.length; i++) {
+       if (savedRoutes.codes[i] == codigo) {
+@@ -60,7 +49,6 @@ class TrilhaRepository {
+       }
+     }
+     await sharedPrefs.remove('savedTrilhas');
+-    print("Trilha removida!");
+     await sharedPrefs.save('savedTrilhas', savedTrilhas);
+   }
+ 
+@@ -89,6 +77,7 @@ class TrilhaRepository {
+ 
+   Future<List<TrilhaModel>> getStorageRoutes() async {
+     List<TrilhaModel> trilhas = [];
++
+     if (savedRoutes == null) {
+       try {
+         savedRoutes =
+diff --git a/lib/app/shared/utils/constants.dart b/lib/app/shared/utils/constants.dart
+index 4b2a7f6..7211445 100644
+--- a/lib/app/shared/utils/constants.dart
++++ b/lib/app/shared/utils/constants.dart
+@@ -1,5 +1,10 @@
++const ADMIN = [
++  'endrewrthang@gmail.com',
++  'bdes.udesc@gmail.com',
++  'fabianobaldo@gmail.com',
++  'Rodrigo-7491@hotmail.com'
++];
+ // const String URL_BASE = "http://192.168.1.10:8080/";
+ const String URL_BASE = "http://200.19.107.169:43198/";
+ int checkedStorage;
+ int checkedTrails;
+-int admin;
+diff --git a/lib/app/shared/utils/functions.dart b/lib/app/shared/utils/functions.dart
+deleted file mode 100644
+index 3b8b4d5..0000000
+--- a/lib/app/shared/utils/functions.dart
++++ /dev/null
+@@ -1,9 +0,0 @@
+-import 'package:connectivity/connectivity.dart';
+-
+-isOnline() async {
+-  var connectivityResult = await (Connectivity().checkConnectivity());
+-  if (connectivityResult == ConnectivityResult.none) {
+-    return false;
+-  }
+-  return true;
+-}
+diff --git a/pubspec.lock b/pubspec.lock
+index 32f6ba7..dc4a108 100644
+--- a/pubspec.lock
++++ b/pubspec.lock
+@@ -36,13 +36,6 @@ packages:
+       url: "https://pub.dartlang.org"
+     source: hosted
+     version: "2.5.0"
+-  background_location:
+-    dependency: "direct main"
+-    description:
+-      name: background_location
+-      url: "https://pub.dartlang.org"
+-    source: hosted
+-    version: "0.5.0"
+   boolean_selector:
+     dependency: transitive
+     description:
+@@ -386,14 +379,14 @@ packages:
+       name: geolocator
+       url: "https://pub.dartlang.org"
+     source: hosted
+-    version: "7.0.3"
++    version: "7.0.1"
+   geolocator_platform_interface:
+     dependency: transitive
+     description:
+       name: geolocator_platform_interface
+       url: "https://pub.dartlang.org"
+     source: hosted
+-    version: "2.0.2"
++    version: "2.0.0"
+   geolocator_web:
+     dependency: transitive
+     description:
+@@ -667,20 +660,6 @@ packages:
+       url: "https://pub.dartlang.org"
+     source: hosted
+     version: "1.11.0"
+-  permission_handler:
+-    dependency: transitive
+-    description:
+-      name: permission_handler
+-      url: "https://pub.dartlang.org"
+-    source: hosted
+-    version: "6.1.3"
+-  permission_handler_platform_interface:
+-    dependency: transitive
+-    description:
+-      name: permission_handler_platform_interface
+-      url: "https://pub.dartlang.org"
+-    source: hosted
+-    version: "3.3.0"
+   petitparser:
+     dependency: transitive
+     description:
+diff --git a/pubspec.yaml b/pubspec.yaml
+index 1dc5dd4..b8832db 100644
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -17,7 +17,6 @@ environment:
+   sdk: ">=2.2.2 <3.0.0"
+ 
+ dependencies:
+-  background_location:
+   location: ^4.1.1
+   flutter_polyline_points: ^0.2.1
+   url_launcher:
+@@ -28,7 +27,7 @@ dependencies:
+   path_provider: ^2.0.1
+   camera: ^0.8.0
+   google_maps_flutter: ^2.0.1
+-  geolocator: ^7.0.3
++  geolocator: ^7.0.1
+   google_sign_in: ^5.0.0
+   firebase_auth: ^1.0.1
+   firebase_core : ^1.0.0

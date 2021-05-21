@@ -3,10 +3,8 @@ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../utils/constants.dart';
@@ -116,17 +114,6 @@ class InfoRepository {
     return list;
   }
 
-  //getRegiao para trilhas offline
-  List<String> getRegiaoTrilhasOffline(cods) {
-    List<String> list = [];
-    for (var reg in regioes) {
-      if (cods.contains(reg.reg_nome)) {
-        list.add(reg.reg_nome);
-      }
-    }
-    return list;
-  }
-
   String getSubtipo(cod) {
     for (var subtipo in subtipos) {
       if (cod == subtipo.subtip_cod) {
@@ -146,17 +133,6 @@ class InfoRepository {
     return list;
   }
 
-  //getSuperficie para trilhas offline
-  List<String> getSuperficieTrilhasOffline(cods) {
-    List<String> list = [];
-    for (var sup in superficies) {
-      if (cods.contains(sup.sup_nome)) {
-        list.add(sup.sup_nome);
-      }
-    }
-    return list;
-  }
-
   List<String> getBairros() {
     List<String> list = [];
     for (var bai in bairros) {
@@ -169,17 +145,6 @@ class InfoRepository {
     List<String> list = [];
     for (var bai in bairros) {
       if (cods.contains(bai.bai_cod)) {
-        list.add(bai.bai_nome);
-      }
-    }
-    return list;
-  }
-
-  //getBairro para trilhas offline
-  List<String> getBairrosTrilhasOffline(cods) {
-    List<String> list = [];
-    for (var bai in bairros) {
-      if (cods.contains(bai.bai_nome)) {
         list.add(bai.bai_nome);
       }
     }
@@ -379,7 +344,6 @@ class InfoRepository {
     return result.data;
   }
 
-  //Verificar se esta online ou offline
   Future<DadosTrilhaModel> getDadosTrilha(int codt) async {
     if (await isOnline()) {
       var result = (await dio.get('/server/naogeografico',
@@ -404,11 +368,9 @@ class InfoRepository {
 
       return model;
     } else {
-      await getPrefNoAlert();
+      await getPref();
       if (codigosTrilhasSalvas.contains(codt)) {
         var result = await sharedPrefs.read(codt.toString());
-
-        //print(result['bairros'].toString());
         DadosTrilhaModel model = DadosTrilhaModel(
           codt,
           result['nome'],
@@ -417,29 +379,27 @@ class InfoRepository {
           result['desnivel'],
           result['tipo'],
         );
-        print(result['bairros']);
-        model.regioes = getRegiaoTrilhasOffline(result['regioes']);
-        model.superficies = getSuperficieTrilhasOffline(result['superficies']);
-        model.bairros = getBairrosTrilhasOffline(result['bairros']);
+
+        List<String> bairros = [];
+        for (var b in result['bairros']) {
+          bairros.add(b);
+        }
+
+        List<String> regioes = [];
+        for (var r in result['regioes']) {
+          regioes.add(r);
+        }
+
+        List<String> superficies = [];
+        for (var s in result['superficies']) {
+          superficies.add(s);
+        }
+
+        model.regioes = regioes;
+        model.superficies = superficies;
+        model.bairros = bairros;
         model.dificuldade = result['dificuldade'];
         model.subtipo = '';
-
-        return model;
-      } else {
-        DadosTrilhaModel model = DadosTrilhaModel(
-          null,
-          'Trilha não salva',
-          'Trilha não salva',
-          0,
-          0,
-          'Trilha não salva',
-        );
-
-        model.regioes = ['Trilha não salva'];
-        model.superficies = ['Trilha não salva'];
-        model.bairros = ['Trilha não salva'];
-        model.dificuldade = 'Trilha não salva';
-        model.subtipo = 'Trilha não salva';
 
         return model;
       }

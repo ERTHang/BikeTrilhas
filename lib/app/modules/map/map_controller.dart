@@ -58,7 +58,7 @@ abstract class _MapControllerBase with Store {
   TrilhaModel newTrail;
   TrilhaModel followTrail;
   bool update = false;
-  int distanceValue = 100;
+  int distanceValue = 500;
 
   @action
   _MapControllerBase(
@@ -119,7 +119,7 @@ abstract class _MapControllerBase with Store {
             'Necessitamos da localização do usuário para o funcionamento do aplicativo');
       }
     }
-    var pos = await Geolocator.getLastKnownPosition();
+    var pos = await Geolocator.getCurrentPosition();
     print(pos);
     return pos;
   }
