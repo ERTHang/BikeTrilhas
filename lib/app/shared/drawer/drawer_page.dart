@@ -1,8 +1,5 @@
-
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
-import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';

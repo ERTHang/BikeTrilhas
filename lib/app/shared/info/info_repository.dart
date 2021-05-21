@@ -289,7 +289,7 @@ class InfoRepository {
   }
 
   Future<int> uploadTrilha(
-      List<LatLng> geometria,
+      List<List<LatLng>> geometria,
       String nome,
       String descricao,
       String tipo,
@@ -306,6 +306,7 @@ class InfoRepository {
     List<int> supInt = [];
     List<int> baiInt = [];
     List<int> regInt = [];
+    List<String> geoList = [];
     tipCod = (tipo == 'Ciclovia')
         ? 2
         : (tipo == 'Trilha')
@@ -348,12 +349,15 @@ class InfoRepository {
     }
     if (subtipInt == null) subtipInt = 1;
 
-    var geoString = "";
-    for (var ponto in geometria) {
-      if (geoString != "") {
-        geoString += ", ";
+    for (var geoponto in geometria) {
+      var geoString = "";
+      for (var ponto in geoponto) {
+        if (geoString != "") {
+          geoString += ", ";
+        }
+        geoString += "${ponto.longitude} ${ponto.latitude}";
       }
-      geoString += "${ponto.longitude} ${ponto.latitude}";
+      geoList.add(geoString);
     }
 
     var result = (await dio.post('/server/trilhatemp', data: {
@@ -368,12 +372,9 @@ class InfoRepository {
       "bairros": baiInt,
       "regioes": regInt,
       "subtip_cod": subtipInt,
-      "geometria": [geoString],
+      "geometria": geoList,
       "email": auth.user.email
     }));
-    if (result.statusCode < 300) {
-      mapController.trilhas.value.add(TrilhaModel(result.data, nome));
-    }
     mapController.createdTrails.clear();
     return result.data;
   }
@@ -450,8 +451,12 @@ class InfoRepository {
       var result = (await dio.get('/server/naogeografico',
               queryParameters: {"tipo": "waypoint", "cod": codwp}))
           .data[0];
-      DadosWaypointModel model = DadosWaypointModel(codwp, result['cod'],
-          result['nome'], result['descricao'], result['numeroDeImagens']);
+      DadosWaypointModel model = DadosWaypointModel(
+          codwp: codwp,
+          codt: result['cod'],
+          nome: result['nome'],
+          descricao: result['descricao'],
+          numImagens: result['numeroDeImagens']);
       for (var i = 1; i <= model.numImagens; i++) {
         model.imagens.add(URL_BASE + 'server/byteimage/$i/$codwp');
       }
@@ -469,7 +474,11 @@ class InfoRepository {
 dadosWaypointModelfromJson(json) {
   int numImagens = json['numImagens'];
   DadosWaypointModel model = DadosWaypointModel(
-      json['codwp'], json['codt'], json['nome'], json['descricao'], numImagens);
+      codwp: json['codwp'],
+      codt: json['codt'],
+      nome: json['nome'],
+      descricao: json['descricao'],
+      numImagens: numImagens);
   if (numImagens >= 1) {
     model.imagens = [json['imagens'][0].toString()];
   }
