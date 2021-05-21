@@ -63,7 +63,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
       alertEdit(context, "Trilha editada com sucesso");
     } else {
       await _infoRepository.uploadTrilha(
-          getTrilha(m.codt).polylineCoordinates[0],
+          getTrilha(m.codt).polylineCoordinates,
           m.nome,
           m.descricao,
           m.tipo,

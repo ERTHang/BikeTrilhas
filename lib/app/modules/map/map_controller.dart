@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -9,6 +10,7 @@ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -77,6 +79,7 @@ abstract class _MapControllerBase with Store {
       typeFilter =
           await filterRepository.getFiltered([2], [], [], [], [], [], []);
       trilhasFiltradas = typeFilter;
+      Timer.periodic(Duration(seconds: 15), (Timer t) => checkUpdatesTrilhas());
     } else {
       trilhas = trilhaRepository.getStorageTrilhas().asObservable();
     }
@@ -116,7 +119,7 @@ abstract class _MapControllerBase with Store {
             'Necessitamos da localização do usuário para o funcionamento do aplicativo');
       }
     }
-    var pos = await Geolocator.getLastKnownPosition();
+    var pos = await Geolocator.getCurrentPosition();
     print(pos);
     return pos;
   }
@@ -264,7 +267,89 @@ abstract class _MapControllerBase with Store {
             tappedTrilha == trilha.codt);
   }
 
-  Future<String> nomeTrilha(context) async {
+  void checkUpdatesTrilhas() async {
+    var result = await trilhaRepository.getUpdatedTrilhas();
+    if (result == null) {
+      return;
+    } else {
+      trilhas.value.addAll(result);
+      getPolylines();
+      state();
+    }
+  }
+
+  Future<void> addWaypoint(context) async {
+    TextEditingController _nameController = TextEditingController();
+    TextEditingController _descController = TextEditingController();
+    DadosWaypointModel model = DadosWaypointModel();
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            actions: [
+              FlatButton(
+                  child: Text('adicionar'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    return;
+                  }),
+            ],
+            title: Text("Adicionar Waypoint"),
+            content: Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextField(
+                    controller: _nameController,
+                    onChanged: (value) {
+                      model.nome = value;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Nome',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: 300.0,
+                    ),
+                    child: TextField(
+                      controller: _descController,
+                      onChanged: (value) {
+                        model.descricao = value;
+                      },
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        labelText: 'Descricao',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Container()
+                  // OutlineButton(
+                  //   onPressed: () => {},
+                  //   shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(15)),
+                  // )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> nomeTrilha(context) async {
     TextEditingController _nameController = TextEditingController();
     await showDialog(
       context: context,

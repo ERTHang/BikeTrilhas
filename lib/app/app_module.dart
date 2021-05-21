@@ -26,10 +26,11 @@ class AppModule extends Module {
     Bind.singleton((i) => DrawerClassController()),
     Bind.singleton((i) => AppController()),
     Bind.singleton((i) => MapController(i.get(), i.get(), i.get())),
+    Bind.singleton((i) => InfoRepository(i.get<Dio>())),
+    Bind.singleton((i) => TrilhaRepository(
+        i.get<Dio>(), i.get<SharedPrefs>(), i.get<AuthController>())),
     Bind.singleton((i) => AuthRepository(i.get<Dio>())),
     Bind.singleton((i) => AuthController()),
-    Bind.singleton((i) => InfoRepository(i.get<Dio>())),
-    Bind.singleton((i) => TrilhaRepository(i.get<Dio>(), i.get<SharedPrefs>())),
     Bind.singleton((i) => FilterRepository(i.get<Dio>())),
     Bind.singleton((i) => SharedPrefs()),
     Bind.singleton((i) => Dio(BaseOptions(baseUrl: URL_BASE)))
