@@ -1,6 +1,4 @@
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
-import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 
@@ -19,6 +17,7 @@ class SaveTrilha {
   double desnivel;
   String tipo;
   String dificuldade;
+  String qualidade;
   List<String> bairros;
   List<String> regioes;
   List<String> superficies;
@@ -32,18 +31,19 @@ class SaveTrilha {
     this.desnivel,
     this.tipo,
     this.dificuldade,
+    this.qualidade,
     this.bairros,
     this.regioes,
     this.superficies,
   ) {
     salvar(context, codigo, nome, descricao, comprimento, desnivel, tipo,
-        dificuldade, bairros, regioes, superficies);
+        dificuldade, qualidade, bairros, regioes, superficies);
   }
 }
 
 ///Tranformar em json as informações da trilha
 Map<String, dynamic> toJson(nome, descricao, comprimento, desnivel, tipo,
-        dificuldade, bairros, regioes, superficies) =>
+        dificuldade, qualidade, bairros, regioes, superficies) =>
     {
       'nome': nome,
       'descricao': descricao,
@@ -51,6 +51,7 @@ Map<String, dynamic> toJson(nome, descricao, comprimento, desnivel, tipo,
       'desnivel': desnivel,
       'tipo': tipo,
       'dificuldade': dificuldade,
+      'qualidade': qualidade,
       'bairros': bairros,
       'regioes': regioes,
       'superficies': superficies
@@ -58,7 +59,7 @@ Map<String, dynamic> toJson(nome, descricao, comprimento, desnivel, tipo,
 
 ///Função para salvar trilha em memória local
 salvar(context, codigo, nome, descricao, comprimento, desnivel, tipo,
-    dificuldade, bairros, regioes, superficies) async {
+    dificuldade, qualidade, bairros, regioes, superficies) async {
   if (await isOnline()) {
     if (codigosTrilhasSalvas.contains(codigo)) {
       alert(context, 'Trilha já foi salva!', 'Trilha');
@@ -66,7 +67,7 @@ salvar(context, codigo, nome, descricao, comprimento, desnivel, tipo,
       sharedPrefs.save(
         codigo.toString(),
         toJson(nome, descricao, comprimento, desnivel, tipo, dificuldade,
-            bairros, regioes, superficies),
+            qualidade, bairros, regioes, superficies),
       );
       codigosTrilhasSalvas.add(codigo);
       incrementadorTrilhasNovas += 1;

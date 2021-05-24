@@ -417,6 +417,7 @@ class InfoRepository {
         model.superficies = superficies;
         model.bairros = bairros;
         model.dificuldade = result['dificuldade'];
+        model.quali_trilha = result['qualidade'];
         model.subtipo = '';
 
         return model;
