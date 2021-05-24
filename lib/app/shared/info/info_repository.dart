@@ -374,7 +374,7 @@ class InfoRepository {
         DadosTrilhaModel model = DadosTrilhaModel(
           codt,
           result['nome'],
-          '',
+          result['descricao'],
           result['comprimento'],
           result['desnivel'],
           result['tipo'],

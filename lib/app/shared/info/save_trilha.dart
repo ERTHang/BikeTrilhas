@@ -14,6 +14,7 @@ SharedPrefs sharedPrefs = SharedPrefs();
 class SaveTrilha {
   int codigo;
   String nome;
+  String descricao;
   double comprimento;
   double desnivel;
   String tipo;
@@ -26,6 +27,7 @@ class SaveTrilha {
     context,
     this.codigo,
     this.nome,
+    this.descricao,
     this.comprimento,
     this.desnivel,
     this.tipo,
@@ -34,16 +36,17 @@ class SaveTrilha {
     this.regioes,
     this.superficies,
   ) {
-    salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade,
-        bairros, regioes, superficies);
+    salvar(context, codigo, nome, descricao, comprimento, desnivel, tipo,
+        dificuldade, bairros, regioes, superficies);
   }
 }
 
 ///Tranformar em json as informações da trilha
-Map<String, dynamic> toJson(nome, comprimento, desnivel, tipo, dificuldade,
-        bairros, regioes, superficies) =>
+Map<String, dynamic> toJson(nome, descricao, comprimento, desnivel, tipo,
+        dificuldade, bairros, regioes, superficies) =>
     {
       'nome': nome,
+      'descricao': descricao,
       'comprimento': comprimento,
       'desnivel': desnivel,
       'tipo': tipo,
@@ -54,16 +57,16 @@ Map<String, dynamic> toJson(nome, comprimento, desnivel, tipo, dificuldade,
     };
 
 ///Função para salvar trilha em memória local
-salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade, bairros,
-    regioes, superficies) async {
+salvar(context, codigo, nome, descricao, comprimento, desnivel, tipo,
+    dificuldade, bairros, regioes, superficies) async {
   if (await isOnline()) {
     if (codigosTrilhasSalvas.contains(codigo)) {
       alert(context, 'Trilha já foi salva!', 'Trilha');
     } else {
       sharedPrefs.save(
         codigo.toString(),
-        toJson(nome, comprimento, desnivel, tipo, dificuldade, bairros, regioes,
-            superficies),
+        toJson(nome, descricao, comprimento, desnivel, tipo, dificuldade,
+            bairros, regioes, superficies),
       );
       codigosTrilhasSalvas.add(codigo);
       incrementadorTrilhasNovas += 1;

@@ -854,6 +854,7 @@ salvarTrilha(context, trilha, trilhaRepository) async {
     context,
     trilha.codt,
     trilha.nome,
+    mapController.modelTrilha.descricao,
     mapController.modelTrilha.comprimento,
     mapController.modelTrilha.desnivel,
     mapController.modelTrilha.tipo,
