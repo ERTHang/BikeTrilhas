@@ -15,8 +15,9 @@ class TrilhaRepository {
   List<int> savedCods = [];
   final Dio dio;
   final SharedPrefs sharedPrefs;
+  final AuthController auth;
 
-  TrilhaRepository(this.dio, this.sharedPrefs);
+  TrilhaRepository(this.dio, this.sharedPrefs, this.auth);
   SavedTrilhas savedTrilhas;
   SavedRoutes savedRoutes;
   SavedRoutes recordedTrails;
@@ -314,6 +315,52 @@ class TrilhaRepository {
         layercod++;
       }
     } catch (e) {}
+    return list;
+  }
+
+  Future<List<TrilhaModel>> getUpdatedTrilhas() async {
+    var cods = (await dio.get('/server/update/${auth.user.email}')).data;
+    if (cods.isEmpty) {
+      return null;
+    }
+    List<TrilhaModel> list;
+    List<String> nomes = [];
+    var layercod = 0;
+    var layers = await dio.put("/server/layer",
+        data: {"codt": cods}).timeout(Duration(seconds: 5));
+    for (var cod in cods) {
+      nomes.add((await dio.get('/server/naogeografico',
+              queryParameters: {"tipo": "trilha", "cod": cod}))
+          .data['nome']);
+    }
+
+    for (var i = 0; i < cods.length; i++) {
+      List<List<LatLng>> line = [];
+      TrilhaModel model = TrilhaModel(
+        cods[i],
+        nomes[i],
+      );
+      var point = layers.data[layercod];
+      var lat = point["latitudeTrilha"];
+      var lon = point["longitudeTrilha"];
+      for (var i = 0; i < lat.length; i++) {
+        if (lat[i] == 0.0) {
+          line.add([]);
+        } else {
+          line.last.add(LatLng(lat[i], lon[i]));
+        }
+      }
+      model.polylineCoordinates = line;
+      var codwp = point["codwp"];
+      var latwp = point["latitudeWaypoint"];
+      var lonwp = point["longitudeWaypoint"];
+      for (var i = 0; i < (codwp as List).length; i++) {
+        model.waypoints.add(WaypointModel(
+            codigo: codwp[i], posicao: LatLng(latwp[i], lonwp[i])));
+      }
+      list.add(model);
+      layercod++;
+    }
     return list;
   }
 }

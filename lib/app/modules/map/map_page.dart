@@ -379,6 +379,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   color: Colors.blue,
                   onPressed: () {
                     Modular.to.pushNamed('/fotos');
+                    // store.addWaypoint(context);
                   },
                   child: Icon(
                     Icons.camera_alt,
