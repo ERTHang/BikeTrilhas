@@ -34,6 +34,15 @@ class Subtipo {
   Subtipo(this.subtip_cod, this.subtip_nome);
 }
 
+class Qualidade {
+  // ignore: non_constant_identifier_names
+  final int quali_cod;
+  // ignore: non_constant_identifier_names
+  final String quali_nome;
+
+  Qualidade(this.quali_cod, this.quali_nome);
+}
+
 class Superficie {
   // ignore: non_constant_identifier_names
   final int sup_cod;

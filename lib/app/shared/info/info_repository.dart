@@ -24,6 +24,7 @@ class InfoRepository {
   List<Superficie> superficies = [];
   List<Dificuldade> dificuldades = [];
   List<Cidade> cidades = [];
+  List<Qualidade> qualidades = [];
 
   Future<bool> getModels() async {
     var result;
@@ -32,6 +33,7 @@ class InfoRepository {
         subtipos.isNotEmpty ||
         regioes.isNotEmpty ||
         superficies.isNotEmpty ||
+        qualidades.isNotEmpty ||
         dificuldades.isNotEmpty) {
       return false;
     }
@@ -55,6 +57,11 @@ class InfoRepository {
       result = await dio.get('/server/subtipo');
       for (var json in (result.data as List)) {
         subtipos.add(Subtipo(json["subtip_cod"], json["subtip_nome"]));
+      }
+      //
+      result = await dio.get('/server/tipoqualidade');
+      for (var json in (result.data as List)) {
+        qualidades.add(Qualidade(json["quali_cod"], json["quali_nome"]));
       }
       result = await dio.get('/server/superficie');
       for (var json in (result.data as List)) {
@@ -118,6 +125,15 @@ class InfoRepository {
     for (var subtipo in subtipos) {
       if (cod == subtipo.subtip_cod) {
         return subtipo.subtip_nome;
+      }
+    }
+    return '';
+  }
+
+  String getQualidade(cod) {
+    for (var qualidade in qualidades) {
+      if (cod == qualidade.quali_cod) {
+        return qualidade.quali_nome;
       }
     }
     return '';
@@ -198,7 +214,7 @@ class InfoRepository {
       List<String> bairros,
       List<String> regioes,
       String subtipo) async {
-    int tipCod, difCod, subtipInt;
+    int tipCod, difCod, subtipInt, qualiInt;
     List<int> supInt = [];
     List<int> baiInt = [];
     List<int> regInt = [];
@@ -248,6 +264,7 @@ class InfoRepository {
       "superficies": supInt,
       "bairros": baiInt,
       "regioes": regInt,
+      "quali_cod": qualiInt,
       "subtip_cod": subtipInt
     }))
         .data;
@@ -365,6 +382,7 @@ class InfoRepository {
       model.bairros = getBairro(result['bairros']);
       model.dificuldade = getDificuldade(result['dif_cod']);
       model.subtipo = getSubtipo(result['subtip_cod']);
+      model.quali_trilha = getQualidade(result['quali_cod']);
 
       return model;
     } else {

@@ -114,6 +114,8 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       ),
                       modifiedText('Dificuldade: ',
                           mapController.modelTrilha.dificuldade),
+                      modifiedText('Qualidade: ',
+                          mapController.modelTrilha.quali_trilha),
                       modifiedText('Bairros: ', bairros),
                       modifiedText('Regioes: ', regioes),
                       modifiedText('Superficies: ', superficies),
