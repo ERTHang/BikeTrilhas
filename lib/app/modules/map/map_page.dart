@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:background_location/background_location.dart' as bglocation;
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
-import 'package:biketrilhas_modular/app/modules/map/Services/geolocator_service.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
@@ -27,7 +26,6 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends ModularState<MapPage, MapController> {
-  final GeolocatorService geoService = GeolocatorService();
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController mapController;
   int n = 0;
@@ -94,6 +92,9 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       body: Stack(
         alignment: Alignment.center,
         children: <Widget>[
+          /* Observer para verificar a posição do usuário e a conexão com o 
+          ** servidor, caso tenha os dois irá para o Google Maps na função
+          ** _map() */
           Observer(
             builder: (context) {
               checkPermission(location);
@@ -134,7 +135,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               return _map();
             },
           ),
-          //StopButton
+
+          //Botão para terminar a criação de trilhas
           AnimatedPositioned(
             bottom: 10,
             right: changeButton ? 145.0 : 10.0,
@@ -160,7 +162,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               child: Icon(Icons.stop),
             ),
           ),
-          //PauseButton
+
+          //Botão para pausar a criação de trilhas
           AnimatedPositioned(
             bottom: 10,
             right: changeButton ? 80.0 : 10.0,
@@ -190,7 +193,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             ),
           ),
 
-          // UserRoute
+          // Botão para criação de trilhas
           Positioned(
             bottom: 10,
             right: 10,
@@ -256,7 +259,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               ),
             ),
           ),
-          // Rota
+
+          // Container para o texto de origem e destino da rota
           Visibility(
             child: Positioned(
               bottom: 0,
@@ -294,6 +298,9 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             ),
             maintainState: false,
           ),
+
+          // Botão para encerrar a criação de rotas quando a origem e destino
+          // estiverem definidos
           Positioned(
             bottom: 0,
             child: Visibility(
@@ -323,7 +330,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               maintainInteractivity: false,
             ),
           ),
-          //botao rota
+
+          //botão para iniciar a criação de uma rota
           Positioned(
             top: 5,
             right: 5,
@@ -365,6 +373,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               ),
             ),
           ),
+
+          //Botão para tirar uma foto para um waypoint
           Visibility(
             visible: admin == 1,
             child: Positioned(
@@ -396,6 +406,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
     );
   }
 
+  // verificar as permissões de localização do usuário
   void checkPermission(Location location) async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
@@ -419,10 +430,12 @@ class _MapPageState extends ModularState<MapPage, MapController> {
     location.changeSettings(distanceFilter: 8, interval: 1000);
   }
 
+  // atualização do estado da página de mapas fora da classe
   void _func() {
     setState(() {});
   }
 
+  // mapa do aplicativo
   Widget _map() {
     if (store.position == null) {
       return Container();
@@ -466,17 +479,15 @@ class _MapPageState extends ModularState<MapPage, MapController> {
     );
   }
 
+  //utilizado na gravação de uma nova trilha
   Future<void> centerScreen(Position position) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(position.latitude, position.longitude), zoom: 19.0)));
   }
-
-  await(Future<ConnectivityResult> checkConnectivity) {}
 }
 
 addInitialLocation(List<LatLng> lista) async {
-  GeolocatorService()
-      .getInitialLocation()
+  Geolocator.getCurrentPosition()
       .then((value) => lista.add(LatLng(value.latitude, value.longitude)));
 }
