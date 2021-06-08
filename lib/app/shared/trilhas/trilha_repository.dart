@@ -279,7 +279,7 @@ class TrilhaRepository {
   }
 
   Future<List<TrilhaModel>> getAllTrilhas() async {
-    List<TrilhaModel> list = List<TrilhaModel>();
+    List<TrilhaModel> list = [];
     try {
       var cods = await dio.get("/server/cods");
       var layercod = 0;

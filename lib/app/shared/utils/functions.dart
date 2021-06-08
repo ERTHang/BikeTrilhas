@@ -53,7 +53,7 @@ alertaComEscolha(context, titulo, mensagem, String botao1text,
             FlatButton(
                 child: Text(botao1text),
                 onPressed: () {
-                  botao1func;
+                  botao1func();
                   Navigator.pop(context);
                   return;
                 }),

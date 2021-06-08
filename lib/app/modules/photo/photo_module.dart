@@ -1,6 +1,5 @@
 import 'package:biketrilhas_modular/app/modules/photo/Components/display/display_controller.dart';
 import 'package:biketrilhas_modular/app/modules/photo/Components/display/display_module.dart';
-import 'package:biketrilhas_modular/app/modules/photo/Components/display/display_page.dart';
 import 'package:biketrilhas_modular/app/modules/photo/Components/loader/loader_controller.dart';
 import 'package:biketrilhas_modular/app/modules/photo/Components/loader/loader_page.dart';
 import 'package:biketrilhas_modular/app/modules/photo/photo_controller.dart';

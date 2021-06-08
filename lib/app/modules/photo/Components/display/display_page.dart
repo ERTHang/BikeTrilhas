@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:biketrilhas_modular/app/modules/photo/photo_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
-import 'display_controller.dart';
 
 class DisplayPage extends StatefulWidget {
   final String title;
@@ -14,17 +15,28 @@ class DisplayPage extends StatefulWidget {
   _DisplayPageState createState() => _DisplayPageState();
 }
 
-class _DisplayPageState extends ModularState<DisplayPage, DisplayController> {
-  PhotoController photoController = Modular.get<PhotoController>();
+class _DisplayPageState extends State<DisplayPage> {
+  PhotoController photoController = Modular.get();
   final TextEditingController nameController = TextEditingController();
+
+  savePicture() async {
+    String imagePath = photoController.path;
+
+    final path = join(
+      (await getApplicationDocumentsDirectory()).path,
+      '${DateTime.now()}.png',
+    );
+
+    File(imagePath).copy(path);
+
+    Modular.to.popUntil(ModalRoute.withName('/map'));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          store.savePicture();
-        },
+        onPressed: savePicture,
         backgroundColor: Colors.blue,
         child: Icon(Icons.send),
       ),

@@ -15,7 +15,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_controller.dart';
-import 'package:connectivity/connectivity.dart';
 
 class MapPage extends StatefulWidget {
   final String title;
@@ -389,7 +388,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   color: Colors.blue,
                   onPressed: () {
                     Modular.to.pushNamed('/fotos');
-                    // store.addWaypoint(context);
                   },
                   child: Icon(
                     Icons.camera_alt,

@@ -403,6 +403,7 @@ class InfoRepository {
 
         return model;
       }
+      return null;
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'loader_controller.dart';
@@ -15,7 +16,15 @@ class _LoaderPageState extends ModularState<LoaderPage, LoaderController> {
   void initState() {
     super.initState();
 
-    controller.startCameras();
+    startCameras();
+  }
+
+  CameraDescription camera;
+
+  void startCameras() async {
+    final cameras = await availableCameras();
+    camera = cameras.first;
+    Modular.to.pushReplacementNamed('/fotos/photo');
   }
 
   @override
