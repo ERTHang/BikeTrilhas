@@ -3,6 +3,7 @@ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -253,6 +254,37 @@ class InfoRepository {
         .data;
   }
 
+  Future<List<int>> getTrilhasProximas(LatLng ponto) async {
+    List<int> cods = [];
+    var result =
+        await dio.get('/server/feature/${ponto.longitude}/${ponto.latitude}');
+    (result.data as List).forEach((element) {
+      cods.add(element["cod"]);
+    });
+    return cods;
+  }
+
+  Future<bool> uploadWaypoint(
+      WaypointModel wp, DadosWaypointModel dadoswp, int codt) async {
+    var auth = Modular.get<AuthController>();
+    List<MultipartFile> imagens = [];
+    dadoswp.imagens.forEach((element) async {
+      MultipartFile fileimage = await MultipartFile.fromFile(element,
+          filename: element.split('/').last);
+      imagens.add(fileimage);
+    });
+    FormData formData = FormData.fromMap({
+      "codt": codt,
+      "descricao": dadoswp.descricao,
+      "nome": dadoswp.nome,
+      "geometria": "${wp.posicao.longitude} ${wp.posicao.latitude}",
+      "imagens": imagens,
+      "categorias": dadoswp.categorias,
+      "email": auth.user.email,
+    });
+    return (await dio.post('/server/waypoint', data: formData)).data;
+  }
+
   Future<int> uploadTrilha(
       List<List<LatLng>> geometria,
       String nome,
@@ -265,7 +297,9 @@ class InfoRepository {
       String subtipo,
       double comprimento,
       double desnivel,
-      int cidade) async {
+      int cidade,
+      List<WaypointModel> waypoints,
+      List<DadosWaypointModel> dadoswp) async {
     var auth = Modular.get<AuthController>();
     int cidCod, tipCod, difCod, subtipInt;
     List<int> supInt = [];
@@ -338,9 +372,19 @@ class InfoRepository {
       "regioes": regInt,
       "subtip_cod": subtipInt,
       "geometria": geoList,
+      "quali_cod": 3,
       "email": auth.user.email
     }));
-    mapController.createdTrails.clear();
+
+    if (result.data != -1) {
+      int n = 0;
+      waypoints.forEach((element) async {
+        uploadWaypoint(element, dadoswp[n], result.data);
+      });
+    }
+
+    mapController.createdTrails
+        .clear(); //TODO: checar se existe mais trilhas para inserir;
     return result.data;
   }
 

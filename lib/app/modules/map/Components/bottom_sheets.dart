@@ -450,7 +450,8 @@ bottomSheetWaypoint(int codt) async {
                       icon: Icon(Icons.edit),
                       onPressed: () {
                         Navigator.pop(context);
-                        Modular.to.pushNamed('/map/editorwaypoint');
+                        Modular.to.pushNamed('/map/editorwaypoint',
+                            arguments: EditMode.UPDATE);
                       },
                     ))
               ]));
@@ -668,7 +669,8 @@ bottomSheetWaypointOffline(int codt) async {
                       icon: Icon(Icons.edit),
                       onPressed: () {
                         Navigator.pop(context);
-                        Modular.to.pushNamed('/map/editorwaypoint');
+                        Modular.to.pushNamed('/map/editorwaypoint',
+                            arguments: EditMode.UPDATE);
                       },
                     ))
               ]));

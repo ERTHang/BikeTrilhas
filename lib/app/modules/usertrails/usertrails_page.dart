@@ -69,6 +69,8 @@ class _UsertrailsPageState
                   bottomSheetTempTrail(store.mapController.followTrail,
                       store.scaffoldState, store.state);
                 }
+                store.mapController.followTrail = null;
+                store.mapController.state();
                 _controller.complete(mapcontroller);
               },
             ),

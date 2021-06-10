@@ -2,7 +2,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 
 ///Verifica se o usuário está online
-isOnline() async {
+Future<bool> isOnline() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
   if (connectivityResult == ConnectivityResult.none) {
     return false;
@@ -93,3 +93,5 @@ mostrarProgressoLinear(context, text) {
     },
   );
 }
+
+enum EditMode { ADD, UPDATE }

@@ -8,7 +8,10 @@ import 'photo_controller.dart';
 
 class PhotoPage extends StatefulWidget {
   final String title;
-  const PhotoPage({Key key, this.title = "Photo"}) : super(key: key);
+  final CameraDescription camera;
+
+  const PhotoPage({Key key, this.title = "Photo", this.camera})
+      : super(key: key);
 
   @override
   _PhotoPageState createState() => _PhotoPageState();
@@ -17,6 +20,7 @@ class PhotoPage extends StatefulWidget {
 class _PhotoPageState extends ModularState<PhotoPage, PhotoController> {
   CameraController _controller;
   Future<void> _initializeControllerFuture;
+  String path;
 
   void initState() {
     super.initState();
@@ -24,8 +28,7 @@ class _PhotoPageState extends ModularState<PhotoPage, PhotoController> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    _controller =
-        CameraController(store.loaderController.camera, ResolutionPreset.max);
+    _controller = CameraController(widget.camera, ResolutionPreset.max);
 
     _initializeControllerFuture = _controller.initialize();
   }
@@ -63,16 +66,17 @@ class _PhotoPageState extends ModularState<PhotoPage, PhotoController> {
         onPressed: () async {
           try {
             await _initializeControllerFuture;
-            store.path = join(
+            path = join(
               (await getTemporaryDirectory()).path,
               '${DateTime.now()}.png',
             );
 
-            await _controller.takePicture(store.path);
+            await _controller.takePicture(path);
 
             dispose();
 
-            Navigator.of(context).pushReplacementNamed('/fotos/display');
+            Navigator.of(context)
+                .pushReplacementNamed('/fotos/display', arguments: path);
           } catch (e) {
             print(e);
           }

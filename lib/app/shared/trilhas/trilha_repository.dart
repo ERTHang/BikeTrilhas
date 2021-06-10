@@ -331,7 +331,7 @@ class TrilhaRepository {
     for (var cod in cods) {
       nomes.add((await dio.get('/server/naogeografico',
               queryParameters: {"tipo": "trilha", "cod": cod}))
-          .data['nome']);
+          .data[0]['nome']);
     }
 
     for (var i = 0; i < cods.length; i++) {

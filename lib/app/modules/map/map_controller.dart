@@ -10,6 +10,7 @@ import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,6 +57,8 @@ abstract class _MapControllerBase with Store {
   PersistentBottomSheetController nameSheet;
   TrilhaModel newTrail;
   TrilhaModel followTrail;
+  WaypointModel newWaypoint;
+  List<DadosWaypointModel> followTrailWaypoints = [];
   bool update = false;
   int distanceValue = 500;
 
@@ -71,6 +74,7 @@ abstract class _MapControllerBase with Store {
     filterClear = false;
     typeNum = 2;
     if (await isOnline()) {
+      distanceValue = 100;
       trilhas = trilhaRepository
           .getAllTrilhas()
           .timeout(Duration(seconds: 10))

@@ -1,3 +1,5 @@
+import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
+
 class DadosTrilhaModel {
   int codt;
   String nome;
@@ -10,6 +12,7 @@ class DadosTrilhaModel {
   List<String> regioes = [];
   List<String> superficies = [];
   String subtipo;
+  List<DadosWaypointModel> waypoints = [];
 
   DadosTrilhaModel(this.codt, this.nome, this.descricao, this.comprimento,
       this.desnivel, this.tipo);

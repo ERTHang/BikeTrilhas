@@ -149,6 +149,21 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(360))),
               ),
+              onLongPress: () async {
+                if (admin == 1) {
+                  var location = await Geolocator.getCurrentPosition();
+                  setState(() {
+                    store.followTrail.polylineCoordinates.last.add(
+                        LatLng(location.latitude + 0.002, location.longitude));
+                    store.followTrail.polylineCoordinates.last.add(LatLng(
+                        location.latitude + 0.002, location.longitude + 0.002));
+                    store.followTrail.polylineCoordinates.last.add(
+                        LatLng(location.latitude, location.longitude + 0.002));
+                    store.followTrail.polylineCoordinates.last
+                        .add(LatLng(location.latitude, location.longitude));
+                  });
+                }
+              },
               onPressed: () {
                 setState(() {
                   tracking = false;
