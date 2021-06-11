@@ -2,6 +2,7 @@ import 'package:biketrilhas_modular/app/modules/filter/filter_module.dart';
 import 'package:biketrilhas_modular/app/modules/info/info_module.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/userroutes/userroutes_module.dart';
+import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_module.dart';
 import 'package:biketrilhas_modular/app/modules/waypoints/waypoints_module.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
@@ -25,7 +26,8 @@ class AppModule extends Module {
   final List<Bind> binds = [
     Bind.singleton((i) => DrawerClassController()),
     Bind.singleton((i) => AppController()),
-    Bind.singleton((i) => MapController(i.get(), i.get(), i.get())),
+    Bind.singleton((i) => UsertrailsController(i.get(), i.get())),
+    Bind.lazySingleton((i) => MapController(i.get(), i.get(), i.get())),
     Bind.singleton((i) => InfoRepository(i.get<Dio>())),
     Bind.singleton((i) => TrilhaRepository(
         i.get<Dio>(), i.get<SharedPrefs>(), i.get<AuthController>())),

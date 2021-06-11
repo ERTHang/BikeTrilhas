@@ -323,7 +323,7 @@ class TrilhaRepository {
     if (cods.isEmpty) {
       return null;
     }
-    List<TrilhaModel> list;
+    List<TrilhaModel> list = [];
     List<String> nomes = [];
     var layercod = 0;
     var layers = await dio.put("/server/layer",
