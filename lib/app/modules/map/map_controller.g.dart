@@ -68,18 +68,12 @@ mixin _$MapController on _MapControllerBase, Store {
     return _$getUserPosAsyncAction.run(() => super.getUserPos());
   }
 
-  final _$_MapControllerBaseActionController =
-      ActionController(name: '_MapControllerBase');
+  final _$getPolylinesAsyncAction =
+      AsyncAction('_MapControllerBase.getPolylines');
 
   @override
-  dynamic getPolylines() {
-    final _$actionInfo = _$_MapControllerBaseActionController.startAction(
-        name: '_MapControllerBase.getPolylines');
-    try {
-      return super.getPolylines();
-    } finally {
-      _$_MapControllerBaseActionController.endAction(_$actionInfo);
-    }
+  Future getPolylines() {
+    return _$getPolylinesAsyncAction.run(() => super.getPolylines());
   }
 
   @override

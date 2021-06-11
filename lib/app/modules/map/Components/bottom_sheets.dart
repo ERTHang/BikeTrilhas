@@ -114,8 +114,6 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       ),
                       modifiedText('Dificuldade: ',
                           mapController.modelTrilha.dificuldade),
-                      modifiedText('Qualidade: ',
-                          mapController.modelTrilha.quali_trilha),
                       modifiedText('Bairros: ', bairros),
                       modifiedText('Regioes: ', regioes),
                       modifiedText('Superficies: ', superficies),
@@ -452,7 +450,8 @@ bottomSheetWaypoint(int codt) async {
                       icon: Icon(Icons.edit),
                       onPressed: () {
                         Navigator.pop(context);
-                        Modular.to.pushNamed('/map/editorwaypoint');
+                        Modular.to.pushNamed('/map/editorwaypoint',
+                            arguments: EditMode.UPDATE);
                       },
                     ))
               ]));
@@ -670,7 +669,8 @@ bottomSheetWaypointOffline(int codt) async {
                       icon: Icon(Icons.edit),
                       onPressed: () {
                         Navigator.pop(context);
-                        Modular.to.pushNamed('/map/editorwaypoint');
+                        Modular.to.pushNamed('/map/editorwaypoint',
+                            arguments: EditMode.UPDATE);
                       },
                     ))
               ]));
@@ -856,12 +856,10 @@ salvarTrilha(context, trilha, trilhaRepository) async {
     context,
     trilha.codt,
     trilha.nome,
-    mapController.modelTrilha.descricao,
     mapController.modelTrilha.comprimento,
     mapController.modelTrilha.desnivel,
     mapController.modelTrilha.tipo,
     mapController.modelTrilha.dificuldade,
-    mapController.modelTrilha.quali_trilha,
     mapController.modelTrilha.bairros,
     mapController.modelTrilha.regioes,
     mapController.modelTrilha.superficies,

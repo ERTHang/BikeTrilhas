@@ -3,6 +3,7 @@ import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -42,7 +43,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
     _regController = TextEditingController();
   }
 
-  getTrilha(codt) {
+  TrilhaModel getTrilha(codt) {
     return mapController.createdTrails
         .where((element) => element.codt == codt)
         .first;
@@ -62,7 +63,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.subtipo);
       alertEdit(context, "Trilha editada com sucesso");
     } else {
-      await _infoRepository.uploadTrilha(
+      var result = await _infoRepository.uploadTrilha(
           getTrilha(m.codt).polylineCoordinates,
           m.nome,
           m.descricao,
@@ -74,11 +75,18 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.subtipo,
           m.comprimento,
           m.desnivel,
-          1);
+          1,
+          getTrilha(m.codt).waypoints,
+          mapController.followTrailWaypoints);
       mapController.sheet.close();
       _userTrailsController.getPolylines();
       _userTrailsController.state();
-      alertEdit(context, "Upload realizado com sucesso");
+      if (result == -1) {
+        alertEdit(context, "Error");
+      } else {
+        alertEdit(context, "Upload realizado com sucesso");
+        
+      }
     }
   }
 
@@ -129,6 +137,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           child: Icon(Icons.save),
           onPressed: () {
             final m = _mapController.modelTrilha;
+            _mapController.modelTrilha = null;
             exit(m);
           },
         ),

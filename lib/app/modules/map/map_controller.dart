@@ -57,6 +57,8 @@ abstract class _MapControllerBase with Store {
   PersistentBottomSheetController nameSheet;
   TrilhaModel newTrail;
   TrilhaModel followTrail;
+  WaypointModel newWaypoint;
+  List<DadosWaypointModel> followTrailWaypoints = [];
   bool update = false;
   int distanceValue = 500;
 
@@ -72,6 +74,7 @@ abstract class _MapControllerBase with Store {
     filterClear = false;
     typeNum = 2;
     if (await isOnline()) {
+      distanceValue = 100;
       trilhas = trilhaRepository
           .getAllTrilhas()
           .timeout(Duration(seconds: 10))
@@ -276,77 +279,6 @@ abstract class _MapControllerBase with Store {
       getPolylines();
       state();
     }
-  }
-
-  Future<void> addWaypoint(context) async {
-    TextEditingController _nameController = TextEditingController();
-    TextEditingController _descController = TextEditingController();
-    DadosWaypointModel model = DadosWaypointModel();
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: AlertDialog(
-            actions: [
-              FlatButton(
-                  child: Text('adicionar'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    return;
-                  }),
-            ],
-            title: Text("Adicionar Waypoint"),
-            content: Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              width: MediaQuery.of(context).size.width * 0.7,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TextField(
-                    controller: _nameController,
-                    onChanged: (value) {
-                      model.nome = value;
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Nome',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: 300.0,
-                    ),
-                    child: TextField(
-                      controller: _descController,
-                      onChanged: (value) {
-                        model.descricao = value;
-                      },
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        labelText: 'Descricao',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Container()
-                  // OutlineButton(
-                  //   onPressed: () => {},
-                  //   shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(15)),
-                  // )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   Future<void> nomeTrilha(context) async {

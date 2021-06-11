@@ -2,7 +2,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 
 ///Verifica se o usuário está online
-isOnline() async {
+Future<bool> isOnline() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
   if (connectivityResult == ConnectivityResult.none) {
     return false;
@@ -53,7 +53,7 @@ alertaComEscolha(context, titulo, mensagem, String botao1text,
             FlatButton(
                 child: Text(botao1text),
                 onPressed: () {
-                  botao1func;
+                  botao1func();
                   Navigator.pop(context);
                   return;
                 }),
@@ -93,3 +93,5 @@ mostrarProgressoLinear(context, text) {
     },
   );
 }
+
+enum EditMode { ADD, UPDATE }

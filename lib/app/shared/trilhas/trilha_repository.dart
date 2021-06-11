@@ -279,7 +279,7 @@ class TrilhaRepository {
   }
 
   Future<List<TrilhaModel>> getAllTrilhas() async {
-    List<TrilhaModel> list = List<TrilhaModel>();
+    List<TrilhaModel> list = [];
     try {
       var cods = await dio.get("/server/cods");
       var layercod = 0;
@@ -323,7 +323,7 @@ class TrilhaRepository {
     if (cods.isEmpty) {
       return null;
     }
-    List<TrilhaModel> list;
+    List<TrilhaModel> list = [];
     List<String> nomes = [];
     var layercod = 0;
     var layers = await dio.put("/server/layer",
@@ -331,7 +331,7 @@ class TrilhaRepository {
     for (var cod in cods) {
       nomes.add((await dio.get('/server/naogeografico',
               queryParameters: {"tipo": "trilha", "cod": cod}))
-          .data['nome']);
+          .data[0]['nome']);
     }
 
     for (var i = 0; i < cods.length; i++) {

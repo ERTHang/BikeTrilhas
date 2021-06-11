@@ -17,7 +17,6 @@ class WaypointsPage extends StatefulWidget {
 class _WaypointsPageState
     extends ModularState<WaypointsPage, WaypointsController> {
   Completer<GoogleMapController> _controller = Completer();
-  
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +33,7 @@ class _WaypointsPageState
         myLocationButtonEnabled: false,
         myLocationEnabled: true,
         mapType: MapType.normal,
-        initialCameraPosition: controller.mapController.position.value,
+        initialCameraPosition: store.mapController.position.value,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },

@@ -16,6 +16,9 @@ class MapModule extends Module {
   final List<ModularRoute> routes = [
     ChildRoute(Modular.initialRoute, child: (_, args) => MapPage()),
     ChildRoute('editor', child: (_, args) => EdicaoTrilhas()),
-    ChildRoute('editorwaypoint', child: (_, args) => EdicaoWaypoint()),
+    ChildRoute('editorwaypoint',
+        child: (_, args) => EdicaoWaypoint(
+              editMode: args.data,
+            )),
   ];
 }

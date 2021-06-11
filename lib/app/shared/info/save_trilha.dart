@@ -12,12 +12,10 @@ SharedPrefs sharedPrefs = SharedPrefs();
 class SaveTrilha {
   int codigo;
   String nome;
-  String descricao;
   double comprimento;
   double desnivel;
   String tipo;
   String dificuldade;
-  String qualidade;
   List<String> bairros;
   List<String> regioes;
   List<String> superficies;
@@ -26,48 +24,44 @@ class SaveTrilha {
     context,
     this.codigo,
     this.nome,
-    this.descricao,
     this.comprimento,
     this.desnivel,
     this.tipo,
     this.dificuldade,
-    this.qualidade,
     this.bairros,
     this.regioes,
     this.superficies,
   ) {
-    salvar(context, codigo, nome, descricao, comprimento, desnivel, tipo,
-        dificuldade, qualidade, bairros, regioes, superficies);
+    salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade,
+        bairros, regioes, superficies);
   }
 }
 
 ///Tranformar em json as informações da trilha
-Map<String, dynamic> toJson(nome, descricao, comprimento, desnivel, tipo,
-        dificuldade, qualidade, bairros, regioes, superficies) =>
+Map<String, dynamic> toJson(nome, comprimento, desnivel, tipo, dificuldade,
+        bairros, regioes, superficies) =>
     {
       'nome': nome,
-      'descricao': descricao,
       'comprimento': comprimento,
       'desnivel': desnivel,
       'tipo': tipo,
       'dificuldade': dificuldade,
-      'qualidade': qualidade,
       'bairros': bairros,
       'regioes': regioes,
       'superficies': superficies
     };
 
 ///Função para salvar trilha em memória local
-salvar(context, codigo, nome, descricao, comprimento, desnivel, tipo,
-    dificuldade, qualidade, bairros, regioes, superficies) async {
+salvar(context, codigo, nome, comprimento, desnivel, tipo, dificuldade, bairros,
+    regioes, superficies) async {
   if (await isOnline()) {
     if (codigosTrilhasSalvas.contains(codigo)) {
       alert(context, 'Trilha já foi salva!', 'Trilha');
     } else {
       sharedPrefs.save(
         codigo.toString(),
-        toJson(nome, descricao, comprimento, desnivel, tipo, dificuldade,
-            qualidade, bairros, regioes, superficies),
+        toJson(nome, comprimento, desnivel, tipo, dificuldade, bairros, regioes,
+            superficies),
       );
       codigosTrilhasSalvas.add(codigo);
       incrementadorTrilhasNovas += 1;

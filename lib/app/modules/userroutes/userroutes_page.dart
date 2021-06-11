@@ -21,10 +21,10 @@ class _UserroutesPageState
 
   @override
   Widget build(BuildContext context) {
-    controller.state = _func;
-    controller.getPolylines();
+    store.state = _func;
+    store.getPolylines();
     return Scaffold(
-        key: controller.scaffoldState,
+        key: store.scaffoldState,
         appBar: AppBar(
           title: Text(
             'Suas Rotas',
@@ -38,21 +38,21 @@ class _UserroutesPageState
             GoogleMap(
               onTap: (latlng) {
                 setState(() {
-                  if (controller.mapController.sheet != null) {
-                    controller.mapController.sheet.close();
-                    controller.mapController.sheet = null;
-                    controller.tappedTrilha = null;
+                  if (store.mapController.sheet != null) {
+                    store.mapController.sheet.close();
+                    store.mapController.sheet = null;
+                    store.tappedTrilha = null;
                   }
-                  if (controller.mapController.nameSheet != null) {
-                    controller.mapController.nameSheet.close();
-                    controller.mapController.nameSheet = null;
-                    controller.tappedTrilha = null;
+                  if (store.mapController.nameSheet != null) {
+                    store.mapController.nameSheet.close();
+                    store.mapController.nameSheet = null;
+                    store.tappedTrilha = null;
                   }
                   if (routeState != 0) {
-                    controller.routeMarkers.add(Marker(
+                    store.routeMarkers.add(Marker(
                         markerId: MarkerId('destino $routeState'),
                         position: latlng));
-                    controller.routePoints.add(latlng);
+                    store.routePoints.add(latlng);
                     destinos++;
                     routeState++;
                   }
@@ -61,22 +61,20 @@ class _UserroutesPageState
               mapToolbarEnabled: false,
               myLocationButtonEnabled: false,
               myLocationEnabled: true,
-              polylines: controller.polylines,
-              markers: (routeState == 0)
-                  ? controller.markers
-                  : controller.routeMarkers,
+              polylines: store.polylines,
+              markers: (routeState == 0) ? store.markers : store.routeMarkers,
               mapType: MapType.normal,
               initialCameraPosition: (mapController.newTrail != null)
                   ? CameraPosition(
                       target: mapController.newTrail.waypoints[0].posicao,
                       zoom: 14)
-                  : controller.mapController.position.value,
+                  : store.mapController.position.value,
               onMapCreated: (GoogleMapController mapcontroller) {
-                if (controller.tappedTrilha != null) {
-                  bottomSheetTempTrail(controller.mapController.newTrail,
-                      controller.scaffoldState, controller.state);
+                if (store.tappedTrilha != null) {
+                  bottomSheetTempTrail(store.mapController.newTrail,
+                      store.scaffoldState, store.state);
                 }
-                controller.mapController.newTrail = null;
+                store.mapController.newTrail = null;
                 _controller.complete(mapcontroller);
               },
             ),
@@ -131,7 +129,7 @@ class _UserroutesPageState
                   ),
                   onPressed: () {
                     routeState = 0;
-                    controller.getRoute();
+                    store.getRoute();
                   },
                 ),
                 visible: routeState > 2,
@@ -146,18 +144,18 @@ class _UserroutesPageState
               right: 5,
               child: IconButton(
                 onPressed: () {
-                  controller.routePoints.clear();
-                  controller.routeMarkers.clear();
+                  store.routePoints.clear();
+                  store.routeMarkers.clear();
                   destinos = 0;
-                  if (controller.mapController.sheet != null) {
-                    controller.mapController.sheet.close();
-                    controller.mapController.sheet = null;
-                    controller.tappedTrilha = null;
+                  if (store.mapController.sheet != null) {
+                    store.mapController.sheet.close();
+                    store.mapController.sheet = null;
+                    store.tappedTrilha = null;
                   }
-                  if (controller.mapController.nameSheet != null) {
-                    controller.mapController.nameSheet.close();
-                    controller.mapController.nameSheet = null;
-                    controller.tappedTrilha = null;
+                  if (store.mapController.nameSheet != null) {
+                    store.mapController.nameSheet.close();
+                    store.mapController.nameSheet = null;
+                    store.tappedTrilha = null;
                   }
                   if (routeState == 0) {
                     setState(() {
@@ -165,7 +163,7 @@ class _UserroutesPageState
                     });
                   } else {
                     setState(() {
-                      controller.getPolylines();
+                      store.getPolylines();
                       routeState = 0;
                     });
                   }
