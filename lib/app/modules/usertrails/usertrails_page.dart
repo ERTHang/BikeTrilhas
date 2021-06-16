@@ -62,7 +62,7 @@ class _UsertrailsPageState
                       target: mapController.followTrail.polylineCoordinates[0]
                           [0],
                       zoom: 14)
-                  : store.mapController.position.value,
+                  : store.mapController.position,
               onMapCreated: (GoogleMapController mapcontroller) {
                 if (store.tappedTrilha != null) {
                   checkUpload();

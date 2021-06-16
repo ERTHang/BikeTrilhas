@@ -68,7 +68,7 @@ class _UserroutesPageState
                   ? CameraPosition(
                       target: mapController.newTrail.waypoints[0].posicao,
                       zoom: 14)
-                  : store.mapController.position.value,
+                  : store.mapController.position,
               onMapCreated: (GoogleMapController mapcontroller) {
                 if (store.tappedTrilha != null) {
                   bottomSheetTempTrail(store.mapController.newTrail,

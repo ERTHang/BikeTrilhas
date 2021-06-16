@@ -1,6 +1,8 @@
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 
 part 'login_controller.g.dart';
@@ -23,7 +25,11 @@ abstract class _LoginControllerBase with Store {
       await auth.loginWithGoogle();
       await auth.loginProcedure();
       await infoRepository.getModels();
-      await Modular.to.pushReplacementNamed('/map');
+      Geolocator.getCurrentPosition().then((value) {
+        Modular.to.pushReplacementNamed('/map',
+            arguments: CameraPosition(
+                target: LatLng(value.latitude, value.longitude), zoom: 17));
+      });
     } catch (e) {
       loading = false;
     }

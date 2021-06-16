@@ -15,7 +15,6 @@ import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:ui' as ui;
@@ -34,8 +33,7 @@ abstract class _MapControllerBase with Store {
   ObservableFuture<bool> dataReady;
   @observable
   ObservableFuture<List<TrilhaModel>> trilhas;
-  @observable
-  ObservableFuture<CameraPosition> position;
+  CameraPosition position;
   Set<Marker> markers = {};
   Set<Marker> routeMarkers = {};
   Set<Polyline> polylines = {};
@@ -60,7 +58,7 @@ abstract class _MapControllerBase with Store {
   WaypointModel newWaypoint;
   List<DadosWaypointModel> followTrailWaypoints = [];
   bool update = false;
-  int distanceValue = 500;
+  int distanceValue = 1000;
 
   @action
   _MapControllerBase(
@@ -70,7 +68,6 @@ abstract class _MapControllerBase with Store {
 
   @action
   init() async {
-    position = getUserPos().asObservable();
     filterClear = false;
     typeNum = 2;
     if (await isOnline()) {
@@ -91,40 +88,6 @@ abstract class _MapControllerBase with Store {
     final Uint8List iconBytes2 =
         await getBytesFromAsset('images/bola3.png', 20);
     markerIconTapped = BitmapDescriptor.fromBytes(iconBytes2);
-  }
-
-  @action
-  Future<CameraPosition> getUserPos() async {
-    Position pos = await _determinePosition();
-    return CameraPosition(
-        target: LatLng(pos.latitude, pos.longitude), zoom: 15);
-  }
-
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Serviços de localização estão desabilitados');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.deniedForever) {
-        return Future.error(
-            'Necessitamos da localização do usuário para o funcionamento do aplicativo');
-      }
-
-      if (permission == LocationPermission.denied) {
-        return Future.error(
-            'Necessitamos da localização do usuário para o funcionamento do aplicativo');
-      }
-    }
-    var pos = await Geolocator.getCurrentPosition();
-    print(pos);
-    return pos;
   }
 
   getRoute() async {
@@ -256,7 +219,7 @@ abstract class _MapControllerBase with Store {
   }
 
   bool isVisible(TrilhaModel trilha) {
-    var user = position.value.target;
+    var user = position.target;
     if (!isInRadius(
         user.latitude,
         user.longitude,

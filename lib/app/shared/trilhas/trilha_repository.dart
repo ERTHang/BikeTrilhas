@@ -144,8 +144,6 @@ class TrilhaRepository {
   }
 
   Future<TrilhaModel> getRoute(List<LatLng> routePoints) async {
-    final auth = Modular.get<AuthController>();
-
     List<List<LatLng>> rotaPolyline = [];
     var username = auth.user.displayName.toLowerCase();
     TrilhaModel model = TrilhaModel(n, 'Rota gerada por $username');
