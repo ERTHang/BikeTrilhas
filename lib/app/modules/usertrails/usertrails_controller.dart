@@ -17,11 +17,8 @@ class UsertrailsController = _UsertrailsControllerBase
     with _$UsertrailsController;
 
 abstract class _UsertrailsControllerBase with Store {
-  _UsertrailsControllerBase(this.mapController, this.drawerClassController) {
-    if (mapController.followTrail != null) {
-      tappedTrilha = mapController.followTrail.codt;
-    }
-  }
+  _UsertrailsControllerBase(this.mapController, this.drawerClassController);
+
   final MapController mapController;
   final DrawerClassController drawerClassController;
   final scaffoldState = GlobalKey<ScaffoldState>();

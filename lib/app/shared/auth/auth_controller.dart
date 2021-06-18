@@ -1,3 +1,4 @@
+import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';

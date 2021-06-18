@@ -77,15 +77,16 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.desnivel,
           1,
           getTrilha(m.codt).waypoints,
-          mapController.followTrailWaypoints);
+          mapController.followTrailWaypoints,
+          m.codt);
       mapController.sheet.close();
       _userTrailsController.getPolylines();
       _userTrailsController.state();
       if (result == -1) {
         alertEdit(context, "Error");
       } else {
+        mapController.trilhasUser.add(result);
         alertEdit(context, "Upload realizado com sucesso");
-        
       }
     }
   }

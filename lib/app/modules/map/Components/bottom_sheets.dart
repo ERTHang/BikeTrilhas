@@ -120,6 +120,44 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                     ],
                   ),
                 ),
+                // Botão para remover do servidor
+                Visibility(
+                  child: Positioned(
+                    top: 5,
+                    right: 50,
+                    child: IconButton(
+                      color: Colors.red,
+                      icon: Icon(Icons.delete_outline_outlined),
+                      iconSize: 25,
+                      onPressed: () async {
+                        alertaComEscolha(
+                            context,
+                            'Remover',
+                            'Deseja remover a trilha ${trilha.nome} ?',
+                            'VOLTAR',
+                            () {
+                              Navigator.pop(context);
+                              return;
+                            },
+                            'OK',
+                            () async {
+                              Navigator.pop(context);
+                              if (await trilhaRepository
+                                  .deleteTrilhaUser(trilha.codt)) {
+                                mapController.trilhas.value.remove(trilha);
+                                mapController.getPolylines();
+                                mapController.state();
+                                alert(
+                                    context, "Trilha foi excluída.", "Sucesso");
+                              } else {
+                                alert(context, "Ocorreu um erro.", "Erro");
+                              }
+                            });
+                      },
+                    ),
+                  ),
+                  visible: mapController.trilhasUser.contains(trilha.codt),
+                ),
                 //Botão para remover trilha
                 Visibility(
                   child: Positioned(

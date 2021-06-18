@@ -70,7 +70,7 @@ alertaComEscolha(context, titulo, mensagem, String botao1text,
 
 ///Emite um alerta do tipo snack
 snackAlert(context, text) {
-  Scaffold.of(context).showSnackBar(
+  ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(text),
     ),

@@ -64,11 +64,6 @@ class _UsertrailsPageState
                       zoom: 14)
                   : store.mapController.position,
               onMapCreated: (GoogleMapController mapcontroller) {
-                if (store.tappedTrilha != null) {
-                  checkUpload();
-                  bottomSheetTempTrail(store.mapController.followTrail,
-                      store.scaffoldState, store.state);
-                }
                 store.mapController.followTrail = null;
                 store.mapController.state();
                 _controller.complete(mapcontroller);

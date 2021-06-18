@@ -216,7 +216,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   });
                 } else {
                   store.followTrail =
-                      TrilhaModel(2000000 + n, 'followRoute $n');
+                      TrilhaModel(store.nextCodt(), 'followRoute $n');
                   n++;
 
                   store.followTrail.polylineCoordinates = [[]];
@@ -228,7 +228,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                         title: "Gravando trilha",
                         message:
                             "Estamos obtendo sua localização para gravar a trilha",
-                        icon: "images/res/mipmap-xxxhdpi/launcher_icon.png",
                       );
                       bglocation.BackgroundLocation.startLocationService(
                           distanceFilter: 6);

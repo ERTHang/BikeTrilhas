@@ -59,6 +59,7 @@ abstract class _MapControllerBase with Store {
   List<DadosWaypointModel> followTrailWaypoints = [];
   bool update = false;
   int distanceValue = 1000;
+  List<int> trilhasUser = [];
 
   @action
   _MapControllerBase(
@@ -80,6 +81,7 @@ abstract class _MapControllerBase with Store {
           await filterRepository.getFiltered([2], [], [], [], [], [], []);
       trilhasFiltradas = typeFilter;
       Timer.periodic(Duration(seconds: 15), (Timer t) => checkUpdatesTrilhas());
+      trilhasUser = await trilhaRepository.getTrilhasUser();
     } else {
       trilhas = trilhaRepository.getStorageTrilhas().asObservable();
     }
@@ -138,9 +140,11 @@ abstract class _MapControllerBase with Store {
               PolylineId("trilha " + (trilha.codt + i * 10000).toString()),
           color: (trilha.codt == tappedTrilha)
               ? Colors.red
-              : codigosTrilhasSalvas.contains(trilha.codt)
-                  ? Colors.green
-                  : Colors.blue,
+              : (trilhasUser.contains(trilha.codt))
+                  ? Colors.purple
+                  : codigosTrilhasSalvas.contains(trilha.codt)
+                      ? Colors.green
+                      : Colors.blue,
           onTap: () {
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;
@@ -239,9 +243,21 @@ abstract class _MapControllerBase with Store {
       return;
     } else {
       trilhas.value.addAll(result);
-      getPolylines();
+      await typeChange(typeNum);
+      trilhasFiltradas = typeFilter;
+      await getPolylines();
       state();
     }
+  }
+
+  int nextCodt() {
+    int next = 2000000;
+    createdTrails.forEach((element) {
+      if (element.codt >= next) {
+        next = element.codt + 1;
+      }
+    });
+    return next;
   }
 
   Future<void> nomeTrilha(context) async {
@@ -258,9 +274,12 @@ abstract class _MapControllerBase with Store {
                   child: Text('Ok'),
                   onPressed: () {
                     createdTrails.add(followTrail);
-                    trilhaRepository.saveRecordedTrail(followTrail);
-                    Navigator.pop(context);
-                    Modular.to.pushNamed('/usertrail');
+                    trilhaRepository
+                        .saveRecordedTrail(followTrail)
+                        .then((value) {
+                      Navigator.pop(context);
+                      Modular.to.pushNamed('/usertrail');
+                    });
                     return;
                   }),
             ],
