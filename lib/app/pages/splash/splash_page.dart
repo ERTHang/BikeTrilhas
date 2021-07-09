@@ -1,6 +1,8 @@
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 
 class SplashPage extends StatefulWidget {
@@ -21,7 +23,11 @@ class _SplashPageState extends State<SplashPage> {
       final auth = Modular.get<AuthController>();
       if (auth.status == AuthStatus.login) {
         auth.loginProcedure();
-        Modular.to.pushReplacementNamed('/map');
+        Geolocator.getCurrentPosition().then((value) {
+          Modular.to.pushReplacementNamed('/map',
+              arguments: CameraPosition(
+                  target: LatLng(value.latitude, value.longitude), zoom: 17));
+        });
       } else if (auth.status == AuthStatus.logoff) {
         Modular.to.pushReplacementNamed('/login');
       }

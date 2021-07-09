@@ -39,33 +39,11 @@ mixin _$MapController on _MapControllerBase, Store {
     });
   }
 
-  final _$positionAtom = Atom(name: '_MapControllerBase.position');
-
-  @override
-  ObservableFuture<CameraPosition> get position {
-    _$positionAtom.reportRead();
-    return super.position;
-  }
-
-  @override
-  set position(ObservableFuture<CameraPosition> value) {
-    _$positionAtom.reportWrite(value, super.position, () {
-      super.position = value;
-    });
-  }
-
   final _$initAsyncAction = AsyncAction('_MapControllerBase.init');
 
   @override
   Future init() {
     return _$initAsyncAction.run(() => super.init());
-  }
-
-  final _$getUserPosAsyncAction = AsyncAction('_MapControllerBase.getUserPos');
-
-  @override
-  Future<CameraPosition> getUserPos() {
-    return _$getUserPosAsyncAction.run(() => super.getUserPos());
   }
 
   final _$getPolylinesAsyncAction =
@@ -80,8 +58,7 @@ mixin _$MapController on _MapControllerBase, Store {
   String toString() {
     return '''
 dataReady: ${dataReady},
-trilhas: ${trilhas},
-position: ${position}
+trilhas: ${trilhas}
     ''';
   }
 }

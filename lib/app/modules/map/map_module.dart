@@ -14,7 +14,10 @@ class MapModule extends Module {
 
   @override
   final List<ModularRoute> routes = [
-    ChildRoute(Modular.initialRoute, child: (_, args) => MapPage()),
+    ChildRoute(Modular.initialRoute,
+        child: (_, args) => MapPage(
+              position: args.data,
+            )),
     ChildRoute('editor', child: (_, args) => EdicaoTrilhas()),
     ChildRoute('editorwaypoint',
         child: (_, args) => EdicaoWaypoint(

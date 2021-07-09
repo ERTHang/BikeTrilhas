@@ -43,11 +43,13 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
 
   exit(DadosWaypointModel m) async {
     if (widget.editMode == EditMode.UPDATE) {
+      print('sdfsf: ${m.codt}  Nome: ${m.nome}  Codwp: ${m.codwp} Categorias: ${m.categorias}');
       await _infoRepository.updateDadosWaypoint(
           m.codwp, m.codt, m.descricao, m.nome, m.categorias);
       bottomSheetWaypoint(m.codwp);
       Modular.to.pop();
     } else {
+      print('Cod: ${m.codt}  Nome: ${m.nome}  Codwp: ${m.codwp} Categorias: ${m.categorias}');
       if (mapController.followTrail != null) {
         mapController.followTrailWaypoints.add(m);
         mapController.followTrail.waypoints.add(mapController.newWaypoint);

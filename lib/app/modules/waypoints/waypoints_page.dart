@@ -33,7 +33,7 @@ class _WaypointsPageState
         myLocationButtonEnabled: false,
         myLocationEnabled: true,
         mapType: MapType.normal,
-        initialCameraPosition: store.mapController.position.value,
+        initialCameraPosition: store.mapController.position,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },

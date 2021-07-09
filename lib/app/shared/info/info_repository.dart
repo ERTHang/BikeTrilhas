@@ -3,6 +3,7 @@ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:dio/dio.dart';
@@ -299,7 +300,8 @@ class InfoRepository {
       double desnivel,
       int cidade,
       List<WaypointModel> waypoints,
-      List<DadosWaypointModel> dadoswp) async {
+      List<DadosWaypointModel> dadoswp,
+      int oldcodt) async {
     var auth = Modular.get<AuthController>();
     int cidCod, tipCod, difCod, subtipInt;
     List<int> supInt = [];
@@ -381,10 +383,12 @@ class InfoRepository {
       waypoints.forEach((element) async {
         uploadWaypoint(element, dadoswp[n], result.data);
       });
+      mapController.createdTrails
+          .removeWhere((element) => element.codt == oldcodt);
+      TrilhaRepository trilhaRepository = Modular.get();
+      trilhaRepository.deleteRecordedTrail(oldcodt);
     }
 
-    mapController.createdTrails
-        .clear(); //TODO: checar se existe mais trilhas para inserir;
     return result.data;
   }
 

@@ -18,7 +18,8 @@ import 'map_controller.dart';
 
 class MapPage extends StatefulWidget {
   final String title;
-  const MapPage({Key key, this.title = "Map"}) : super(key: key);
+  final CameraPosition position;
+  const MapPage({Key key, this.title = "Map", this.position}) : super(key: key);
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -45,6 +46,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
 
   Widget build(BuildContext context) {
     store.state = _func;
+    store.position = widget.position;
     return Scaffold(
       key: store.scaffoldState,
       appBar: AppBar(
@@ -92,26 +94,14 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         alignment: Alignment.center,
         children: <Widget>[
           /* Observer para verificar a posição do usuário e a conexão com o 
-          ** servidor, caso tenha os dois irá para o Google Maps na função
-          ** _map() */
+           * servidor, caso tenha os dois irá para o Google Maps na função
+           * _map() 
+           */
           Observer(
             builder: (context) {
-              checkPermission(location);
-              if (store.position.error != null) {
+              if (widget.position == null) {
                 return Center(
                   child: Text("error getting position"),
-                );
-              }
-              if (store.position.value == null) {
-                return Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircularProgressIndicator(),
-                      Text("Obtendo posição do usuário")
-                    ],
-                  ),
                 );
               }
               if (store.trilhas.error != null) {
@@ -226,7 +216,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   });
                 } else {
                   store.followTrail =
-                      TrilhaModel(2000000 + n, 'followRoute $n');
+                      TrilhaModel(store.nextCodt(), 'followRoute $n');
                   n++;
 
                   store.followTrail.polylineCoordinates = [[]];
@@ -238,7 +228,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                         title: "Gravando trilha",
                         message:
                             "Estamos obtendo sua localização para gravar a trilha",
-                        icon: "images/res/mipmap-xxxhdpi/launcher_icon.png",
                       );
                       bglocation.BackgroundLocation.startLocationService(
                           distanceFilter: 6);
@@ -484,7 +473,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       polylines: store.polylines,
       markers: (routeState == 0) ? store.markers : store.routeMarkers,
       mapType: MapType.normal,
-      initialCameraPosition: store.position.value,
+      initialCameraPosition: widget.position,
       onMapCreated: (GoogleMapController controller) {
         _controller.complete(controller);
         mapController = controller;

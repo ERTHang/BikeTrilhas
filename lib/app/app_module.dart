@@ -31,8 +31,8 @@ class AppModule extends Module {
     Bind.singleton((i) => InfoRepository(i.get<Dio>())),
     Bind.singleton((i) => TrilhaRepository(
         i.get<Dio>(), i.get<SharedPrefs>(), i.get<AuthController>())),
-    Bind.singleton((i) => AuthRepository(i.get<Dio>())),
-    Bind.singleton((i) => AuthController()),
+    Bind.lazySingleton((i) => AuthRepository(i.get<Dio>())),
+    Bind.lazySingleton((i) => AuthController()),
     Bind.singleton((i) => FilterRepository(i.get<Dio>())),
     Bind.singleton((i) => SharedPrefs()),
     Bind.singleton((i) => Dio(BaseOptions(baseUrl: URL_BASE)))

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
@@ -8,7 +9,6 @@ import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_trilhas.
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TrilhaRepository {
@@ -24,7 +24,15 @@ class TrilhaRepository {
 
   int n = 10000;
 
-  void deleteRecordedTrail(int codigo) {
+  void deleteRecordedTrail(int codigo) async {
+    if (recordedTrails == null) {
+      try {
+        recordedTrails =
+            SavedRoutes.fromJson(await sharedPrefs.read('recordedTrails'));
+      } catch (e) {
+        recordedTrails = SavedRoutes([]);
+      }
+    }
     sharedPrefs.remove('recorded trail $codigo');
     for (var i = 0; i < recordedTrails.codes.length; i++) {
       if (recordedTrails.codes[i] == codigo) {
@@ -143,9 +151,22 @@ class TrilhaRepository {
     }
   }
 
-  Future<TrilhaModel> getRoute(List<LatLng> routePoints) async {
-    final auth = Modular.get<AuthController>();
+  Future<List<int>> getTrilhasUser() async {
+    List<int> codts = [];
+    var email = auth.user.email;
+    final value = await dio.get("/server/trilhauser/$email");
+    for (var item in (value.data as List)) {
+      codts.add(item['cod']);
+    }
+    return codts;
+  }
 
+  Future<bool> deleteTrilhaUser(int codt) async {
+    final value = await dio.delete("/server/trilha/$codt");
+    return value.data == 'true';
+  }
+
+  Future<TrilhaModel> getRoute(List<LatLng> routePoints) async {
     List<List<LatLng>> rotaPolyline = [];
     var username = auth.user.displayName.toLowerCase();
     TrilhaModel model = TrilhaModel(n, 'Rota gerada por $username');
@@ -323,21 +344,32 @@ class TrilhaRepository {
     if (cods.isEmpty) {
       return null;
     }
+    List<dynamic> codsfinal = [];
+    codsfinal.addAll(cods);
+
     List<TrilhaModel> list = [];
     List<String> nomes = [];
     var layercod = 0;
-    var layers = await dio.put("/server/layer",
-        data: {"codt": cods}).timeout(Duration(seconds: 5));
     for (var cod in cods) {
-      nomes.add((await dio.get('/server/naogeografico',
-              queryParameters: {"tipo": "trilha", "cod": cod}))
-          .data[0]['nome']);
+      if (cod < 0) {
+        if (mapController.trilhas.value.contains(cod)) {
+          mapController.trilhas.value
+              .removeWhere((element) => element.codt == cod);
+        }
+        codsfinal.remove(cod);
+      } else {
+        nomes.add((await dio.get('/server/naogeografico',
+                queryParameters: {"tipo": "trilha", "cod": cod}))
+            .data[0]['nome']);
+      }
     }
+    var layers = await dio.put("/server/layer",
+        data: {"codt": codsfinal}).timeout(Duration(seconds: 5));
 
-    for (var i = 0; i < cods.length; i++) {
+    for (var i = 0; i < codsfinal.length; i++) {
       List<List<LatLng>> line = [];
       TrilhaModel model = TrilhaModel(
-        cods[i],
+        codsfinal[i],
         nomes[i],
       );
       var point = layers.data[layercod];
