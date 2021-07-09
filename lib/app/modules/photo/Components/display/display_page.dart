@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +45,20 @@ class _DisplayPageState extends State<DisplayPage> {
     mapController.newWaypoint =
         WaypointModel(posicao: LatLng(pos.latitude, pos.longitude));
 
-    Modular.to
-        .pushReplacementNamed('/map/editorwaypoint', arguments: EditMode.ADD);
+    if (await isOnline()) {
+      Modular.to
+          .pushReplacementNamed('/map/editorwaypoint', arguments: EditMode.ADD);
+    } else {
+      mapController.followTrail =
+          TrilhaModel(mapController.nextCodt(), 'MarkerOnly');
+      mapController.createdTrails.add(mapController.followTrail);
+      mapController.createdTrails.last.waypoints.add(mapController.newWaypoint);
+      mapController.trilhaRepository
+          .saveRecordedTrail(mapController.followTrail)
+          .then((value) {
+        Modular.to.pushReplacementNamed('/usertrail');
+      });
+    }
   }
 
   @override

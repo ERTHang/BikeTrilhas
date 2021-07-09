@@ -21,6 +21,12 @@ class _UsertrailsPageState
   int routeState = 0, destinos = 0;
 
   @override
+  void initState() {
+    super.initState();
+    store.init();
+  }
+
+  @override
   Widget build(BuildContext context) {
     store.state = _func;
     store.getPolylines();
@@ -43,11 +49,13 @@ class _UsertrailsPageState
                     store.mapController.sheet.close();
                     store.mapController.sheet = null;
                     store.tappedTrilha = null;
+                    store.tappedWaypoint = null;
                   }
                   if (store.mapController.nameSheet != null) {
                     store.mapController.nameSheet.close();
                     store.mapController.nameSheet = null;
                     store.tappedTrilha = null;
+                    store.tappedWaypoint = null;
                   }
                 });
               },

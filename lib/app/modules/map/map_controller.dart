@@ -169,7 +169,7 @@ abstract class _MapControllerBase with Store {
           onTap: () async {
             tappedTrilha = null;
             if (await isOnline()) {
-              bottomSheetWaypoint(waypoint.codigo);
+              bottomSheetWaypoint(waypoint.codigo, codt: trilha.codt);
             } else {
               bottomSheetWaypointOffline(waypoint.codigo);
             }

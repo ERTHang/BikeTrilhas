@@ -311,12 +311,13 @@ bottomSheetTrilha(TrilhaModel trilha) async {
   }
 }
 
-bottomSheetWaypoint(int codt) async {
+bottomSheetWaypoint(int codwp, {int codt}) async {
+  final TrilhaRepository trilhaRepository = Modular.get();
   mapController.modelTrilha = null;
   mapController.sheet =
       mapController.scaffoldState.currentState.showBottomSheet((context) {
     return FutureBuilder(
-      future: getDataWaypoint(codt),
+      future: getDataWaypoint(codwp),
       builder: (context, snapshot) {
         Widget wid;
         if (snapshot.hasData) {
@@ -446,6 +447,47 @@ bottomSheetWaypoint(int codt) async {
                     ],
                   ),
                 ),
+
+                // //Botão para remover do servidor
+
+                // Visibility(
+                //   child: Positioned(
+                //     top: 5,
+                //     right: 50,
+                //     child: IconButton(
+                //       color: Colors.red,
+                //       icon: Icon(Icons.delete_outline_outlined),
+                //       iconSize: 25,
+                //       onPressed: () async {
+                //         alertaComEscolha(
+                //             context,
+                //             'Remover',
+                //             'Deseja remover o waypoint ${mapController.modelWaypoint.nome} ?',
+                //             'VOLTAR',
+                //             () {
+                //               Navigator.pop(context);
+                //               return;
+                //             },
+                //             'OK',
+                //             () async {
+                //               Navigator.pop(context);
+                //               if (await trilhaRepository.deleteWaypointUser(
+                //                   codwp, codt)) {
+                //                 mapController.trilhas.value.removeWhere(
+                //                     (element) => element.codt == codt);
+                //                 mapController.getPolylines();
+                //                 mapController.state();
+                //                 alert(
+                //                     context, "Trilha foi excluída.", "Sucesso");
+                //               } else {
+                //                 alert(context, "Ocorreu um erro.", "Erro");
+                //               }
+                //             });
+                //       },
+                //     ),
+                //   ),
+                //   visible: mapController.trilhasUser.contains(codt),
+                // ),
                 Positioned(
                     bottom: 10,
                     right: 10,
@@ -473,7 +515,7 @@ bottomSheetWaypoint(int codt) async {
                                   title: Text(mapController.modelWaypoint.nome),
                                   onTap: () {
                                     mapController.nameSheet = null;
-                                    bottomSheetWaypoint(codt);
+                                    bottomSheetWaypoint(codwp);
                                   },
                                 ),
                               ));
@@ -529,12 +571,12 @@ bottomSheetWaypoint(int codt) async {
   }
 }
 
-bottomSheetWaypointOffline(int codt) async {
+bottomSheetWaypointOffline(int codwp) async {
   mapController.modelTrilha = null;
   mapController.sheet =
       mapController.scaffoldState.currentState.showBottomSheet((context) {
     return FutureBuilder(
-      future: getDataWaypoint(codt),
+      future: getDataWaypoint(codwp),
       builder: (context, snapshot) {
         Widget wid;
         if (snapshot.hasData) {
@@ -692,7 +734,7 @@ bottomSheetWaypointOffline(int codt) async {
                                   title: Text(mapController.modelWaypoint.nome),
                                   onTap: () {
                                     mapController.nameSheet = null;
-                                    bottomSheetWaypoint(codt);
+                                    bottomSheetWaypoint(codwp);
                                   },
                                 ),
                               ));
