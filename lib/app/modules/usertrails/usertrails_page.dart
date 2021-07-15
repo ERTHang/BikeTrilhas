@@ -65,7 +65,8 @@ class _UsertrailsPageState
               polylines: store.polylines,
               markers: (routeState == 0) ? store.markers : store.routeMarkers,
               mapType: MapType.normal,
-              initialCameraPosition: (mapController.followTrail != null)
+              initialCameraPosition: (mapController.followTrail != null &&
+                      mapController.followTrail.polylineCoordinates.isNotEmpty)
                   ? CameraPosition(
                       target: mapController.followTrail.polylineCoordinates[0]
                           [0],

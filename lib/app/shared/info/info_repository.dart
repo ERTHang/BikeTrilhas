@@ -3,6 +3,7 @@ import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
+import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
@@ -16,8 +17,9 @@ var connectivityResult;
 
 class InfoRepository {
   final Dio dio;
+  final SharedPrefs sharedPrefs;
 
-  InfoRepository(this.dio);
+  InfoRepository(this.dio, this.sharedPrefs);
 
   List<Bairro> bairros = [];
   List<Categoria> categorias = [];
@@ -29,6 +31,15 @@ class InfoRepository {
 
   Future<bool> getModels() async {
     var result;
+    try {
+      var mapCategorias = await sharedPrefs.read("categorias");
+      for (var item in mapCategorias) {
+        categorias.add(Categoria(item['cat_cod'], item['cat_nome']));
+      }
+    } catch (e) {
+      print(e);
+    }
+
     if (bairros.isNotEmpty ||
         categorias.isNotEmpty ||
         subtipos.isNotEmpty ||
@@ -50,6 +61,7 @@ class InfoRepository {
       for (var json in (result.data as List)) {
         categorias.add(Categoria(json["catCod"], json["catNome"]));
       }
+      sharedPrefs.update("categorias", categorias);
       result = await dio.get('/server/regiao');
       for (var json in (result.data as List)) {
         regioes.add(Regiao(json['regCod'], json['regNome']));
@@ -382,6 +394,7 @@ class InfoRepository {
       int n = 0;
       waypoints.forEach((element) async {
         uploadWaypoint(element, dadoswp[n], result.data);
+        n++;
       });
       mapController.createdTrails
           .removeWhere((element) => element.codt == oldcodt);
