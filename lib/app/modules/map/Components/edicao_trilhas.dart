@@ -80,7 +80,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           mapController.followTrailWaypoints,
           m.codt);
       mapController.sheet.close();
-      _userTrailsController.getPolylines(context);
+      _userTrailsController.getPolylines();
       _userTrailsController.state();
       if (result == -1) {
         alertEdit(context, "Error");

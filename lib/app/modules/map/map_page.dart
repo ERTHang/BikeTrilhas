@@ -379,7 +379,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
 
           //Botão para tirar uma foto para um waypoint
           Visibility(
-            visible: admin == 1,
             child: Positioned(
               bottom: 70,
               right: 10,

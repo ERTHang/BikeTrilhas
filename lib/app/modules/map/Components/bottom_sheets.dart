@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -313,12 +311,13 @@ bottomSheetTrilha(TrilhaModel trilha) async {
   }
 }
 
-bottomSheetWaypoint(int codt) async {
+bottomSheetWaypoint(int codwp, {int codt}) async {
+  final TrilhaRepository trilhaRepository = Modular.get();
   mapController.modelTrilha = null;
   mapController.sheet =
       mapController.scaffoldState.currentState.showBottomSheet((context) {
     return FutureBuilder(
-      future: getDataWaypoint(codt),
+      future: getDataWaypoint(codwp),
       builder: (context, snapshot) {
         Widget wid;
         if (snapshot.hasData) {
@@ -448,6 +447,47 @@ bottomSheetWaypoint(int codt) async {
                     ],
                   ),
                 ),
+
+                // //Botão para remover do servidor
+
+                // Visibility(
+                //   child: Positioned(
+                //     top: 5,
+                //     right: 50,
+                //     child: IconButton(
+                //       color: Colors.red,
+                //       icon: Icon(Icons.delete_outline_outlined),
+                //       iconSize: 25,
+                //       onPressed: () async {
+                //         alertaComEscolha(
+                //             context,
+                //             'Remover',
+                //             'Deseja remover o waypoint ${mapController.modelWaypoint.nome} ?',
+                //             'VOLTAR',
+                //             () {
+                //               Navigator.pop(context);
+                //               return;
+                //             },
+                //             'OK',
+                //             () async {
+                //               Navigator.pop(context);
+                //               if (await trilhaRepository.deleteWaypointUser(
+                //                   codwp, codt)) {
+                //                 mapController.trilhas.value.removeWhere(
+                //                     (element) => element.codt == codt);
+                //                 mapController.getPolylines();
+                //                 mapController.state();
+                //                 alert(
+                //                     context, "Trilha foi excluída.", "Sucesso");
+                //               } else {
+                //                 alert(context, "Ocorreu um erro.", "Erro");
+                //               }
+                //             });
+                //       },
+                //     ),
+                //   ),
+                //   visible: mapController.trilhasUser.contains(codt),
+                // ),
                 Positioned(
                     bottom: 10,
                     right: 10,
@@ -475,7 +515,7 @@ bottomSheetWaypoint(int codt) async {
                                   title: Text(mapController.modelWaypoint.nome),
                                   onTap: () {
                                     mapController.nameSheet = null;
-                                    bottomSheetWaypoint(codt);
+                                    bottomSheetWaypoint(codwp);
                                   },
                                 ),
                               ));
@@ -531,12 +571,12 @@ bottomSheetWaypoint(int codt) async {
   }
 }
 
-bottomSheetWaypointOffline(int codt) async {
+bottomSheetWaypointOffline(int codwp) async {
   mapController.modelTrilha = null;
   mapController.sheet =
       mapController.scaffoldState.currentState.showBottomSheet((context) {
     return FutureBuilder(
-      future: getDataWaypoint(codt),
+      future: getDataWaypoint(codwp),
       builder: (context, snapshot) {
         Widget wid;
         if (snapshot.hasData) {
@@ -694,7 +734,7 @@ bottomSheetWaypointOffline(int codt) async {
                                   title: Text(mapController.modelWaypoint.nome),
                                   onTap: () {
                                     mapController.nameSheet = null;
-                                    bottomSheetWaypoint(codt);
+                                    bottomSheetWaypoint(codwp);
                                   },
                                 ),
                               ));
@@ -855,167 +895,6 @@ bottomSheetTempTrail(
                   });
                 },
               ))
-        ]));
-  }, backgroundColor: Colors.transparent);
-  final auxSheet = mapController.sheet;
-  final auxNameSheet = mapController.nameSheet;
-  if (auxSheet != null) {
-    auxSheet.closed.whenComplete(() {
-      mapController.tappedTrilha = null;
-      mapController.sheet = null;
-    });
-  }
-  if (auxNameSheet != null) {
-    auxNameSheet.closed.whenComplete(() {
-      mapController.tappedTrilha = null;
-      mapController.nameSheet = null;
-    });
-  }
-}
-
-bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
-    WaypointModel waypoint, DadosWaypointModel followTrailWaypoints) {
-  print(">> ${followTrailWaypoints.categorias}");
-
-  mapController.modelTrilha = null;
-  mapController.modelWaypoint = null;
-  mapController.sheet = keyState.currentState.showBottomSheet((context) {
-    return ClipRRect(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        child: Stack(children: <Widget>[
-          Container(
-            color: Colors.white,
-            width: MediaQuery.of(context).size.width,
-            height: 170,
-            padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                modifiedText('Nome: ', followTrailWaypoints.nome),
-                Visibility(
-                  visible: followTrailWaypoints.categorias.length > 0,
-                  child: modifiedText('Categoria: ',
-                      (followTrailWaypoints.categorias.join(', '))),
-                ),
-                Visibility(
-                  visible: followTrailWaypoints.descricao.isNotEmpty,
-                  child: modifiedText(
-                      'Descrição: ', followTrailWaypoints.descricao.toString()),
-                ),
-                Visibility(
-                  visible: followTrailWaypoints.imagens.length > 0,
-                  child: RichText(
-                      text: TextSpan(
-                    text: followTrailWaypoints.imagens.length == 1
-                        ? 'Imagem: '
-                        : 'Imagens: ',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black),
-                  )),
-                ),
-                Visibility(
-                    visible: followTrailWaypoints.imagens.length >= 1,
-                    maintainState: false,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                          children: followTrailWaypoints.imagens
-                              .map((e) => GestureDetector(
-                                    child: Hero(
-                                      tag: e,
-                                      child: Image.file(
-                                        File(followTrailWaypoints.imagens[0]),
-                                        height: 80,
-                                        width: 80,
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      showDialog(
-                                          context: mapController
-                                              .scaffoldState.currentContext,
-                                          builder: (_) {
-                                            return SimpleDialog(
-                                              contentPadding: EdgeInsets.all(0),
-                                              children: <Widget>[
-                                                Container(
-                                                  child: Stack(
-                                                    children: <Widget>[
-                                                      PhotoView(
-                                                        imageProvider:
-                                                            FileImage(File(
-                                                                followTrailWaypoints
-                                                                        .imagens[
-                                                                    0])),
-                                                        minScale:
-                                                            PhotoViewComputedScale
-                                                                .covered,
-                                                      ),
-                                                      Positioned(
-                                                        top: 5,
-                                                        right: 5,
-                                                        child: IconButton(
-                                                            icon: Icon(
-                                                              Icons.close,
-                                                              color: Colors.red,
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            }),
-                                                      ),
-                                                    ],
-                                                    fit: StackFit.expand,
-                                                  ),
-                                                  height: MediaQuery.of(
-                                                              mapController
-                                                                  .scaffoldState
-                                                                  .currentContext)
-                                                          .size
-                                                          .height *
-                                                      0.7,
-                                                  width: MediaQuery.of(
-                                                              mapController
-                                                                  .scaffoldState
-                                                                  .currentContext)
-                                                          .size
-                                                          .width *
-                                                      0.7,
-                                                ),
-                                              ],
-                                            );
-                                          });
-                                    },
-                                  ))
-                              .toList()),
-                    )),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 125,
-            right: 44,
-            child: IconButton(
-              icon: Icon(
-                Icons.upload_rounded,
-                color: Colors.blue,
-              ),
-              onPressed: () {},
-            ),
-          ),
-          Positioned(
-            bottom: 125,
-            right: 10,
-            child: IconButton(
-              icon: Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
-              onPressed: () {},
-            ),
-          ),
         ]));
   }, backgroundColor: Colors.transparent);
   final auxSheet = mapController.sheet;
