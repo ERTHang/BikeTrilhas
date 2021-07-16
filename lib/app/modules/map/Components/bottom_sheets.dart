@@ -132,7 +132,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       onPressed: () async {
                         alertaComEscolha(
                             context,
-                            'Remover',
+                            'Remover Servidor',
                             'Deseja remover a trilha ${trilha.nome} ?',
                             'VOLTAR',
                             () {
@@ -147,6 +147,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                                 mapController.trilhas.value.remove(trilha);
                                 mapController.getPolylines();
                                 mapController.state();
+                                mapController.sheet.close();
                                 alert(
                                     context, "Trilha foi excluída.", "Sucesso");
                               } else {
@@ -156,7 +157,9 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       },
                     ),
                   ),
-                  visible: mapController.trilhasUser.contains(trilha.codt),
+                  visible: mapController.trilhasUser.contains(trilha.codt) ||
+                      (admin == 1 &&
+                          !codigosTrilhasSalvas.contains(trilha.codt)),
                 ),
                 //Botão para remover trilha
                 Visibility(

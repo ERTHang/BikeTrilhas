@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:biketrilhas_modular/app/app_controller.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
@@ -146,11 +147,10 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         mapController.newWaypoint = null;
         Modular.to.popUntil((route) => route.isFirst);
       } else {
-        int codt = await _showTrilhasDialog();
-        if (codt != -1) {
-          await _showLoadDialog(m, codt);
-          alertEdit(context, "Waypoint salvo com sucesso");
-        }
+        mapController.followTrailWaypoints.add(m);
+        mapController.followTrail.waypoints.add(mapController.newWaypoint);
+        mapController.newWaypoint = null;
+        Modular.to.popUntil((route) => route.isFirst);
       }
     }
   }
