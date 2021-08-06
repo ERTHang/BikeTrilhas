@@ -80,7 +80,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           mapController.followTrailWaypoints,
           m.codt);
       mapController.sheet.close();
-      _userTrailsController.getPolylines();
+      _userTrailsController.getPolylines(context);
       _userTrailsController.state();
       if (result == -1) {
         alertEdit(context, "Error");
@@ -243,8 +243,9 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                             _mapController.modelTrilha.tipo = newValue;
                           });
                         },
-                        items: <String>['Ciclovia', 'Trilha', 'Cicloturismo']
-                            .map<DropdownMenuItem<String>>((String value) {
+                        items: <String>[
+                          /**'Ciclovia',**/ 'Trilha' /**, 'Cicloturismo'**/
+                        ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),

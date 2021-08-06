@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'usertrails_controller.dart';
 class UsertrailsPage extends StatefulWidget {
   final String title;
   const UsertrailsPage({Key key, this.title = "Usertrails"}) : super(key: key);
-
   @override
   _UsertrailsPageState createState() => _UsertrailsPageState();
 }
@@ -19,17 +17,10 @@ class _UsertrailsPageState
     extends ModularState<UsertrailsPage, UsertrailsController> {
   Completer<GoogleMapController> _controller = Completer();
   int routeState = 0, destinos = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    store.init();
-  }
-
   @override
   Widget build(BuildContext context) {
     store.state = _func;
-    store.getPolylines();
+    store.getPolylines(context);
     return Scaffold(
         key: store.scaffoldState,
         appBar: AppBar(
@@ -49,13 +40,11 @@ class _UsertrailsPageState
                     store.mapController.sheet.close();
                     store.mapController.sheet = null;
                     store.tappedTrilha = null;
-                    store.tappedWaypoint = null;
                   }
                   if (store.mapController.nameSheet != null) {
                     store.mapController.nameSheet.close();
                     store.mapController.nameSheet = null;
                     store.tappedTrilha = null;
-                    store.tappedWaypoint = null;
                   }
                 });
               },
@@ -65,8 +54,7 @@ class _UsertrailsPageState
               polylines: store.polylines,
               markers: (routeState == 0) ? store.markers : store.routeMarkers,
               mapType: MapType.normal,
-              initialCameraPosition: (mapController.followTrail != null &&
-                      mapController.followTrail.polylineCoordinates.isNotEmpty)
+              initialCameraPosition: (mapController.followTrail != null)
                   ? CameraPosition(
                       target: mapController.followTrail.polylineCoordinates[0]
                           [0],
