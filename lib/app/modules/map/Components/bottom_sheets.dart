@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
@@ -134,8 +135,8 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       onPressed: () async {
                         alertaComEscolha(
                             context,
-                            'Remover Servidor',
-                            'Deseja remover a trilha ${trilha.nome} ?',
+                            'Remover',
+                            'Deseja remover permanentemente a trilha ${trilha.nome} ?',
                             'VOLTAR',
                             () {
                               Navigator.pop(context);
@@ -176,7 +177,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         alertaComEscolha(
                             context,
                             'Remover',
-                            'Deseja remover a trilha ${trilha.nome} ?',
+                            'Deseja remover cópia local da trilha ${trilha.nome} ?',
                             'VOLTAR',
                             () {
                               Navigator.pop(context);
@@ -549,8 +550,8 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                         onPressed: () async {
                           alertaComEscolha(
                               context,
-                              'Remover Servidor',
-                              'Deseja remover waypoint ${mapController.modelWaypoint.nome} ?',
+                              'Remover',
+                              'Deseja remover permanentemente o waypoint ${mapController.modelWaypoint.nome} ?',
                               'VOLTAR',
                               () {
                                 Navigator.pop(context);
@@ -568,17 +569,8 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                                   Navigator.pop(context);
                                 } catch (e) {
                                   Navigator.pop(context);
-                                  alert(context, e.toString(), 'Erro');
+                                  print(e.toString());
                                 }
-                                //if (await trilhaRepository
-                                //   .deleteTrilhaUser(trilha.codt)) {
-                                // mapController.trilhas.value.remove(trilha);
-                                //mapController.getPolylines();
-                                // mapController.state();
-                                // mapController.sheet.close();
-                                // alert(context, "Trilha foi excluída.",
-                                //     "Sucesso");
-                                //}
                               });
                         },
                       )),
@@ -900,6 +892,7 @@ bottomSheetTempTrail(
                     'OK',
                     () {
                       if (trilha.codt >= 2000000) {
+                        ////AQUI ESTA O PROBLEMA DE REMOVER WAYPOINT APENAS
                         mapController.createdTrails.remove(trilha);
 
                         mapController.trilhaRepository
@@ -1128,16 +1121,24 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     },
                     'OK',
                     () async {
-                      Navigator.pop(context);
-                      try {
-                        mapController.followTrailWaypoints.remove(0);
-                        mapController.newWaypoint = null;
-                        mapController.getPolylines();
-                        mapController.state();
-                        mapController.sheet.close();
-                      } catch (e) {
-                        print(alert(context, e.toString(), 'Erro'));
-                      }
+                      print('Teste');
+                      print(mapController.followTrailWaypoints[0].codt);
+                      print('Teste2');
+                      print(mapController.createdTrails[1].waypoints);
+                      print('Teste3');
+                      SavedRoutes recordedTrails = SavedRoutes.fromJson(
+                          await sharedPrefs.read('recordedTrails'));
+                      print(recordedTrails.codes[0]);
+                      //   Navigator.pop(context);
+                      //   try {
+                      //     mapController.followTrailWaypoints.remove(0);
+                      //     mapController.newWaypoint = null;
+                      //     mapController.getPolylines();
+                      //     mapController.state();
+                      //     mapController.sheet.close();
+                      //   } catch (e) {
+                      //     alert(context, e.toString(), 'Erro');
+                      //   }
                     });
               },
             ),

@@ -28,7 +28,7 @@ class AppModule extends Module {
     Bind.singleton((i) => AppController()),
     Bind.singleton((i) => UsertrailsController(i.get(), i.get())),
     Bind.lazySingleton((i) => MapController(i.get(), i.get(), i.get())),
-    Bind.singleton((i) => InfoRepository(i.get<Dio>(), i.get<SharedPrefs>())),
+    Bind.singleton((i) => InfoRepository(i.get<Dio>())),
     Bind.singleton((i) => TrilhaRepository(
         i.get<Dio>(), i.get<SharedPrefs>(), i.get<AuthController>())),
     Bind.lazySingleton((i) => AuthRepository(i.get<Dio>())),

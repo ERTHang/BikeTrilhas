@@ -14,6 +14,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 part 'usertrails_controller.g.dart';
+
 class UsertrailsController = _UsertrailsControllerBase
     with _$UsertrailsController;
 
@@ -93,6 +94,7 @@ abstract class _UsertrailsControllerBase with Store {
     }
     state();
   }
+
   uploadTrilha(context, TrilhaModel trilha) async {
     await showDialog(
       context: context,
@@ -133,6 +135,7 @@ abstract class _UsertrailsControllerBase with Store {
       },
     );
   }
+
   double distance(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295;
     var a = 0.5 -
@@ -140,6 +143,7 @@ abstract class _UsertrailsControllerBase with Store {
         cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
+
   double totalDistance(List<LatLng> lista) {
     double total = 0;
     for (var i = 0; i < lista.length - 1; i++) {
