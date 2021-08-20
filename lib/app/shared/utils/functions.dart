@@ -37,7 +37,7 @@ alert(BuildContext context, String mensagem, String titulo) {
 }
 
 alertaComEscolha(context, titulo, mensagem, String botao1text,
-    Function botao1func, String botao2text, Function botao2func) {
+    Function botao1func, String botao2text, Function botao2func, {Color corTitulo = Colors.black}) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -45,10 +45,13 @@ alertaComEscolha(context, titulo, mensagem, String botao1text,
       return WillPopScope(
         onWillPop: () async => false,
         child: AlertDialog(
-          title: Text(titulo),
-          content: Text(
-            mensagem,
+          title: Text(
+            titulo,
+            style: TextStyle(
+              color: corTitulo
+            ),
           ),
+          content: mensagem,
           actions: <Widget>[
             FlatButton(
                 child: Text(botao1text),
