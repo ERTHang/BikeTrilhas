@@ -382,6 +382,7 @@ class InfoRepository {
       int n = 0;
       waypoints.forEach((element) async {
         uploadWaypoint(element, dadoswp[n], result.data);
+        n++;
       });
       mapController.createdTrails
           .removeWhere((element) => element.codt == oldcodt);

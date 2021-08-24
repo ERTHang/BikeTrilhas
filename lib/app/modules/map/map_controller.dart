@@ -60,6 +60,7 @@ abstract class _MapControllerBase with Store {
   bool update = false;
   int distanceValue = 1000;
   List<int> trilhasUser = [];
+  List<int> waypointsUser = [];
 
   @action
   _MapControllerBase(
@@ -82,6 +83,7 @@ abstract class _MapControllerBase with Store {
       trilhasFiltradas = typeFilter;
       Timer.periodic(Duration(seconds: 15), (Timer t) => checkUpdatesTrilhas());
       trilhasUser = await trilhaRepository.getTrilhasUser();
+      waypointsUser = await trilhaRepository.getWaypointUser();
     } else {
       trilhas = trilhaRepository.getStorageTrilhas().asObservable();
     }

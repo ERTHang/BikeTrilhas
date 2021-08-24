@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 
 final mapController = Modular.get<MapController>();
+final auth = Modular.get<IAuthRepository>();
 var icone;
 
 Future<DadosTrilhaModel> getDataTrilha(int codt) async {
@@ -528,18 +530,22 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                         });
                       },
                     )),
-                Positioned(
-                    bottom: 44,
-                    right: 10,
-                    child: IconButton(
-                      color: Colors.blue,
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Modular.to.pushNamed('/map/editorwaypoint',
-                            arguments: EditMode.UPDATE);
-                      },
-                    )),
+                Visibility(
+                  child: Positioned(
+                      bottom: 44,
+                      right: 10,
+                      child: IconButton(
+                        color: Colors.blue,
+                        icon: Icon(Icons.edit),
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          Modular.to.pushNamed('/map/editorwaypoint',
+                              arguments: EditMode.UPDATE);
+                        },
+                      )),
+                  visible:
+                      admin == 1 || mapController.waypointsUser.contains(codwp),
+                ),
                 Visibility(
                   child: Positioned(
                       top: 5,
@@ -574,7 +580,8 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                               });
                         },
                       )),
-                  visible: admin == 1,
+                  visible:
+                      admin == 1 || mapController.waypointsUser.contains(codwp),
                 ),
               ]));
         } else {
