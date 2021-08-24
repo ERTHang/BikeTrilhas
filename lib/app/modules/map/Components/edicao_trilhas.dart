@@ -4,8 +4,11 @@ import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+
+List<String> escolha = [];
 
 class EdicaoTrilhas extends StatefulWidget {
   @override
@@ -41,6 +44,11 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
     _supController = TextEditingController();
     _baiController = TextEditingController();
     _regController = TextEditingController();
+    if (admin == 1) {
+      escolha = ['Trilha', 'Ciclovia', 'Cicloturismo'];
+    } else {
+      escolha = ['Trilha'];
+    }
   }
 
   TrilhaModel getTrilha(codt) {
@@ -58,7 +66,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.tipo,
           m.dificuldade,
           m.superficies,
-          m.bairros,
+          // m.bairros,
           m.regioes,
           m.subtipo);
       alertEdit(context, "Trilha editada com sucesso");
@@ -70,7 +78,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.tipo,
           m.dificuldade,
           m.superficies,
-          m.bairros,
+          // m.bairros,
           m.regioes,
           m.subtipo,
           m.comprimento,
@@ -80,7 +88,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           mapController.followTrailWaypoints,
           m.codt);
       mapController.sheet.close();
-      _userTrailsController.getPolylines();
+      _userTrailsController.getPolylines(context);
       _userTrailsController.state();
       if (result == -1) {
         alertEdit(context, "Error");
@@ -193,21 +201,21 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                       ),
                     ),
                   ),
-                  TextField(
-                    controller: _baiController,
-                    minLines: 1,
-                    maxLines: 3,
-                    onTap: () {
-                      _showBaiDialog();
-                    },
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      labelText: 'Bairros',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
+                  // TextField(
+                  //   controller: _baiController,
+                  //   minLines: 1,
+                  //   maxLines: 3,
+                  //   onTap: () {
+                  //     _showBaiDialog();
+                  //   },
+                  //   readOnly: true,
+                  //   decoration: InputDecoration(
+                  //     labelText: 'Bairros',
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //   ),
+                  // ),
                   TextField(
                     controller: _regController,
                     minLines: 1,
@@ -243,7 +251,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                             _mapController.modelTrilha.tipo = newValue;
                           });
                         },
-                        items: <String>['Ciclovia', 'Trilha', 'Cicloturismo']
+                        items: escolha
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,

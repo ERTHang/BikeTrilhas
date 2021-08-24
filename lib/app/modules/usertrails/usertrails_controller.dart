@@ -5,8 +5,10 @@ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dar
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -54,7 +56,8 @@ abstract class _UsertrailsControllerBase with Store {
         .asUint8List();
   }
 
-  getPolylines() async {
+  bool pressionando = false;
+  getPolylines(context) async {
     polylines.clear();
     markers.clear();
 
@@ -64,37 +67,49 @@ abstract class _UsertrailsControllerBase with Store {
       mapController.createdTrails
           .addAll(await mapController.trilhaRepository.getRecordedTrails());
     }
-
     for (var trilha in mapController.createdTrails) {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
-        if (trilha.nome != 'MarkerOnly') {
-          Polyline pol = Polyline(
-            zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
-            consumeTapEvents: true,
-            polylineId: PolylineId("rota $i " + trilha.codt.toString()),
-            color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
-            onTap: () {
-              tappedTrilha = trilha.codt;
-              state();
-              bottomSheetTempTrail(trilha, scaffoldState, state);
-            },
-            points: trilha.polylineCoordinates[i],
-            width: 3,
-          );
-          polylines.add(pol);
-        }
+        Polyline pol = Polyline(
+          zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
+          consumeTapEvents: true,
+          polylineId: PolylineId("rota $i " + trilha.codt.toString()),
+          color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
+          onTap: () {
+            tappedTrilha = trilha.codt;
+            state();
+            bottomSheetTempTrail(trilha, scaffoldState, state);
+          },
+          points: trilha.polylineCoordinates[i],
+          width: 3,
+        );
+
+        polylines.add(pol);
         markers.addAll(
           List.generate(
             trilha.waypoints.length,
             (index) => Marker(
+              icon: pressionando == false
+                  ? mapController.markerIcon
+                  : mapController.markerIconTapped,
+              visible: true,
               markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
               position: trilha.waypoints[index].posicao,
-              icon: (trilha.waypoints[index].codigo == tappedWaypoint)
-                  ? markerIconTapped
-                  : markerIcon,
               onTap: () {
-                tappedWaypoint = trilha.waypoints[index].codigo;
-                state();
+                //polylines.clear();
+                pressionando == true
+                    ? pressionando = false
+                    : pressionando = true;
+                pressionando == true
+                    ? state()
+                    : bottomSheetTempWaypoint(
+                        trilha,
+                        scaffoldState,
+                        trilha.waypoints[index],
+                        mapController.followTrailWaypoints[index]);
+                //bottomSheetWaypoint(trilha.waypoints[0].codigo); 255
+                //bottomSheetTempTrail(trilha, scaffoldState, state)
+                //tappedTrilha = trilha.codt; Seleciona a trilha mesmo clicando apenas no bottomSheet
+                //state();
               },
             ),
           ),
