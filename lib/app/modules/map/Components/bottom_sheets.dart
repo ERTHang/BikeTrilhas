@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:http/http.dart' as http;
@@ -138,7 +137,28 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         alertaComEscolha(
                             context,
                             'Remover',
-                            'Deseja remover permanentemente a trilha ${trilha.nome} ?',
+                            RichText(
+                              text: TextSpan(
+                                text: "Deseja remover permanentemente a trilha ",
+                                style: TextStyle(
+                                  color: Colors.red
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: "${trilha.nome} ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold 
+                                    )
+                                  ),
+                                  TextSpan(
+                                    text: "?",
+                                    style: TextStyle(
+                                      color: Colors.red
+                                    )
+                                  ),
+                                ]
+                              )
+                            ),
                             'VOLTAR',
                             () {
                               Navigator.pop(context);
@@ -158,7 +178,9 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                               } else {
                                 alert(context, "Ocorreu um erro.", "Erro");
                               }
-                            });
+                            },
+                            corTitulo: Colors.red, 
+                        );
                       },
                     ),
                   ),
@@ -179,7 +201,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         alertaComEscolha(
                             context,
                             'Remover',
-                            'Deseja remover cópia local da trilha ${trilha.nome} ?',
+                            Text('Deseja remover cópia local da trilha ${trilha.nome} ?'),
                             'VOLTAR',
                             () {
                               Navigator.pop(context);
@@ -208,7 +230,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         alertaComEscolha(
                             context,
                             'Salvar',
-                            'Deseja salvar a trilha ${trilha.nome} ?',
+                            Text('Deseja salvar a trilha ${trilha.nome} ?'),
                             'VOLTAR',
                             () {
                               Navigator.pop(context);
@@ -470,7 +492,7 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                 //         alertaComEscolha(
                 //             context,
                 //             'Remover',
-                //             'Deseja remover o waypoint ${mapController.modelWaypoint.nome} ?',
+                //             Text('Deseja remover o waypoint ${mapController.modelWaypoint.nome} ?'),
                 //             'VOLTAR',
                 //             () {
                 //               Navigator.pop(context);
@@ -557,7 +579,7 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                           alertaComEscolha(
                               context,
                               'Remover',
-                              'Deseja remover permanentemente o waypoint ${mapController.modelWaypoint.nome} ?',
+                              Text('Deseja remover permanentemente o waypoint ${mapController.modelWaypoint.nome} ?'),
                               'VOLTAR',
                               () {
                                 Navigator.pop(context);
@@ -890,7 +912,7 @@ bottomSheetTempTrail(
                 alertaComEscolha(
                     context,
                     'Remover',
-                    'Deseja remover a trilha ${trilha.nome} ?',
+                    Text('Deseja remover a trilha ${trilha.nome} ?'),
                     'Voltar',
                     () {
                       Navigator.pop(context);
@@ -1120,7 +1142,7 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                 alertaComEscolha(
                     context,
                     'Remover',
-                    'Deseja remover o waypoint ${mapController.followTrailWaypoints[0].nome} ?',
+                    Text('Deseja remover o waypoint ${mapController.followTrailWaypoints[0].nome} ?'),
                     'VOLTAR',
                     () {
                       Navigator.pop(context);

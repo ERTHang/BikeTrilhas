@@ -10,9 +10,12 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
+import 'dart:ui' as ui;
+
 part 'usertrails_controller.g.dart';
 
 class UsertrailsController = _UsertrailsControllerBase
@@ -31,6 +34,27 @@ abstract class _UsertrailsControllerBase with Store {
   Set<Marker> routeMarkers = {};
   TrilhaModel newTrail;
   int tappedTrilha;
+  int tappedWaypoint;
+  BitmapDescriptor markerIcon;
+  BitmapDescriptor markerIconTapped;
+
+  init() async {
+    final Uint8List iconBytes = await getBytesFromAsset('images/bola.png', 20);
+    markerIcon = BitmapDescriptor.fromBytes(iconBytes);
+    final Uint8List iconBytes2 =
+        await getBytesFromAsset('images/bola3.png', 20);
+    markerIconTapped = BitmapDescriptor.fromBytes(iconBytes2);
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+        .buffer
+        .asUint8List();
+  }
 
   bool pressionando = false;
   getPolylines(context) async {
