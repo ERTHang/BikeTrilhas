@@ -4,8 +4,11 @@ import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+
+List<String> escolha = [];
 
 class EdicaoTrilhas extends StatefulWidget {
   @override
@@ -41,6 +44,11 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
     _supController = TextEditingController();
     _baiController = TextEditingController();
     _regController = TextEditingController();
+    if (admin == 1) {
+      escolha = ['Trilha', 'Ciclovia', 'Cicloturismo'];
+    } else {
+      escolha = ['Trilha'];
+    }
   }
 
   TrilhaModel getTrilha(codt) {
@@ -80,7 +88,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           mapController.followTrailWaypoints,
           m.codt);
       mapController.sheet.close();
-      _userTrailsController.getPolylines();
+      _userTrailsController.getPolylines(context);
       _userTrailsController.state();
       if (result == -1) {
         alertEdit(context, "Error");
@@ -243,7 +251,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                             _mapController.modelTrilha.tipo = newValue;
                           });
                         },
-                        items: <String>['Ciclovia', 'Trilha', 'Cicloturismo']
+                        items: escolha
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,

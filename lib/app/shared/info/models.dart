@@ -5,6 +5,15 @@ class Categoria {
   final String cat_nome;
 
   Categoria(this.cat_cod, this.cat_nome);
+
+  Categoria.fromJson(Map<String, dynamic> json)
+      : cat_cod = json['cat_cod'],
+        cat_nome = json['cat_nome'];
+
+  Map<String, dynamic> toJson() => {
+        'cat_cod': cat_cod,
+        'cat_nome': cat_nome,
+      };
 }
 
 class Regiao {

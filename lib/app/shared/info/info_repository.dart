@@ -268,22 +268,22 @@ class InfoRepository {
   Future<bool> uploadWaypoint(
       WaypointModel wp, DadosWaypointModel dadoswp, int codt) async {
     var auth = Modular.get<AuthController>();
-    List<MultipartFile> imagens = [];
-    dadoswp.imagens.forEach((element) async {
-      MultipartFile fileimage = await MultipartFile.fromFile(element,
-          filename: element.split('/').last);
-      imagens.add(fileimage);
-    });
     FormData formData = FormData.fromMap({
       "codt": codt,
       "descricao": dadoswp.descricao,
       "nome": dadoswp.nome,
       "geometria": "${wp.posicao.longitude} ${wp.posicao.latitude}",
-      "imagens": imagens,
-      "categorias": dadoswp.categorias,
+      "imagens": await MultipartFile.fromFile(
+        dadoswp.imagens[0],
+        filename: dadoswp.imagens[0].split('/').last,
+      ),
+      "categorias": [],
       "email": auth.user.email,
     });
-    return (await dio.post('/server/waypoint', data: formData)).data;
+    var response = (await dio.post('/server/waypoint', data: formData));
+    updateDadosWaypoint(response.data, codt, dadoswp.descricao, dadoswp.nome,
+        dadoswp.categorias);
+    return response.data != -1;
   }
 
   Future<int> uploadTrilha(
@@ -382,6 +382,7 @@ class InfoRepository {
       int n = 0;
       waypoints.forEach((element) async {
         uploadWaypoint(element, dadoswp[n], result.data);
+        n++;
       });
       mapController.createdTrails
           .removeWhere((element) => element.codt == oldcodt);

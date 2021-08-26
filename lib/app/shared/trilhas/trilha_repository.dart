@@ -166,6 +166,21 @@ class TrilhaRepository {
     return value.data == 'true';
   }
 
+  Future<List<int>> getWaypointUser() async {
+    List<int> codts = [];
+    var email = auth.user.email;
+    final value = await dio.get("/server/waypoint/$email");
+    for (var item in (value.data as List)) {
+      codts.add(item['cod']);
+    }
+    return codts;
+  }
+
+  Future<bool> deleteWaypointUser(int codwp, int codt) async {
+    final value = await dio.delete("/server/waypoint/$codwp/$codt");
+    return value.data == 'true';
+  }
+
   Future<TrilhaModel> getRoute(List<LatLng> routePoints) async {
     List<List<LatLng>> rotaPolyline = [];
     var username = auth.user.displayName.toLowerCase();

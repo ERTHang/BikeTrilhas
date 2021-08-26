@@ -1,17 +1,15 @@
 import 'dart:io';
 
+import 'package:biketrilhas_modular/app/app_controller.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:photo_view/photo_view.dart';
 
 class EdicaoWaypoint extends StatefulWidget {
@@ -41,29 +39,14 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
     _catController = TextEditingController();
   }
 
-  exit(DadosWaypointModel m) async {
-    if (widget.editMode == EditMode.UPDATE) {
-      await _infoRepository.updateDadosWaypoint(
-          m.codwp, m.codt, m.descricao, m.nome, m.categorias);
-      bottomSheetWaypoint(m.codwp);
-      Modular.to.pop();
-    } else {
-      if (mapController.followTrail != null) {
-        mapController.followTrailWaypoints.add(m);
-        mapController.followTrail.waypoints.add(mapController.newWaypoint);
-        mapController.newWaypoint = null;
-        Modular.to.popUntil((route) => route.isFirst);
-      } else {
-        int codt = await _showTrilhasDialog();
-        if (codt != -1) {
-          _showLoadDialog(m, codt);
-        }
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    if (_mapController.modelWaypoint.categorias == null) {
+      _mapController.modelWaypoint.categorias = [];
+    }
+    if (_mapController.modelWaypoint.descricao == null) {
+      _mapController.modelWaypoint.descricao = '';
+    }
     _categorias = '';
     _mapController.modelWaypoint.categorias.forEach((element) {
       if (_categorias == '') {
@@ -89,7 +72,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         child: Icon(Icons.save),
         onPressed: () {
           final m = _mapController.modelWaypoint;
-          exit(m);
+          saida(m);
         },
       ),
       body: Container(
@@ -151,6 +134,27 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
     );
   }
 
+  saida(DadosWaypointModel m) async {
+    if (widget.editMode == EditMode.UPDATE) {
+      await _infoRepository.updateDadosWaypoint(
+          m.codwp, m.codt, m.descricao, m.nome, m.categorias);
+      bottomSheetWaypoint(m.codwp);
+      Modular.to.pop();
+    } else {
+      if (mapController.followTrail != null) {
+        mapController.followTrailWaypoints.add(m);
+        mapController.followTrail.waypoints.add(mapController.newWaypoint);
+        mapController.newWaypoint = null;
+        Modular.to.popUntil((route) => route.isFirst);
+      } else {
+        mapController.followTrailWaypoints.add(m);
+        mapController.followTrail.waypoints.add(mapController.newWaypoint);
+        mapController.newWaypoint = null;
+        Modular.to.popUntil((route) => route.isFirst);
+      }
+    }
+  }
+
   Future<List<String>> _showCatDialog() async {
     return showDialog<List<String>>(
       context: context,
@@ -180,6 +184,8 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
   }
 
   Future<void> _showLoadDialog(DadosWaypointModel dadoswp, int codt) async {
+    Future<bool> uploadSuccess = _infoRepository.uploadWaypoint(
+        mapController.newWaypoint, dadoswp, codt);
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -188,20 +194,14 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
           title: Text('Carregando'),
           content: SingleChildScrollView(
               child: FutureBuilder(
-            future: _infoRepository.uploadWaypoint(
-                mapController.newWaypoint, dadoswp, codt),
+            future: uploadSuccess,
             builder: (BuildContext _, AsyncSnapshot<bool> snapshot) {
-              Widget child;
+              Widget child = Center(
+                child: CircularProgressIndicator(),
+              );
               if (snapshot.hasData) {
                 if (snapshot.data) {
-                  Future.delayed(Duration(seconds: 1),
-                      () => Modular.to.popUntil((route) => route.isFirst));
-                  child = Center(
-                    child: Icon(
-                      Icons.check_circle_outline,
-                      color: Colors.green,
-                    ),
-                  );
+                  Modular.to.pop();
                 } else {
                   child = Center(
                     child: Icon(
@@ -210,10 +210,6 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
                     ),
                   );
                 }
-              } else {
-                child = Center(
-                  child: CircularProgressIndicator(),
-                );
               }
               return child;
             },
@@ -224,70 +220,76 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
   }
 
   Future<int> _showTrilhasDialog() async {
-    int _selectedCodt;
+    int _selectedIndex;
+    List<TrilhaModel> trilhasproximas;
     return showDialog<int>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Selecione uma trilha'),
-          content: SingleChildScrollView(
-              child: FutureBuilder(
-                  future: _infoRepository
-                      .getTrilhasProximas(_mapController.newWaypoint.posicao),
-                  builder: (BuildContext _, AsyncSnapshot<List<int>> snapshot) {
-                    Widget child;
-                    if (snapshot.hasData) {
-                      if (snapshot.data.isNotEmpty) {
-                        _selectedCodt = snapshot.data.first;
-                        List<TrilhaModel> trilhasproximas = mapController
-                            .trilhas.value
-                            .where((element) =>
-                                snapshot.data.contains(element.codt))
-                            .toList();
-                        child = ListBody(
-                            children: List<Widget>.generate(
-                                snapshot.data.length,
-                                (index) => ListTile(
-                                      title: Text(trilhasproximas[index].nome),
-                                      selected: trilhasproximas[index].codt ==
-                                          _selectedCodt,
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedCodt =
-                                              trilhasproximas[index].codt;
-                                        });
-                                      },
-                                    )));
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Selecione uma trilha'),
+            content: SingleChildScrollView(
+                child: FutureBuilder(
+                    future: _infoRepository
+                        .getTrilhasProximas(_mapController.newWaypoint.posicao),
+                    builder:
+                        (BuildContext _, AsyncSnapshot<List<int>> snapshot) {
+                      Widget child;
+                      if (snapshot.hasData) {
+                        if (snapshot.data.isNotEmpty) {
+                          trilhasproximas = mapController.trilhas.value
+                              .where((element) =>
+                                  snapshot.data.contains(element.codt))
+                              .toList();
+                          child = ListBody(
+                              children: List<Widget>.generate(
+                                  snapshot.data.length,
+                                  (index) => ListTile(
+                                        title: Text(
+                                          trilhasproximas[index].nome,
+                                          style: TextStyle(
+                                              color: (index == _selectedIndex)
+                                                  ? Colors.blue
+                                                  : Colors.black),
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedIndex = index;
+                                          });
+                                        },
+                                      )));
+                        } else {
+                          child = Text("Não há nenhuma trilha próxima");
+                        }
                       } else {
-                        child = Text("Não há nenhuma trilha próxima");
+                        child = Center(
+                          child: CircularProgressIndicator(),
+                        );
                       }
-                    } else {
-                      child = Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return child;
-                  })),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Cancelar'),
-              onPressed: () {
-                setState(() {
-                  Navigator.of(context).pop(-1);
-                });
-              },
-            ),
-            FlatButton(
-              child: Text('Salvar'),
-              onPressed: () {
-                setState(() {
-                  Navigator.of(context).pop(_selectedCodt);
-                });
-              },
-            ),
-          ],
-        );
+                      return child;
+                    })),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancelar'),
+                onPressed: () {
+                  setState(() {
+                    Navigator.of(context).pop(-1);
+                  });
+                },
+              ),
+              FlatButton(
+                child: Text('Salvar'),
+                onPressed: () {
+                  setState(() {
+                    Navigator.of(context)
+                        .pop(trilhasproximas[_selectedIndex].codt);
+                  });
+                },
+              ),
+            ],
+          );
+        });
       },
     );
   }
@@ -527,4 +529,30 @@ class _DialogContentState extends State<DialogContent> {
       },
     );
   }
+}
+
+alertEdit(BuildContext context, String msg) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: Text("Sucesso"),
+          content: Text(
+            msg,
+          ),
+          actions: <Widget>[
+            FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Modular.to.popUntil((route) => route.isFirst);
+                })
+          ],
+        ),
+      );
+    },
+  );
 }
