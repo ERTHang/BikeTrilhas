@@ -197,7 +197,7 @@ class InfoRepository {
       String tipo,
       String dif,
       List<String> superficies,
-      List<String> bairros,
+      // List<String> bairros,
       List<String> regioes,
       String subtipo) async {
     int tipCod, difCod, subtipInt;
@@ -222,11 +222,11 @@ class InfoRepository {
       }
     }
 
-    for (var i = 1; i <= this.bairros.length; i++) {
-      if (bairros.contains(this.bairros[i - 1].bai_nome)) {
-        baiInt.add(i);
-      }
-    }
+    // for (var i = 1; i <= this.bairros.length; i++) {
+    //   if (bairros.contains(this.bairros[i - 1].bai_nome)) {
+    //     baiInt.add(i);
+    //   }
+    // }
 
     for (var i = 1; i <= this.regioes.length; i++) {
       if (regioes.contains(this.regioes[i - 1].reg_nome)) {
@@ -293,7 +293,7 @@ class InfoRepository {
       String tipo,
       String dif,
       List<String> superficies,
-      List<String> bairros,
+      // List<String> bairros,
       List<String> regioes,
       String subtipo,
       double comprimento,
@@ -330,11 +330,11 @@ class InfoRepository {
       }
     }
 
-    for (var i = 1; i <= this.bairros.length; i++) {
-      if (bairros.contains(this.bairros[i - 1].bai_nome)) {
-        baiInt.add(i);
-      }
-    }
+    // for (var i = 1; i <= this.bairros.length; i++) {
+    //   if (bairros.contains(this.bairros[i - 1].bai_nome)) {
+    //     baiInt.add(i);
+    //   }
+    // }
 
     for (var i = 1; i <= this.regioes.length; i++) {
       if (regioes.contains(this.regioes[i - 1].reg_nome)) {

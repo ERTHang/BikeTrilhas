@@ -66,7 +66,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.tipo,
           m.dificuldade,
           m.superficies,
-          m.bairros,
+          // m.bairros,
           m.regioes,
           m.subtipo);
       alertEdit(context, "Trilha editada com sucesso");
@@ -78,7 +78,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
           m.tipo,
           m.dificuldade,
           m.superficies,
-          m.bairros,
+          // m.bairros,
           m.regioes,
           m.subtipo,
           m.comprimento,
@@ -200,21 +200,21 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                       ),
                     ),
                   ),
-                  TextField(
-                    controller: _baiController,
-                    minLines: 1,
-                    maxLines: 3,
-                    onTap: () {
-                      _showBaiDialog();
-                    },
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      labelText: 'Bairros',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
+                  // TextField(
+                  //   controller: _baiController,
+                  //   minLines: 1,
+                  //   maxLines: 3,
+                  //   onTap: () {
+                  //     _showBaiDialog();
+                  //   },
+                  //   readOnly: true,
+                  //   decoration: InputDecoration(
+                  //     labelText: 'Bairros',
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //   ),
+                  // ),
                   TextField(
                     controller: _regController,
                     minLines: 1,
