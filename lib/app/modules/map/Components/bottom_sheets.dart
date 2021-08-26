@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +18,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 
 final mapController = Modular.get<MapController>();
 final auth = Modular.get<IAuthRepository>();
@@ -135,51 +135,42 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       iconSize: 25,
                       onPressed: () async {
                         alertaComEscolha(
-                            context,
-                            'Remover',
-                            RichText(
+                          context,
+                          'Remover',
+                          RichText(
                               text: TextSpan(
-                                text: "Deseja remover permanentemente a trilha ",
-                                style: TextStyle(
-                                  color: Colors.red
-                                ),
-                                children: <TextSpan>[
-                                  TextSpan(
+                                  text:
+                                      "Deseja remover permanentemente a trilha ",
+                                  style: TextStyle(color: Colors.red),
+                                  children: <TextSpan>[
+                                TextSpan(
                                     text: "${trilha.nome} ",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold 
-                                    )
-                                  ),
-                                  TextSpan(
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
                                     text: "?",
-                                    style: TextStyle(
-                                      color: Colors.red
-                                    )
-                                  ),
-                                ]
-                              )
-                            ),
-                            'VOLTAR',
-                            () {
-                              Navigator.pop(context);
-                              return;
-                            },
-                            'OK',
-                            () async {
-                              Navigator.pop(context);
-                              if (await trilhaRepository
-                                  .deleteTrilhaUser(trilha.codt)) {
-                                mapController.trilhas.value.remove(trilha);
-                                mapController.getPolylines();
-                                mapController.state();
-                                mapController.sheet.close();
-                                alert(
-                                    context, "Trilha foi excluída.", "Sucesso");
-                              } else {
-                                alert(context, "Ocorreu um erro.", "Erro");
-                              }
-                            },
-                            corTitulo: Colors.red, 
+                                    style: TextStyle(color: Colors.red)),
+                              ])),
+                          'VOLTAR',
+                          () {
+                            Navigator.pop(context);
+                            return;
+                          },
+                          'OK',
+                          () async {
+                            Navigator.pop(context);
+                            if (await trilhaRepository
+                                .deleteTrilhaUser(trilha.codt)) {
+                              mapController.trilhas.value.remove(trilha);
+                              mapController.getPolylines();
+                              mapController.state();
+                              mapController.sheet.close();
+                              alert(context, "Trilha foi excluída.", "Sucesso");
+                            } else {
+                              alert(context, "Ocorreu um erro.", "Erro");
+                            }
+                          },
+                          corTitulo: Colors.red,
                         );
                       },
                     ),
@@ -201,7 +192,8 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         alertaComEscolha(
                             context,
                             'Remover',
-                            Text('Deseja remover cópia local da trilha ${trilha.nome} ?'),
+                            Text(
+                                'Deseja remover cópia local da trilha ${trilha.nome} ?'),
                             'VOLTAR',
                             () {
                               Navigator.pop(context);
@@ -579,7 +571,21 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                           alertaComEscolha(
                               context,
                               'Remover',
-                              Text('Deseja remover permanentemente o waypoint ${mapController.modelWaypoint.nome} ?'),
+                              RichText(
+                                  text: TextSpan(
+                                      text:
+                                          "Deseja remover permanentemente o waypoint ",
+                                      style: TextStyle(color: Colors.red),
+                                      children: <TextSpan>[
+                                    TextSpan(
+                                        text:
+                                            "${mapController.modelWaypoint.nome} ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    TextSpan(
+                                        text: "?",
+                                        style: TextStyle(color: Colors.red)),
+                                  ])),
                               'VOLTAR',
                               () {
                                 Navigator.pop(context);
@@ -599,7 +605,8 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                                   Navigator.pop(context);
                                   print(e.toString());
                                 }
-                              });
+                              },
+                              corTitulo: Colors.red);
                         },
                       )),
                   visible:
@@ -1142,7 +1149,8 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                 alertaComEscolha(
                     context,
                     'Remover',
-                    Text('Deseja remover o waypoint ${mapController.followTrailWaypoints[0].nome} ?'),
+                    Text(
+                        'Deseja remover o waypoint ${mapController.followTrailWaypoints[0].nome} ?'),
                     'VOLTAR',
                     () {
                       Navigator.pop(context);

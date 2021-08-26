@@ -17,9 +17,8 @@ var connectivityResult;
 
 class InfoRepository {
   final Dio dio;
-  final SharedPrefs sharedPrefs;
 
-  InfoRepository(this.dio, this.sharedPrefs);
+  InfoRepository(this.dio);
 
   List<Bairro> bairros = [];
   List<Categoria> categorias = [];
