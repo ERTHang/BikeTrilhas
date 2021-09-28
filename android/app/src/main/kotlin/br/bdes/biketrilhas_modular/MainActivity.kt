@@ -1,4 +1,4 @@
-package br.bdes.biketrilhas_modular
+package br.udesc.bdes.biketrilhas_modular
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

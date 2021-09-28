@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="br.bdes.biketrilhas">
+    package="br.udesc.bdes.biketrilhas">
     <uses-sdk android:minSdkVersion="21"/>
     <application android:usesCleartextTraffic="true"/>
 
