@@ -104,10 +104,12 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   child: Text("error getting position"),
                 );
               }
+              
               if (store.trilhas.error != null) {
                 print(store.trilhas.error);
                 return _map();
               }
+              
               if (store.trilhas.value == null) {
                 return Center(
                   child: Column(
@@ -120,7 +122,9 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                   ),
                 );
               }
+
               store.getPolylines();
+              
               return _map();
             },
           ),

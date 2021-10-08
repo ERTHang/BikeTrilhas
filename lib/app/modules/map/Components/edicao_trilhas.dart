@@ -34,16 +34,23 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
   @override
   void initState() {
     super.initState();
+
+    _infoRepository.getModels();
+
     _nameController =
         TextEditingController(text: _mapController.modelTrilha.nome);
+
     _descController =
         TextEditingController(text: _mapController.modelTrilha.descricao);
+        
     _tipoValue = _mapController.modelTrilha.tipo;
     _subtipoValue = _mapController.modelTrilha.subtipo;
     _difValue = _mapController.modelTrilha.dificuldade;
+
     _supController = TextEditingController();
     _baiController = TextEditingController();
     _regController = TextEditingController();
+
     if (admin == 1) {
       escolha = ['Trilha', 'Ciclovia', 'Cicloturismo'];
     } else {
