@@ -9,6 +9,8 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -72,6 +74,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         child: Icon(Icons.save),
         onPressed: () {
           final m = _mapController.modelWaypoint;
+          m.codwp = mapController.nextCodWp();
           saida(m);
         },
       ),
@@ -135,22 +138,44 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
   }
 
   saida(DadosWaypointModel m) async {
+    var pos = await Geolocator.getCurrentPosition();
+    //EDITAR
     if (widget.editMode == EditMode.UPDATE) {
       await _infoRepository.updateDadosWaypoint(
           m.codwp, m.codt, m.descricao, m.nome, m.categorias);
       bottomSheetWaypoint(m.codwp);
       Modular.to.pop();
     } else {
+      //Se o waypoint esta sob gravação
       if (mapController.followTrail != null) {
         mapController.followTrailWaypoints.add(m);
+        mapController.newWaypoint.codigo = m.codwp;
         mapController.followTrail.waypoints.add(mapController.newWaypoint);
         mapController.newWaypoint = null;
         Modular.to.popUntil((route) => route.isFirst);
-      } else {
+      } else if (await isOnline() == false &&
+          mapController.followTrail == null) {
         mapController.followTrailWaypoints.add(m);
-        mapController.followTrail.waypoints.add(mapController.newWaypoint);
-        mapController.newWaypoint = null;
-        Modular.to.popUntil((route) => route.isFirst);
+        mapController.followTrail =
+            TrilhaModel(mapController.nextCodt(), 'MarkerOnly');
+        mapController.followTrail.polylineCoordinates
+            .add([LatLng(pos.latitude, pos.longitude)]);
+        mapController.createdTrails.add(mapController.followTrail);
+        mapController.newWaypoint.codigo = m.codwp;
+        mapController.createdTrails.last.waypoints
+            .add(mapController.newWaypoint);
+        mapController.trilhaRepository
+            .saveRecordedTrail(mapController.followTrail)
+            .then((value) {
+          Modular.to.pushReplacementNamed('/usertrail');
+        });
+      } else if (await isOnline()) {
+        //Waypoint sem trilha
+        int codt = await _showTrilhasDialog();
+        if (codt != -1) {
+          await _showLoadDialog(m, codt);
+          alertEdit(context, "Waypoint salvo com sucesso");
+        }
       }
     }
   }

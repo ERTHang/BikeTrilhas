@@ -48,8 +48,6 @@ Widget modifiedText(titulo, valor) {
 
 bottomSheetTrilha(TrilhaModel trilha) async {
   final TrilhaRepository trilhaRepository = Modular.get();
-  final List<int> minhasTrilhas = await trilhaRepository.getTrilhasUser();
-
   mapController.sheet =
       mapController.scaffoldState.currentState.showBottomSheet(
     (context) {
@@ -280,7 +278,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       },
                     )),
                 Visibility(
-                  visible: admin == 1 || minhasTrilhas.contains(trilha.codt),
+                  visible: admin == 1,
                   child: Positioned(
                     bottom: 44,
                     right: 10,

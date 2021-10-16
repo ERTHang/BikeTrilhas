@@ -148,6 +148,7 @@ abstract class _MapControllerBase with Store {
                       ? Colors.green
                       : Colors.blue,
           onTap: () {
+            print('Teste');
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;
             state();
@@ -171,6 +172,10 @@ abstract class _MapControllerBase with Store {
           onTap: () async {
             tappedTrilha = null;
             if (await isOnline()) {
+              print("----------------------");
+              print(waypoint.codigo);
+              print(trilha.codt);
+              print("----------------------");
               bottomSheetWaypoint(waypoint.codigo, codt: trilha.codt);
             } else {
               bottomSheetWaypointOffline(waypoint.codigo);
@@ -250,6 +255,16 @@ abstract class _MapControllerBase with Store {
       await getPolylines();
       state();
     }
+  }
+
+  int nextCodWp() {
+    int nextcodwp = 2000000;
+    followTrailWaypoints.forEach((element) {
+      if (element.codwp >= nextcodwp) {
+        nextcodwp = element.codwp + 1;
+      }
+    });
+    return nextcodwp;
   }
 
   int nextCodt() {

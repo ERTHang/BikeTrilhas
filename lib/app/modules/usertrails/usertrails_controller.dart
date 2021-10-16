@@ -6,6 +6,7 @@ import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
+import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,7 +52,10 @@ abstract class _UsertrailsControllerBase with Store {
           polylineId: PolylineId("rota $i " + trilha.codt.toString()),
           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
           onTap: () {
+            print('TRILHA TAPPED');
             tappedTrilha = trilha.codt;
+            print(tappedTrilha);
+            print(tappedTrilha);
             state();
             bottomSheetTempTrail(trilha, scaffoldState, state);
           },
@@ -71,21 +75,24 @@ abstract class _UsertrailsControllerBase with Store {
               markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
               position: trilha.waypoints[index].posicao,
               onTap: () {
-                //polylines.clear();
-                pressionando == true
-                    ? pressionando = false
-                    : pressionando = true;
-                pressionando == true
-                    ? state()
-                    : bottomSheetTempWaypoint(
-                        trilha,
-                        scaffoldState,
-                        trilha.waypoints[index],
-                        mapController.followTrailWaypoints[index]);
-                //bottomSheetWaypoint(trilha.waypoints[0].codigo); 255
-                //bottomSheetTempTrail(trilha, scaffoldState, state)
-                //tappedTrilha = trilha.codt; Seleciona a trilha mesmo clicando apenas no bottomSheet
-                //state();
+                print("WAYPOINT TAPPED");
+                DadosWaypointModel model;
+                mapController.tappedWaypoint = trilha.waypoints[index].codigo;
+                for (var element in mapController.followTrailWaypoints) {
+                  if (element.codwp == mapController.tappedWaypoint) {
+                    model = element;
+                  }
+                }
+
+                print(mapController.tappedWaypoint);
+
+                bottomSheetTempWaypoint(
+                    trilha, scaffoldState, trilha.waypoints[index], model);
+                // bottomSheetWaypoint(tappedWaypoint ,codt: tappedTrilha);
+
+                //bottomSheetTempTrail(trilha, scaffoldState, state);
+                // tappedTrilha = trilha.codt;
+                state();
               },
             ),
           ),
