@@ -1128,17 +1128,6 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
           ),
           Positioned(
             bottom: 125,
-            right: 44,
-            child: IconButton(
-              icon: Icon(
-                Icons.upload_rounded,
-                color: Colors.blue,
-              ),
-              onPressed: () {},
-            ),
-          ),
-          Positioned(
-            bottom: 125,
             right: 10,
             child: IconButton(
               icon: Icon(
