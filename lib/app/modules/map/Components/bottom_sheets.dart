@@ -610,8 +610,9 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                               corTitulo: Colors.red);
                         },
                       )),
-                  visible:
-                      admin == 1 || mapController.waypointsUser.contains(codwp),
+                  visible: (admin == 1 ||
+                          mapController.waypointsUser.contains(codwp)) &&
+                      !codigosTrilhasSalvas.contains(codt),
                 ),
               ]));
         } else {
@@ -820,18 +821,18 @@ bottomSheetWaypointOffline(int codwp) async {
                         });
                       },
                     )),
-                Positioned(
-                    bottom: 44,
-                    right: 10,
-                    child: IconButton(
-                      color: Colors.blue,
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Modular.to.pushNamed('/map/editorwaypoint',
-                            arguments: EditMode.UPDATE);
-                      },
-                    ))
+                // Positioned(
+                //     bottom: 44,
+                //     right: 10,
+                //     child: IconButton(
+                //       color: Colors.blue,
+                //       icon: Icon(Icons.edit),
+                //       onPressed: () {
+                //         Navigator.pop(context);
+                //         Modular.to.pushNamed('/map/editorwaypoint',
+                //             arguments: EditMode.UPDATE);
+                //       },
+                //     ))
               ]));
         } else {
           wid = ClipRRect(
