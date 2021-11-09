@@ -15,16 +15,16 @@ class TrilhaModel {
 
   TrilhaModelJson toJson() {
     TrilhaModelJson trilha = TrilhaModelJson(codt, nome);
-    for (var waypoint in this.waypoints) {
-      trilha.waypoints.add(WaypointJson(waypoint.codigo,
-          LatLngJson(waypoint.posicao.latitude, waypoint.posicao.longitude)));
-    }
     for (var coordList in this.polylineCoordinates) {
       trilha.polylineCoordinates.add([]);
       for (var coord in coordList) {
         trilha.polylineCoordinates.last
             .add(LatLngJson(coord.latitude, coord.longitude));
       }
+    }
+    for (var waypoint in this.waypoints) {
+      trilha.waypoints.add(WaypointJson(waypoint.codigo,
+          LatLngJson(waypoint.posicao.latitude, waypoint.posicao.longitude)));
     }
     return trilha;
   }

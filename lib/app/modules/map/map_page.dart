@@ -446,6 +446,18 @@ class _MapPageState extends ModularState<MapPage, MapController> {
       return Container();
     }
     return GoogleMap(
+      mapToolbarEnabled: false,
+      myLocationButtonEnabled: false,
+      myLocationEnabled: true,
+      zoomControlsEnabled: false,
+      polylines: store.polylines,
+      markers: (routeState == 0) ? store.markers : store.routeMarkers,
+      mapType: MapType.normal,
+      initialCameraPosition: widget.position,
+      onMapCreated: (GoogleMapController controller) {
+        _controller.complete(controller);
+        mapController = controller;
+      },
       onTap: (latlng) {
         setState(() {
           if (store.sheet != null) {
@@ -468,18 +480,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
             routeState++;
           }
         });
-      },
-      mapToolbarEnabled: false,
-      myLocationButtonEnabled: false,
-      myLocationEnabled: true,
-      zoomControlsEnabled: false,
-      polylines: store.polylines,
-      markers: (routeState == 0) ? store.markers : store.routeMarkers,
-      mapType: MapType.normal,
-      initialCameraPosition: widget.position,
-      onMapCreated: (GoogleMapController controller) {
-        _controller.complete(controller);
-        mapController = controller;
       },
     );
   }
