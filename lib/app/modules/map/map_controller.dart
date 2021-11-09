@@ -130,8 +130,10 @@ abstract class _MapControllerBase with Store {
         polylines.add(pol);
       }
     }
-    for (var trilha in trilhas.value) {
-      for (var i = 0; i < trilha.polylineCoordinates.length; i++) {
+    //Irá percorrer todas as trilhas
+    for (TrilhaModel trilha in trilhas.value) {
+      //Irá desenhar as polylines de cada trilha no mapa
+      for (int i = 0; i < trilha.polylineCoordinates.length; i++) {
         Polyline pol = Polyline(
           zIndex: (tappedTrilha == trilha.codt) ? 2 : 1,
           consumeTapEvents: (trilhasFiltradas.isEmpty || trilha.codt >= 2000000)
@@ -160,7 +162,8 @@ abstract class _MapControllerBase with Store {
         );
         polylines.add(pol);
       }
-      for (var waypoint in trilha.waypoints) {
+      //Irá desenhar os waypoints no mapa
+      for (WaypointModel waypoint in trilha.waypoints) {
         Marker mar = Marker(
           zIndex: (tappedWaypoint == waypoint.codigo) ? 2 : 1,
           consumeTapEvents: (trilhasFiltradas.isEmpty)
@@ -169,6 +172,11 @@ abstract class _MapControllerBase with Store {
                   tappedTrilha == trilha.codt),
           markerId: MarkerId(waypoint.codigo.toString()),
           position: waypoint.posicao,
+          icon: (waypoint.codigo == tappedWaypoint)
+              ? markerIconTapped
+              : markerIcon,
+          anchor: Offset(0.5, 0.5),
+          visible: isVisible(trilha),
           onTap: () async {
             tappedTrilha = null;
             if (await isOnline()) {
@@ -183,11 +191,6 @@ abstract class _MapControllerBase with Store {
             tappedWaypoint = waypoint.codigo;
             state();
           },
-          icon: (waypoint.codigo == tappedWaypoint)
-              ? markerIconTapped
-              : markerIcon,
-          anchor: Offset(0.5, 0.5),
-          visible: isVisible(trilha),
         );
         markers.add(mar);
       }

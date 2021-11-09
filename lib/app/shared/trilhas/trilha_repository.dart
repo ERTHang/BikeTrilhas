@@ -136,10 +136,12 @@ class TrilhaRepository {
       var json = await sharedPrefs.read('trilha ${savedTrilhas.codes[i]}');
       TrilhaModel trilha = TrilhaModel(savedTrilhas.codes[i], 'aux');
       var aux = TrilhaModelJson.fromJson(json);
-      trilha.fromJson(aux);
+      await trilha.fromJson(aux);
       trilhas.add(trilha);
       savedCods.add(trilha.codt);
     }
+
+    await Future.delayed(Duration(seconds: 2)); //-> resolve problema do mapa cinza mas não é a melhor solução
     return trilhas;
   }
 

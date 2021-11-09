@@ -1189,21 +1189,23 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
 }
 
 ///Salvar trilha em memória local
-salvarTrilha(context, trilha, trilhaRepository) async {
+salvarTrilha(
+    context, TrilhaModel trilha, TrilhaRepository trilhaRepository) async {
   mostrarProgressoLinear(context, 'Salvando');
-  List<DadosWaypointModel> dadosWaypointModel = [];
   int qntWaypoints = trilha.waypoints.length;
   if (qntWaypoints > 0) {
+    List<DadosWaypointModel> dadosWaypointModel = [];
     for (int i = 0; i < qntWaypoints; i++) {
-      var o = await getDataWaypoint(trilha.waypoints[i].codigo);
-      dadosWaypointModel.add(o);
+      DadosWaypointModel aux =
+          await getDataWaypoint(trilha.waypoints[i].codigo);
+      dadosWaypointModel.add(aux);
     }
-  }
-  for (int i = 0; i < dadosWaypointModel.length; i++) {
-    if (!(await sharedPrefs.haveKey('${dadosWaypointModel[i].codwp}'))) {
-      var wayPointJson = await wayPointToJson(dadosWaypointModel[i]);
-      await sharedPrefs.save(
-          dadosWaypointModel[i].codwp.toString(), wayPointJson);
+    for (int i = 0; i < dadosWaypointModel.length; i++) {
+      if (!(await sharedPrefs.haveKey('${dadosWaypointModel[i].codwp}'))) {
+        var wayPointJson = await wayPointToJson(dadosWaypointModel[i]);
+        await sharedPrefs.save(
+            dadosWaypointModel[i].codwp.toString(), wayPointJson);
+      }
     }
   }
   trilhaRepository.saveTrilha(trilha);
