@@ -278,7 +278,8 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       },
                     )),
                 Visibility(
-                  visible: admin == 1,
+                  visible:
+                      admin == 1 && !codigosTrilhasSalvas.contains(trilha.codt),
                   child: Positioned(
                     bottom: 44,
                     right: 10,
@@ -558,8 +559,9 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                               arguments: EditMode.UPDATE);
                         },
                       )),
-                  visible:
-                      admin == 1 || mapController.waypointsUser.contains(codwp),
+                  visible: (admin == 1 ||
+                          mapController.waypointsUser.contains(codwp)) &&
+                      !codigosTrilhasSalvas.contains(codt),
                 ),
                 Visibility(
                   child: Positioned(
