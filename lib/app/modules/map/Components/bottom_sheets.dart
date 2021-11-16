@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_page.dart';
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
@@ -1029,14 +1030,14 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
               children: <Widget>[
                 modifiedText('Nome: ', followTrailWaypoints.nome),
                 Visibility(
-                  visible: followTrailWaypoints.categorias.length > 0,
-                  child: modifiedText('Categoria: ',
-                      (followTrailWaypoints.categorias.join(', '))),
-                ),
-                Visibility(
                   visible: followTrailWaypoints.descricao.isNotEmpty,
                   child: modifiedText(
                       'Descrição: ', followTrailWaypoints.descricao.toString()),
+                ),
+                Visibility(
+                  visible: followTrailWaypoints.categorias.length > 0,
+                  child: modifiedText('Categoria: ',
+                      (followTrailWaypoints.categorias.join(', '))),
                 ),
                 Visibility(
                   visible: followTrailWaypoints.imagens.length > 0,
@@ -1149,14 +1150,25 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     },
                     'OK',
                     () async {
-                      print('Teste');
+                      /*
+                      for (int i = 0; i < trilha.waypoints.length; i++) {
+                        if (trilha.waypoints[i] == waypoint) {
+                          trilha.waypoints.removeAt(i);
+                        }
+                      }
+                      //mapController.followTrailWaypoints.remove(0);
+                      await mapController.getPolylines();
+                      await mapController.state();
+                      mapController.sheet.close();*/
+
+                      /*print('Teste');
                       print(mapController.followTrailWaypoints[0].codt);
                       print('Teste2');
                       print(mapController.createdTrails[1].waypoints);
                       print('Teste3');
                       SavedRoutes recordedTrails = SavedRoutes.fromJson(
                           await sharedPrefs.read('recordedTrails'));
-                      print(recordedTrails.codes[0]);
+                      print(recordedTrails.codes[0]);*/
                       //   Navigator.pop(context);
                       //   try {
                       //     mapController.followTrailWaypoints.remove(0);

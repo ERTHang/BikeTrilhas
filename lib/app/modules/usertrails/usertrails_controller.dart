@@ -51,12 +51,12 @@ abstract class _UsertrailsControllerBase with Store {
           consumeTapEvents: true,
           polylineId: PolylineId("rota $i " + trilha.codt.toString()),
           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
-          onTap: () {
+          onTap: () async {
             print('TRILHA TAPPED');
             tappedTrilha = trilha.codt;
             print(tappedTrilha);
             print(tappedTrilha);
-            state();
+            await state();
             bottomSheetTempTrail(trilha, scaffoldState, state);
           },
           points: trilha.polylineCoordinates[i],
