@@ -1,16 +1,11 @@
 import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
-import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -23,7 +18,6 @@ class UsertrailsController = _UsertrailsControllerBase
 abstract class _UsertrailsControllerBase with Store {
   _UsertrailsControllerBase(this.mapController, this.drawerClassController);
 
-  
   final MapController mapController;
   final DrawerClassController drawerClassController;
   final scaffoldState = GlobalKey<ScaffoldState>();
@@ -34,8 +28,7 @@ abstract class _UsertrailsControllerBase with Store {
   Set<Marker> routeMarkers = {};
   TrilhaModel newTrail;
   int tappedTrilha;
-  
-  
+
   bool pressionando = false;
   getPolylines(context) async {
     polylines.clear();
