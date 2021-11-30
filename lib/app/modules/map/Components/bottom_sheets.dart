@@ -3,6 +3,7 @@ import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_page.dart'
 import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -931,7 +932,7 @@ bottomSheetTempTrail(
                       return;
                     },
                     'OK',
-                    () {
+                    () async {
                       if (trilha.codt >= 2000000) {
                         ////AQUI ESTA O PROBLEMA DE REMOVER WAYPOINT APENAS
                         mapController.createdTrails.remove(trilha);
@@ -941,7 +942,7 @@ bottomSheetTempTrail(
 
                         mapController.sheet.close();
                         mapController.sheet = null;
-                        state();
+                        await state();
                         Navigator.of(context).pop();
                       } else {
                         mapController.createdRoutes.remove(trilha);
@@ -950,7 +951,7 @@ bottomSheetTempTrail(
 
                         mapController.sheet.close();
                         mapController.sheet = null;
-                        state();
+                        await state();
                         Navigator.of(context).pop();
                       }
                     });
@@ -1152,35 +1153,30 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     },
                     'OK',
                     () async {
-                      /*
                       for (int i = 0; i < trilha.waypoints.length; i++) {
                         if (trilha.waypoints[i] == waypoint) {
                           trilha.waypoints.removeAt(i);
                         }
                       }
-                      //mapController.followTrailWaypoints.remove(0);
+
+                      for (int i = 0;
+                          i < mapController.followTrailWaypoints.length;
+                          i++) {
+                        if (mapController.followTrailWaypoints
+                                .elementAt(i)
+                                .codwp ==
+                            waypoint.codigo) {
+                          mapController.followTrailWaypoints.removeAt(i);
+                        }
+                      }
+
+                      mapController.trilhaRepository
+                          .deleteRecordedTrail(trilha.codt);
+                      await mapController.trilhaRepository
+                          .saveRecordedTrail(trilha);
                       await mapController.getPolylines();
                       await mapController.state();
-                      mapController.sheet.close();*/
-
-                      /*print('Teste');
-                      print(mapController.followTrailWaypoints[0].codt);
-                      print('Teste2');
-                      print(mapController.createdTrails[1].waypoints);
-                      print('Teste3');
-                      SavedRoutes recordedTrails = SavedRoutes.fromJson(
-                          await sharedPrefs.read('recordedTrails'));
-                      print(recordedTrails.codes[0]);*/
-                      //   Navigator.pop(context);
-                      //   try {
-                      //     mapController.followTrailWaypoints.remove(0);
-                      //     mapController.newWaypoint = null;
-                      //     mapController.getPolylines();
-                      //     mapController.state();
-                      //     mapController.sheet.close();
-                      //   } catch (e) {
-                      //     alert(context, e.toString(), 'Erro');
-                      //   }
+                      mapController.sheet.close();
                     });
               },
             ),

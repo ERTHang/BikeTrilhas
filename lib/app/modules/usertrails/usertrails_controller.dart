@@ -76,6 +76,7 @@ abstract class _UsertrailsControllerBase with Store {
               position: trilha.waypoints[index].posicao,
               onTap: () {
                 print("WAYPOINT TAPPED");
+                print(trilha.waypoints[index].posicao);
                 DadosWaypointModel model;
                 mapController.tappedWaypoint = trilha.waypoints[index].codigo;
                 for (var element in mapController.followTrailWaypoints) {
