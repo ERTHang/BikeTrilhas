@@ -27,6 +27,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
+              mapController.tappedTrilha = null;
+
               store.filtrar(_data, store, context);
             },
             label: Text('Filtrar')),
