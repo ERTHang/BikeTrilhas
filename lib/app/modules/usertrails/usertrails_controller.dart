@@ -89,7 +89,7 @@ abstract class _UsertrailsControllerBase with Store {
                 print(mapController.tappedWaypoint);
 
                 bottomSheetTempWaypoint(
-                    trilha, scaffoldState, trilha.waypoints[index], model);
+                    trilha, scaffoldState, trilha.waypoints[index], model, state);
                 // bottomSheetWaypoint(tappedWaypoint ,codt: tappedTrilha);
 
                 //bottomSheetTempTrail(trilha, scaffoldState, state);

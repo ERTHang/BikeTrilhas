@@ -1011,10 +1011,10 @@ bottomSheetTempTrail(
     });
   }
 }
+
 //1009
 bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
-    WaypointModel waypoint, DadosWaypointModel followTrailWaypoints) {
-
+    WaypointModel waypoint, DadosWaypointModel followTrailWaypoints, state) {
   mapController.modelTrilha = null;
   mapController.modelWaypoint = null;
   mapController.sheet = keyState.currentState.showBottomSheet((context) {
@@ -1146,7 +1146,7 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     context,
                     'Remover',
                     Text(
-                        'Deseja remover o waypoint ${mapController.followTrailWaypoints[0].nome} ?'),
+                        'Deseja remover o waypoint ${followTrailWaypoints.nome}?'),
                     'VOLTAR',
                     () {
                       Navigator.pop(context);
@@ -1175,9 +1175,11 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                           .deleteRecordedTrail(trilha.codt);
                       await mapController.trilhaRepository
                           .saveRecordedTrail(trilha);
-                      await mapController.getPolylines();
-                      await mapController.state();
+
                       mapController.sheet.close();
+                      mapController.sheet = null;
+                      await state();
+                      Navigator.of(context).pop();
                     });
               },
             ),
