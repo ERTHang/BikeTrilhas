@@ -139,7 +139,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
       ),
     );
   }
-
+//s
   saida(DadosWaypointModel m) async {
     var pos = await Geolocator.getCurrentPosition();
     //EDITAR

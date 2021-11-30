@@ -268,7 +268,7 @@ class TrilhaRepository {
     } catch (e) {}
     sharedPrefs.save('recordedTrails', recordedTrails);
   }
-
+//s
     Future saveRecordedWaypoint(DadosWaypointModel model) async {
     if (recordedWaypoints == null) {
       try {

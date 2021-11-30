@@ -35,7 +35,7 @@ abstract class _UsertrailsControllerBase with Store {
   TrilhaModel newTrail;
   int tappedTrilha;
   
-  
+  //s
   bool pressionando = false;
   getPolylines(context) async {
     polylines.clear();
