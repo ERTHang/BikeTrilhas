@@ -2,10 +2,13 @@ import 'dart:math';
 
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_waypoint.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_trilhas.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/waipoint_dados_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:dio/dio.dart';
@@ -21,7 +24,7 @@ class TrilhaRepository {
   SavedTrilhas savedTrilhas;
   SavedRoutes savedRoutes;
   SavedRoutes recordedTrails;
-
+  SavedWaypoint recordedWaypoints;
   int n = 10000;
 
   void deleteRecordedTrail(int codigo) async {
@@ -270,6 +273,52 @@ class TrilhaRepository {
     sharedPrefs.save('recordedTrails', recordedTrails);
   }
 
+    Future saveRecordedWaypoint(DadosWaypointModel model) async {
+    print(model.nome);
+    if (recordedWaypoints == null) {
+      try {
+        recordedWaypoints =
+            SavedWaypoint.fromJson(await sharedPrefs.read('recordedWaypoints'));
+      } catch (Exception) {
+        recordedWaypoints = SavedWaypoint([]);
+      }
+    }
+    var numero = model.codt;
+    DadosWaypointJson waypoint = model.toJson();
+    sharedPrefs.save('recorded waypoint $numero', waypoint.toJson());
+    
+    recordedWaypoints.codes.add(numero);
+    try {
+      sharedPrefs.remove('recordedWaypoints');
+    } catch (e) {}
+    sharedPrefs.save('recordedWaypoints', recordedWaypoints);
+  }
+
+    Future<List<DadosWaypointModel>> getRecordedWaypoint() async {
+    List<DadosWaypointModel> waypoints = [];
+    
+    if (recordedWaypoints== null) {
+      try {
+        recordedWaypoints =
+            SavedWaypoint.fromJson(await sharedPrefs.read('recordedWaypoints'));
+      } catch (e) {
+        recordedWaypoints = SavedWaypoint([]);
+      }
+    }
+    for (var i = 0; i < recordedWaypoints.codes.length; i++) {
+      var json =
+          await sharedPrefs.read('recorded waypoint ${recordedWaypoints.codes[i]}');
+      DadosWaypointModel waypoint = DadosWaypointModel();
+      var aux = DadosWaypointJson.fromJson(json);
+      waypoint.fromJson(aux);
+      waypoints.add(waypoint);
+    }
+    
+    return waypoints;
+  }
+
+
+
   Future saveRoute(TrilhaModel model) async {
     if (savedRoutes == null) {
       try {
@@ -303,7 +352,6 @@ class TrilhaRepository {
         savedTrilhas = SavedTrilhas([]);
       }
     }
-
     var numero = model.codt;
 
     TrilhaModelJson trilha = model.toJson();

@@ -8,6 +8,7 @@ import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class UsertrailsController = _UsertrailsControllerBase
 abstract class _UsertrailsControllerBase with Store {
   _UsertrailsControllerBase(this.mapController, this.drawerClassController);
 
+  
   final MapController mapController;
   final DrawerClassController drawerClassController;
   final scaffoldState = GlobalKey<ScaffoldState>();
@@ -32,7 +34,8 @@ abstract class _UsertrailsControllerBase with Store {
   Set<Marker> routeMarkers = {};
   TrilhaModel newTrail;
   int tappedTrilha;
-
+  
+  
   bool pressionando = false;
   getPolylines(context) async {
     polylines.clear();
@@ -43,6 +46,8 @@ abstract class _UsertrailsControllerBase with Store {
       mapController.createdTrails.clear();
       mapController.createdTrails
           .addAll(await mapController.trilhaRepository.getRecordedTrails());
+      mapController.followTrailWaypoints
+          .addAll(await mapController.trilhaRepository.getRecordedWaypoint());
     }
     for (var trilha in mapController.createdTrails) {
       for (var i = 0; i < trilha.polylineCoordinates.length; i++) {

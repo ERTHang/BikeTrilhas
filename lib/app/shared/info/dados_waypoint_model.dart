@@ -1,3 +1,5 @@
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/waipoint_dados_json.dart';
+
 class DadosWaypointModel {
   int codwp;
   int codt;
@@ -7,6 +9,24 @@ class DadosWaypointModel {
   List<String> categorias = [];
   List<String> imagens = [];
 
+  
+
   DadosWaypointModel(
       {this.codwp, this.codt, this.nome, this.descricao, this.numImagens});
+
+      
+   DadosWaypointJson toJson() {
+    DadosWaypointJson dadoswp = DadosWaypointJson(codwp, codt, nome, descricao, numImagens, categorias, imagens);
+    return dadoswp;
+  }
+  fromJson(DadosWaypointJson json) {
+    this.codwp = json.codwp;
+    this.codt = json.codt;
+    this.nome = json.nome;
+    this.descricao = json.descricao;
+    this.numImagens = json.numImagens;
+    this.categorias = json.categorias;
+    this.imagens = json.imagens;
+    
+  }
 }

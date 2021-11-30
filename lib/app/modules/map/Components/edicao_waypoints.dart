@@ -6,6 +6,7 @@ import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 
 class EdicaoWaypoint extends StatefulWidget {
   final EditMode editMode;
@@ -30,6 +32,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
   var _categorias = '';
   final _mapController = Modular.get<MapController>();
   final _infoRepository = Modular.get<InfoRepository>();
+  final _trilhaRepository = Modular.get<TrilhaRepository>();
 
   @override
   void initState() {
@@ -153,8 +156,12 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         mapController.followTrail.waypoints.add(mapController.newWaypoint);
         mapController.newWaypoint = null;
         Modular.to.popUntil((route) => route.isFirst);
+        //Tirando Foto sem Gravar
       } else if (await isOnline() == false &&
           mapController.followTrail == null) {
+          //AQUI
+        mapController.trilhaRepository.saveRecordedWaypoint(m);  
+          //TESTAR
         mapController.followTrailWaypoints.add(m);
         mapController.followTrail =
             TrilhaModel(mapController.nextCodt(), 'MarkerOnly');
