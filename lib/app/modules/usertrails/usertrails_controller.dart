@@ -28,7 +28,8 @@ abstract class _UsertrailsControllerBase with Store {
   Set<Marker> routeMarkers = {};
   TrilhaModel newTrail;
   int tappedTrilha;
-
+  
+  //s
   bool pressionando = false;
   getPolylines(context) async {
     polylines.clear();
@@ -37,6 +38,7 @@ abstract class _UsertrailsControllerBase with Store {
     if (checkedTrails == null) {
       checkedTrails = 1;
       mapController.createdTrails.clear();
+      
       mapController.createdTrails
           .addAll(await mapController.trilhaRepository.getRecordedTrails());
       mapController.followTrailWaypoints
@@ -76,6 +78,7 @@ abstract class _UsertrailsControllerBase with Store {
                 print("WAYPOINT TAPPED");
                 print(trilha.waypoints[index].posicao);
                 DadosWaypointModel model;
+                
                 mapController.tappedWaypoint = trilha.waypoints[index].codigo;
                 for (var element in mapController.followTrailWaypoints) {
                   if (element.codwp == mapController.tappedWaypoint) {

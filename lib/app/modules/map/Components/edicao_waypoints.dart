@@ -139,7 +139,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
       ),
     );
   }
-
+//s
   saida(DadosWaypointModel m) async {
     var pos = await Geolocator.getCurrentPosition();
     //EDITAR
@@ -160,7 +160,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
       } else if (await isOnline() == false &&
           mapController.followTrail == null) {
           //AQUI
-        mapController.trilhaRepository.saveRecordedWaypoint(m);  
+        
           //TESTAR
         mapController.followTrailWaypoints.add(m);
         mapController.followTrail =
@@ -171,6 +171,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         mapController.newWaypoint.codigo = m.codwp;
         mapController.createdTrails.last.waypoints
             .add(mapController.newWaypoint);
+        mapController.trilhaRepository.saveRecordedWaypoint(m);  
         mapController.trilhaRepository
             .saveRecordedTrail(mapController.followTrail)
             .then((value) {

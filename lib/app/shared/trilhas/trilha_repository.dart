@@ -78,7 +78,6 @@ class TrilhaRepository {
 
   Future<List<TrilhaModel>> getRecordedTrails() async {
     List<TrilhaModel> trilhas = [];
-
     if (recordedTrails == null) {
       try {
         recordedTrails =
@@ -260,33 +259,29 @@ class TrilhaRepository {
         recordedTrails = SavedRoutes([]);
       }
     }
-
     var numero = model.codt;
-
     TrilhaModelJson trilha = model.toJson();
     sharedPrefs.save('recorded trail $numero', trilha.toJson());
-
     recordedTrails.codes.add(numero);
     try {
       sharedPrefs.remove('recordedTrails');
     } catch (e) {}
     sharedPrefs.save('recordedTrails', recordedTrails);
   }
-
+//s
     Future saveRecordedWaypoint(DadosWaypointModel model) async {
-    print(model.nome);
     if (recordedWaypoints == null) {
       try {
+        print("cai no if null");
         recordedWaypoints =
             SavedWaypoint.fromJson(await sharedPrefs.read('recordedWaypoints'));
       } catch (Exception) {
         recordedWaypoints = SavedWaypoint([]);
       }
     }
-    var numero = model.codt;
+    var numero = model.codwp;
     DadosWaypointJson waypoint = model.toJson();
     sharedPrefs.save('recorded waypoint $numero', waypoint.toJson());
-    
     recordedWaypoints.codes.add(numero);
     try {
       sharedPrefs.remove('recordedWaypoints');
@@ -296,7 +291,7 @@ class TrilhaRepository {
 
     Future<List<DadosWaypointModel>> getRecordedWaypoint() async {
     List<DadosWaypointModel> waypoints = [];
-    
+    print("GETTING RECORDED WAYPOINTS");
     if (recordedWaypoints== null) {
       try {
         recordedWaypoints =
@@ -311,6 +306,8 @@ class TrilhaRepository {
       DadosWaypointModel waypoint = DadosWaypointModel();
       var aux = DadosWaypointJson.fromJson(json);
       waypoint.fromJson(aux);
+      print("EXEMPLO------------------");
+      print(aux.nome);
       waypoints.add(waypoint);
     }
     
