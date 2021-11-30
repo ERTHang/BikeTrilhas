@@ -1006,9 +1006,10 @@ bottomSheetTempTrail(
     });
   }
 }
-
+//1009
 bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
     WaypointModel waypoint, DadosWaypointModel followTrailWaypoints) {
+
   mapController.modelTrilha = null;
   mapController.modelWaypoint = null;
   mapController.sheet = keyState.currentState.showBottomSheet((context) {
@@ -1148,6 +1149,7 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     },
                     'OK',
                     () async {
+                      
                       print('Teste');
                       print(mapController.followTrailWaypoints[0].codt);
                       print('Teste2');

@@ -44,6 +44,7 @@ abstract class _UsertrailsControllerBase with Store {
     if (checkedTrails == null) {
       checkedTrails = 1;
       mapController.createdTrails.clear();
+      
       mapController.createdTrails
           .addAll(await mapController.trilhaRepository.getRecordedTrails());
       mapController.followTrailWaypoints
@@ -80,7 +81,10 @@ abstract class _UsertrailsControllerBase with Store {
               markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
               position: trilha.waypoints[index].posicao,
               onTap: () {
+                print(mapController.followTrailWaypoints.length);
+
                 DadosWaypointModel model;
+                
                 mapController.tappedWaypoint = trilha.waypoints[index].codigo;
                 for (var element in mapController.followTrailWaypoints) {
                   if (element.codwp == mapController.tappedWaypoint) {
