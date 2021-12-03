@@ -1,4 +1,3 @@
-import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/latlngjson.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/waypoint_json.dart';

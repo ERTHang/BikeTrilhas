@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:biketrilhas_modular/app/app_controller.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
@@ -10,11 +9,10 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 
 class EdicaoWaypoint extends StatefulWidget {
   final EditMode editMode;
