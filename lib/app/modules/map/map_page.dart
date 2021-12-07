@@ -12,9 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_controller.dart';
 
 class MapPage extends StatefulWidget {
@@ -215,7 +214,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     borderRadius: BorderRadius.circular(360))),
               ),
               onPressed: () {
-                
                 if (tracking) {
                   setState(() {
                     changeButton = !changeButton;

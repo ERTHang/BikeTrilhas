@@ -291,7 +291,13 @@ abstract class _MapControllerBase with Store {
           child: AlertDialog(
             actions: [
               FlatButton(
-                  child: Text('Ok'),
+                  child: Text('VOLTAR'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    return;
+                  }),
+              FlatButton(
+                  child: Text('OK'),
                   onPressed: () {
                     createdTrails.add(followTrail);
                     trilhaRepository
