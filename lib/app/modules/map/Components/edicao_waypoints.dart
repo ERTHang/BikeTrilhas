@@ -74,7 +74,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         child: Icon(Icons.save),
         onPressed: () {
           final m = _mapController.modelWaypoint;
-          m.codwp = mapController.nextCodWp();
+
           saida(m);
         },
       ),
@@ -143,6 +143,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
     if (widget.editMode == EditMode.UPDATE) {
       await _infoRepository.updateDadosWaypoint(
           m.codwp, m.codt, m.descricao, m.nome, m.categorias);
+
       bottomSheetWaypoint(m.codwp);
       Modular.to.pop();
     } else {
