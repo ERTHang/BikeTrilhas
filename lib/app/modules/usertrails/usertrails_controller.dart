@@ -5,7 +5,11 @@ import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,6 +35,7 @@ abstract class _UsertrailsControllerBase with Store {
   
   //s
   bool pressionando = false;
+  
   getPolylines(context) async {
     polylines.clear();
     markers.clear();
@@ -75,19 +80,17 @@ abstract class _UsertrailsControllerBase with Store {
               markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
               position: trilha.waypoints[index].posicao,
               onTap: () {
-                print("WAYPOINT TAPPED");
-                print(trilha.waypoints[index].posicao);
-                DadosWaypointModel model;
-                
+                mapController.state();
+                 DadosWaypointModel model;    
                 mapController.tappedWaypoint = trilha.waypoints[index].codigo;
                 for (var element in mapController.followTrailWaypoints) {
                   if (element.codwp == mapController.tappedWaypoint) {
                     model = element;
                   }
                 }
-
+                print("-------------TAPPED WAYPOINT----------------");
                 print(mapController.tappedWaypoint);
-
+                print("-------------TAPPED WAYPOINT----------------");
                 bottomSheetTempWaypoint(
                     trilha, scaffoldState, trilha.waypoints[index], model, state);
                 // bottomSheetWaypoint(tappedWaypoint ,codt: tappedTrilha);
@@ -137,6 +140,42 @@ abstract class _UsertrailsControllerBase with Store {
                     mapController.state();
                     Navigator.pop(context);
                     Modular.to.pushNamed('/map/editor');
+                  }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+    uploadWaypoint(context, WaypointModel waypoint, DadosWaypointModel followTrailWaypoints) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: Text("Upload"),
+            content: Text(
+              "Deseja realizar o upload do waypoint agora?",
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  child: Text('Não'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    return;
+                  }),
+              FlatButton(
+                  child: Text('Sim'),
+                  onPressed: () {
+                      mapController.modelWaypoint = followTrailWaypoints;
+                      mapController.newWaypoint = waypoint;    
+                      print(mapController.trilhaRepository.recordedWaypoints.codes.elementAt(0));
+                      // Navigator.pop(context);
+                      Modular.to.pushReplacementNamed('/map/editorwaypoint',
+                          arguments: EditMode.ADD);
                   }),
             ],
           ),

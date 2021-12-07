@@ -1130,7 +1130,21 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
             ),
           ),
           Positioned(
-            bottom: 125,
+            top: 5,
+            right: 50,
+            child: IconButton(
+                icon: Icon(
+                  //AQUIII
+                  Icons.upload,
+                  color: Colors.blue,
+                ),
+                onPressed: () {
+                  print('Teste');
+                  checkUploadWp(context, waypoint, followTrailWaypoints);
+                }),
+          ),
+          Positioned(
+            top: 5,
             right: 10,
             child: IconButton(
               icon: Icon(
@@ -1283,6 +1297,16 @@ Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
     'imagens': [],
     'categorias': waypoint.categorias,
   };
+}
+
+checkUploadWp(context, waypoint, followtrailwaypoint) async {
+  if (!await isOnline()) {
+    alert(context, "Dispositivo Offline", 'Waypoint');
+  } else {
+    UsertrailsController usertrailsController = Modular.get();
+    usertrailsController.uploadWaypoint(context, waypoint, followtrailwaypoint);
+    
+  }
 }
 
 checkUpload(context, trilha) async {
