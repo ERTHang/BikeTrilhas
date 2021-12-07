@@ -1129,6 +1129,22 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
           ),
           Positioned(
             bottom: 125,
+            left: 300,
+            child: IconButton(
+              icon: Icon(
+                //AQUIII
+                Icons.upload,
+                color: Colors.blue,
+              ),
+              onPressed: () {
+                checkUploadWp(context, waypoint, followTrailWaypoints);
+              }
+      
+            ),
+            
+          ),
+          Positioned(
+            bottom: 125,
             right: 10,
             child: IconButton(
               icon: Icon(
@@ -1149,25 +1165,8 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     },
                     'OK',
                     () async {
-                      
-                      print('Teste');
-                      print(mapController.followTrailWaypoints[0].codt);
-                      print('Teste2');
-                      print(mapController.createdTrails[1].waypoints);
-                      print('Teste3');
-                      SavedRoutes recordedTrails = SavedRoutes.fromJson(
-                          await sharedPrefs.read('recordedTrails'));
-                      print(recordedTrails.codes[0]);
-                      //   Navigator.pop(context);
-                      //   try {
-                      //     mapController.followTrailWaypoints.remove(0);
-                      //     mapController.newWaypoint = null;
-                      //     mapController.getPolylines();
-                      //     mapController.state();
-                      //     mapController.sheet.close();
-                      //   } catch (e) {
-                      //     alert(context, e.toString(), 'Erro');
-                      //   }
+                      mapController.trilhaRepository.deleteRecordedWaypoint(followTrailWaypoints.codwp);
+                      mapController.trilhaRepository.deleteRecordedTrail(trilha.codt);
                     });
               },
             ),
@@ -1274,6 +1273,15 @@ Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
     'imagens': [],
     'categorias': waypoint.categorias,
   };
+}
+
+  checkUploadWp(context, waypoint, followtrailwaypoint) async {
+  if (!await isOnline()) {
+    alert(context, "Dispositivo Offline", 'Waypoint');
+  } else {
+    UsertrailsController usertrailsController = Modular.get();
+    usertrailsController.uploadWaypoint(context, waypoint, followtrailwaypoint);
+  }
 }
 
 checkUpload(context, trilha) async {

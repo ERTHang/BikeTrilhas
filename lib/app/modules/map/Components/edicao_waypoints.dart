@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:biketrilhas_modular/app/app_controller.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
@@ -33,7 +34,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
   final _mapController = Modular.get<MapController>();
   final _infoRepository = Modular.get<InfoRepository>();
   final _trilhaRepository = Modular.get<TrilhaRepository>();
-
+  final _usertrailsController = Modular.get<UsertrailsController>();
   @override
   void initState() {
     super.initState();
@@ -182,7 +183,11 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         int codt = await _showTrilhasDialog();
         if (codt != -1) {
           await _showLoadDialog(m, codt);
-          alertEdit(context, "Waypoint salvo com sucesso");
+                mapController.trilhaRepository.deleteRecordedWaypoint(m.codwp);
+                mapController.trilhaRepository.deleteRecordedTrail(mapController.newWaypoint.codigo);
+                 alertEdit(context, "Waypoint salvo com sucesso");
+                 mapController.state();               
+                 _usertrailsController.state();
         }
       }
     }

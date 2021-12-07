@@ -86,7 +86,6 @@ class TrilhaRepository {
         recordedTrails = SavedRoutes([]);
       }
     }
-
     for (var i = 0; i < recordedTrails.codes.length; i++) {
       var json =
           await sharedPrefs.read('recorded trail ${recordedTrails.codes[i]}');
@@ -314,6 +313,24 @@ class TrilhaRepository {
     return waypoints;
   }
 
+    void deleteRecordedWaypoint(int codigo) async {
+    if (recordedWaypoints == null) {
+      try {
+        recordedWaypoints =
+            SavedWaypoint.fromJson(await sharedPrefs.read('recordedWaypoints'));
+      } catch (e) {
+        recordedWaypoints = SavedWaypoint([]);
+      }
+    }
+    sharedPrefs.remove('recorded waypoint $codigo');
+    for (var i = 0; i < recordedWaypoints.codes.length; i++) {
+      if (recordedWaypoints.codes[i] == codigo) {
+        recordedWaypoints.codes.removeAt(i);
+      }
+    }
+    sharedPrefs.remove('recordedWaypoints');
+    sharedPrefs.save('recordedWaypoints', recordedTrails);
+  }
 
 
   Future saveRoute(TrilhaModel model) async {
