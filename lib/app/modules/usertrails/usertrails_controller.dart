@@ -32,10 +32,10 @@ abstract class _UsertrailsControllerBase with Store {
   Set<Marker> routeMarkers = {};
   TrilhaModel newTrail;
   int tappedTrilha;
-  
+
   //s
   bool pressionando = false;
-  
+
   getPolylines(context) async {
     polylines.clear();
     markers.clear();
@@ -43,7 +43,7 @@ abstract class _UsertrailsControllerBase with Store {
     if (checkedTrails == null) {
       checkedTrails = 1;
       mapController.createdTrails.clear();
-      
+
       mapController.createdTrails
           .addAll(await mapController.trilhaRepository.getRecordedTrails());
       mapController.followTrailWaypoints
@@ -81,7 +81,7 @@ abstract class _UsertrailsControllerBase with Store {
               position: trilha.waypoints[index].posicao,
               onTap: () {
                 mapController.state();
-                 DadosWaypointModel model;    
+                DadosWaypointModel model;
                 mapController.tappedWaypoint = trilha.waypoints[index].codigo;
                 for (var element in mapController.followTrailWaypoints) {
                   if (element.codwp == mapController.tappedWaypoint) {
@@ -91,8 +91,8 @@ abstract class _UsertrailsControllerBase with Store {
                 print("-------------TAPPED WAYPOINT----------------");
                 print(mapController.tappedWaypoint);
                 print("-------------TAPPED WAYPOINT----------------");
-                bottomSheetTempWaypoint(
-                    trilha, scaffoldState, trilha.waypoints[index], model, state);
+                bottomSheetTempWaypoint(trilha, scaffoldState,
+                    trilha.waypoints[index], model, state);
                 // bottomSheetWaypoint(tappedWaypoint ,codt: tappedTrilha);
 
                 //bottomSheetTempTrail(trilha, scaffoldState, state);
@@ -148,7 +148,8 @@ abstract class _UsertrailsControllerBase with Store {
     );
   }
 
-    uploadWaypoint(context, WaypointModel waypoint, DadosWaypointModel followTrailWaypoints) async {
+  uploadWaypoint(context, WaypointModel waypoint,
+      DadosWaypointModel followTrailWaypoints) async {
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -170,12 +171,13 @@ abstract class _UsertrailsControllerBase with Store {
               FlatButton(
                   child: Text('Sim'),
                   onPressed: () {
-                      mapController.modelWaypoint = followTrailWaypoints;
-                      mapController.newWaypoint = waypoint;    
-                      print(mapController.trilhaRepository.recordedWaypoints.codes.elementAt(0));
-                      // Navigator.pop(context);
-                      Modular.to.pushReplacementNamed('/map/editorwaypoint',
-                          arguments: EditMode.ADD);
+                    mapController.modelWaypoint = followTrailWaypoints;
+                    mapController.newWaypoint = waypoint;
+                    print(mapController.trilhaRepository.recordedWaypoints.codes
+                        .elementAt(0));
+                    // Navigator.pop(context);
+                    Modular.to.pushReplacementNamed('/map/editorwaypoint',
+                        arguments: EditMode.ADD);
                   }),
             ],
           ),

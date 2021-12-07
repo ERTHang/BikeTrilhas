@@ -1138,9 +1138,8 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                   Icons.upload,
                   color: Colors.blue,
                 ),
-                onPressed: () {
-                  print('Teste');
-                  checkUploadWp(context, waypoint, followTrailWaypoints);
+                onPressed: () async {
+                  await checkUploadWp(context, waypoint, followTrailWaypoints);
                 }),
           ),
           Positioned(
@@ -1165,32 +1164,9 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     },
                     'OK',
                     () async {
-                      for (int i = 0; i < trilha.waypoints.length; i++) {
-                        if (trilha.waypoints[i] == waypoint) {
-                          trilha.waypoints.removeAt(i);
-                        }
-                      }
-
-                      for (int i = 0;
-                          i < mapController.followTrailWaypoints.length;
-                          i++) {
-                        if (mapController.followTrailWaypoints
-                                .elementAt(i)
-                                .codwp ==
-                            waypoint.codigo) {
-                          mapController.followTrailWaypoints.removeAt(i);
-                        }
-                      }
-
-                      mapController.trilhaRepository
-                          .deleteRecordedTrail(trilha.codt);
-                      await mapController.trilhaRepository
-                          .saveRecordedTrail(trilha);
-
-                      mapController.sheet.close();
-                      mapController.sheet = null;
-                      await state();
-                      Navigator.of(context).pop();
+                      onClickRemoverTempWaypoint(
+                          context, trilha, waypoint, state);
+                      return;
                     });
               },
             ),
@@ -1304,8 +1280,8 @@ checkUploadWp(context, waypoint, followtrailwaypoint) async {
     alert(context, "Dispositivo Offline", 'Waypoint');
   } else {
     UsertrailsController usertrailsController = Modular.get();
-    usertrailsController.uploadWaypoint(context, waypoint, followtrailwaypoint);
-    
+    await usertrailsController.uploadWaypoint(
+        context, waypoint, followtrailwaypoint);
   }
 }
 
@@ -1316,4 +1292,27 @@ checkUpload(context, trilha) async {
     UsertrailsController usertrailsController = Modular.get();
     usertrailsController.uploadTrilha(context, trilha);
   }
+}
+
+onClickRemoverTempWaypoint(context, trilha, waypoint, state) async {
+  for (int i = 0; i < trilha.waypoints.length; i++) {
+    if (trilha.waypoints[i] == waypoint) {
+      trilha.waypoints.removeAt(i);
+    }
+  }
+
+  for (int i = 0; i < mapController.followTrailWaypoints.length; i++) {
+    if (mapController.followTrailWaypoints.elementAt(i).codwp ==
+        waypoint.codigo) {
+      mapController.followTrailWaypoints.removeAt(i);
+    }
+  }
+
+  mapController.trilhaRepository.deleteRecordedTrail(trilha.codt);
+  await mapController.trilhaRepository.saveRecordedTrail(trilha);
+
+  mapController.sheet.close();
+  mapController.sheet = null;
+  await state();
+  Navigator.of(context).pop();
 }

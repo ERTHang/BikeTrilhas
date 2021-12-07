@@ -138,6 +138,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
       ),
     );
   }
+
 //s
   saida(DadosWaypointModel m) async {
     var pos = await Geolocator.getCurrentPosition();
@@ -158,9 +159,9 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         //Tirando Foto sem Gravar
       } else if (await isOnline() == false &&
           mapController.followTrail == null) {
-          //AQUI
-        
-          //TESTAR
+        //AQUI
+
+        //TESTAR
         mapController.followTrailWaypoints.add(m);
         mapController.followTrail =
             TrilhaModel(mapController.nextCodt(), 'MarkerOnly');
@@ -170,7 +171,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         mapController.newWaypoint.codigo = m.codwp;
         mapController.createdTrails.last.waypoints
             .add(mapController.newWaypoint);
-        mapController.trilhaRepository.saveRecordedWaypoint(m);  
+        mapController.trilhaRepository.saveRecordedWaypoint(m);
         mapController.trilhaRepository
             .saveRecordedTrail(mapController.followTrail)
             .then((value) {
@@ -181,11 +182,12 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         int codt = await _showTrilhasDialog();
         if (codt != -1) {
           await _showLoadDialog(m, codt);
-                mapController.trilhaRepository.deleteRecordedWaypoint(m.codwp);
-                mapController.trilhaRepository.deleteRecordedTrail(mapController.newWaypoint.codigo);
-                 alertEdit(context, "Waypoint salvo com sucesso");
-                 mapController.state();               
-                 _usertrailsController.state();
+          mapController.trilhaRepository.deleteRecordedWaypoint(m.codwp);
+          mapController.trilhaRepository
+              .deleteRecordedTrail(mapController.newWaypoint.codigo);
+          alertEdit(context, "Waypoint salvo com sucesso");
+          await mapController.state();
+          await _usertrailsController.state();
         }
       }
     }
