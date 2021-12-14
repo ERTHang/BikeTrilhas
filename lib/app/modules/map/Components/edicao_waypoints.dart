@@ -183,11 +183,8 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         int codt = await _showTrilhasDialog();
         if (codt != -1) {
           await _showLoadDialog(m, codt);
-                mapController.trilhaRepository.deleteRecordedWaypoint(m.codwp);
-                mapController.trilhaRepository.deleteRecordedTrail(mapController.newWaypoint.codigo);
-                 alertEdit(context, "Waypoint salvo com sucesso");
-                 mapController.state();               
-                 _usertrailsController.state();
+                 alertEdit(context, "Waypoint salvo com sucesso", m);
+                 
         }
       }
     }
@@ -569,12 +566,14 @@ class _DialogContentState extends State<DialogContent> {
   }
 }
 
-alertEdit(BuildContext context, String msg) {
+alertEdit(BuildContext context, String msg, DadosWaypointModel m) {
   showDialog(
+    
     context: context,
     barrierDismissible: false,
     builder: (context) {
       return WillPopScope(
+        
         onWillPop: () async => false,
         child: AlertDialog(
           title: Text("Sucesso"),
@@ -584,8 +583,13 @@ alertEdit(BuildContext context, String msg) {
           actions: <Widget>[
             FlatButton(
                 child: Text('OK'),
-                onPressed: () {
-                  Navigator.pop(context);
+                onPressed: () async {            
+                  print("apagando");
+                  mapController.trilhaRepository.deleteRecordedWaypoint(m.codwp);
+                  mapController.trilhaRepository.deleteRecordedTrail(mapController.newWaypoint.codigo);
+                  //UsertrailsController u = Modular.get<UsertrailsController>();
+                  //await u.getPolylines(context);
+                  Navigator.pop(context);                  
                   Modular.to.popUntil((route) => route.isFirst);
                 })
           ],
