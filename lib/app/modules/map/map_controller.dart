@@ -55,6 +55,7 @@ abstract class _MapControllerBase with Store {
   PersistentBottomSheetController sheet;
   PersistentBottomSheetController nameSheet;
   TrilhaModel newTrail;
+  TrilhaModel trailAux;
   TrilhaModel followTrail;
   WaypointModel newWaypoint;
   List<DadosWaypointModel> followTrailWaypoints = [];

@@ -7,6 +7,7 @@ import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
+import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
@@ -25,7 +26,7 @@ class UsertrailsController = _UsertrailsControllerBase
 abstract class _UsertrailsControllerBase with Store {
   _UsertrailsControllerBase(this.mapController, this.drawerClassController);
 
-  
+  TrilhaRepository trilharep = Modular.get<TrilhaRepository>();
   final MapController mapController;
   final DrawerClassController drawerClassController;
   final scaffoldState = GlobalKey<ScaffoldState>();
@@ -148,7 +149,7 @@ abstract class _UsertrailsControllerBase with Store {
     );
   }
 
-    uploadWaypoint(context, WaypointModel waypoint, DadosWaypointModel followTrailWaypoints) async {
+    uploadWaypoint(context, WaypointModel waypoint, DadosWaypointModel followTrailWaypoints, [trilha]) async {
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -170,9 +171,10 @@ abstract class _UsertrailsControllerBase with Store {
               FlatButton(
                   child: Text('Sim'),
                   onPressed: () {
+                      mapController.trailAux = trilha;
                       mapController.modelWaypoint = followTrailWaypoints;
                       mapController.newWaypoint = waypoint;    
-                      print(mapController.trilhaRepository.recordedWaypoints.codes.elementAt(0));
+                      
                       // Navigator.pop(context);
                       Modular.to.pushReplacementNamed('/map/editorwaypoint',
                           arguments: EditMode.ADD);

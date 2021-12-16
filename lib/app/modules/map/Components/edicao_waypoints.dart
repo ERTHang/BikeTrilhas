@@ -10,6 +10,7 @@ import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -34,7 +35,8 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
   final _mapController = Modular.get<MapController>();
   final _infoRepository = Modular.get<InfoRepository>();
   final _trilhaRepository = Modular.get<TrilhaRepository>();
-  final _usertrailsController = Modular.get<UsertrailsController>();
+   final _userTrailsController = Modular.get<UsertrailsController>();
+
   @override
   void initState() {
     super.initState();
@@ -149,7 +151,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
           m.codwp, m.codt, m.descricao, m.nome, m.categorias);
       bottomSheetWaypoint(m.codwp);
       Modular.to.pop();
-    } else {
+    } else { 
       //Se o waypoint esta sob gravação
       if (mapController.followTrail != null) {
         mapController.followTrailWaypoints.add(m);
@@ -161,7 +163,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
       } else if (await isOnline() == false &&
           mapController.followTrail == null) {
           //AQUI
-        
+        print("nesse ifff");
           //TESTAR
         mapController.followTrailWaypoints.add(m);
         mapController.followTrail =
@@ -179,12 +181,13 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
           Modular.to.pushReplacementNamed('/usertrail');
         });
       } else if (await isOnline()) {
-        //Waypoint sem trilha
         int codt = await _showTrilhasDialog();
         if (codt != -1) {
           await _showLoadDialog(m, codt);
-                 alertEdit(context, "Waypoint salvo com sucesso", m);
-                 
+          
+          alertEdit(context, "Waypoint salvo com sucesso"); 
+          
+          
         }
       }
     }
@@ -566,9 +569,8 @@ class _DialogContentState extends State<DialogContent> {
   }
 }
 
-alertEdit(BuildContext context, String msg, DadosWaypointModel m) {
-  showDialog(
-    
+alertEdit(BuildContext context, String msg) {
+  showDialog(  
     context: context,
     barrierDismissible: false,
     builder: (context) {
@@ -583,12 +585,7 @@ alertEdit(BuildContext context, String msg, DadosWaypointModel m) {
           actions: <Widget>[
             FlatButton(
                 child: Text('OK'),
-                onPressed: () async {            
-                  print("apagando");
-                  mapController.trilhaRepository.deleteRecordedWaypoint(m.codwp);
-                  mapController.trilhaRepository.deleteRecordedTrail(mapController.newWaypoint.codigo);
-                  //UsertrailsController u = Modular.get<UsertrailsController>();
-                  //await u.getPolylines(context);
+                onPressed: () {            
                   Navigator.pop(context);                  
                   Modular.to.popUntil((route) => route.isFirst);
                 })

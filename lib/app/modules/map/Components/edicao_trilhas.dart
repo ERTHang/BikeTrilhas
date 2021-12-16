@@ -198,7 +198,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                     maxLines: 3,
                     onTap: () {
                       _showSupDialog();
-                    },
+                    }, 
                     readOnly: true,
                     decoration: InputDecoration(
                       labelText: 'Superfícies',

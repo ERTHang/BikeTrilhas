@@ -267,6 +267,8 @@ class InfoRepository {
 
   Future<bool> uploadWaypoint(
       WaypointModel wp, DadosWaypointModel dadoswp, int codt) async {
+      //-------------------------------------------
+      //-------------------------------------------
     var auth = Modular.get<AuthController>();
     FormData formData = FormData.fromMap({
       "codt": codt,
@@ -283,6 +285,14 @@ class InfoRepository {
     var response = (await dio.post('/server/waypoint', data: formData));
     updateDadosWaypoint(response.data, codt, dadoswp.descricao, dadoswp.nome,
         dadoswp.categorias);
+      mapController.followTrailWaypoints
+          .removeWhere((element) => element.codwp == mapController.newWaypoint.codigo);
+      mapController.createdTrails
+          .removeWhere((element) => element.codt == mapController.trailAux.codt);
+      TrilhaRepository trilhaRepository = Modular.get();
+      trilhaRepository.deleteRecordedWaypoint(mapController.newWaypoint.codigo);
+      trilhaRepository.deleteRecordedTrail(mapController.trailAux.codt);
+      
     return response.data != -1;
   }
 
