@@ -28,8 +28,8 @@ mixin _$LoginController on _LoginControllerBase, Store {
       AsyncAction('_LoginControllerBase.loginWithGoogle');
 
   @override
-  Future<dynamic> loginWithGoogle() {
-    return _$loginWithGoogleAsyncAction.run(() => super.loginWithGoogle());
+  Future<dynamic> loginWithGoogle(context) {
+    return _$loginWithGoogleAsyncAction.run(() => super.loginWithGoogle(context));
   }
 
   @override

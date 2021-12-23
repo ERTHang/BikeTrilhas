@@ -24,18 +24,18 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
             SizedBox(height: 10),
             Image.asset('images/bike_logo_actionbar.png'),
             SizedBox(height: 100),
-            _signInButton(),
+            _signInButton(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _signInButton() {
+  Widget _signInButton(context) {
     return OutlineButton(
       splashColor: Colors.grey,
       onPressed: () {
-        store.loginWithGoogle();
+        store.loginWithGoogle(context);
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       highlightElevation: 0,
