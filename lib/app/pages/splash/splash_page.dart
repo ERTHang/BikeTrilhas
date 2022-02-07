@@ -23,7 +23,7 @@ class _SplashPageState extends State<SplashPage> {
     disposer = autorun((_) async {
       final auth = Modular.get<AuthController>();
       if (auth.status == AuthStatus.login) {
-        await auth.loginProcedure();
+        //await auth.loginProcedure();
         LocationPermission _permissionGranted =
             await Geolocator.checkPermission();
         if (_permissionGranted == LocationPermission.denied ||
