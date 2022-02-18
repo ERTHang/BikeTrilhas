@@ -130,7 +130,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           ),
 
           //Botão para terminar a criação de trilhas
-          AnimatedPositioned(
+          /*AnimatedPositioned(
             bottom: 10,
             right: changeButton ? 145.0 : 10.0,
             duration: const Duration(seconds: 1),
@@ -169,10 +169,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               },
               child: Icon(Icons.stop),
             ),
-          ),
+          ),*/
 
           //Botão para pausar a criação de trilhas
-          AnimatedPositioned(
+          /*AnimatedPositioned(
             bottom: 10,
             right: changeButton ? 80.0 : 10.0,
             duration: const Duration(seconds: 1),
@@ -199,10 +199,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               },
               child: (!paused) ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             ),
-          ),
+          ),*/
 
           // Botão para criação de trilhas
-          Positioned(
+          /*Positioned(
             bottom: 10,
             right: 10,
             child: ElevatedButton(
@@ -265,7 +265,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 size: 30,
               ),
             ),
-          ),
+          ),*/
 
           // Container para o texto de origem e destino da rota
           Visibility(
@@ -382,7 +382,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           ),
 
           //Botão para tirar uma foto para um waypoint
-          Visibility(
+          /*Visibility(
             child: Positioned(
               bottom: 70,
               right: 10,
@@ -405,7 +405,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 ),
               ),
             ),
-          )
+          )*/
         ],
       ),
     );

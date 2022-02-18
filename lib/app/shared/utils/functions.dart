@@ -80,17 +80,20 @@ locationPermissionPopUp(context) {
       Text(
           'Bike Trilhas collects location data to enable map tracking even when the app is in background.'),
       'CANCEL',
-      () {},
-      'OK', () async {
-    Navigator.pop(context);
-    LocationPermission _permissionGranted =
-        await Geolocator.requestPermission();
-    if (_permissionGranted != LocationPermission.denied) {
-      functionPermisionEnables(context);
-    } else {
-      return;
-    }
-  });
+      () {
+        Modular.to.pushReplacementNamed('/permission');
+      },
+      'OK',
+      () async {
+        Navigator.pop(context);
+        LocationPermission _permissionGranted =
+            await Geolocator.requestPermission();
+        if (_permissionGranted != LocationPermission.denied) {
+          functionPermisionEnables(context);
+        } else {
+          return;
+        }
+      });
 }
 
 functionPermisionEnables(context) async {
