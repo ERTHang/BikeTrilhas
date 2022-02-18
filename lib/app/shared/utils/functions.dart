@@ -76,9 +76,9 @@ alertaComEscolha(context, titulo, mensagem, String botao1text,
 locationPermissionPopUp(context) {
   alertaComEscolha(
       context,
-      'Permissão de localização',
+      'Location Permission',
       Text(
-          'BikeTrilhas coleta dados de localização para navegação no mapa mesmo com o app fechado ou quando não está sendo usado.'),
+          'Bike Trilhas collects location data to enable map tracking even when the app is in background.'),
       'CANCEL',
       () {},
       'OK', () async {
