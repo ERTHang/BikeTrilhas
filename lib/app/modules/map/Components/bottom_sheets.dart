@@ -1010,7 +1010,7 @@ bottomSheetTempTrail(
 
 //1009
 bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
-    WaypointModel waypoint, DadosWaypointModel followTrailWaypoints) {
+    WaypointModel waypoint, DadosWaypointModel followTrailWaypoints, Function state) {
   mapController.modelTrilha = null;
   mapController.modelWaypoint = null;
   mapController.sheet = keyState.currentState.showBottomSheet((context) {
@@ -1160,15 +1160,40 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     'VOLTAR',
                     () {
                       Navigator.pop(context);
+                      for (int i = 0;i<mapController.followTrailWaypoints.length;i++){
+                        print("ELEMENTOS");
+                        print(mapController.followTrailWaypoints.elementAt(i).codwp);
+                                            }
+                        print("ELEMENTO Q EU QRO");
+                        print(followTrailWaypoints.codwp);
+
                       return;
                     },
                     'OK',
                     () async {
-                      mapController.trilhaRepository
-                          .deleteRecordedWaypoint(followTrailWaypoints.codwp);
+                      for (int i = 0;i<mapController.followTrailWaypoints.length;i++){                        
+                        if (mapController.followTrailWaypoints.elementAt(i).codwp == followTrailWaypoints.codwp){
+                            print("achei");
+                            mapController.followTrailWaypoints.removeAt(i);
+                        }
+                      }
+                      
+                       print("Apagando1");
+                       mapController.trilhaRepository
+                           .deleteRecordedWaypoint(followTrailWaypoints.codwp);
+                            print("Apagando2");
                       mapController.trilhaRepository
                           .deleteRecordedTrail(trilha.codt);
+                          
+                        mapController.sheet.close();
+                        mapController.sheet = null;
+                        state();
+                        Navigator.pop(context);                  
+                       Modular.to.popUntil((route) => route.isFirst);
+
                     });
+
+                    
               },
             ),
           ),

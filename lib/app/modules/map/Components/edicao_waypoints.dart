@@ -79,8 +79,12 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.save),
         onPressed: () {
+         
           final m = _mapController.modelWaypoint;
-          m.codwp = mapController.nextCodWp();
+          if (m.codwp == null){
+            m.codwp = mapController.nextCodWp();
+          }
+          
           saida(m);
         },
       ),
@@ -181,13 +185,11 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
           Modular.to.pushReplacementNamed('/usertrail');
         });
       } else if (await isOnline()) {
+        print("to aqui");
         int codt = await _showTrilhasDialog();
         if (codt != -1) {
           await _showLoadDialog(m, codt);
-          
           alertEdit(context, "Waypoint salvo com sucesso"); 
-          
-          
         }
       }
     }
@@ -257,6 +259,10 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
     );
   }
 
+  
+  
+
+
   Future<int> _showTrilhasDialog() async {
     int _selectedIndex;
     List<TrilhaModel> trilhasproximas;
@@ -311,7 +317,9 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
               FlatButton(
                 child: Text('Cancelar'),
                 onPressed: () {
+                  
                   setState(() {
+                    
                     Navigator.of(context).pop(-1);
                   });
                 },
@@ -585,7 +593,8 @@ alertEdit(BuildContext context, String msg) {
           actions: <Widget>[
             FlatButton(
                 child: Text('OK'),
-                onPressed: () {            
+                onPressed: () {        
+                  print("Ok, alert edit");    
                   Navigator.pop(context);                  
                   Modular.to.popUntil((route) => route.isFirst);
                 })

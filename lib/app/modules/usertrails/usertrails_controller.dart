@@ -37,6 +37,7 @@ abstract class _UsertrailsControllerBase with Store {
   Set<Marker> routeMarkers = {};
   TrilhaModel newTrail;
   int tappedTrilha;
+  int tappedWaypoint;
   
   //s
   bool pressionando = false;
@@ -70,19 +71,21 @@ abstract class _UsertrailsControllerBase with Store {
           points: trilha.polylineCoordinates[i],
           width: 3,
         );
-
+        
         polylines.add(pol);
         markers.addAll(
           List.generate(
             trilha.waypoints.length,
             (index) => Marker(
-              icon: pressionando == false
-                  ? mapController.markerIcon
-                  : mapController.markerIconTapped,
+              icon: (trilha.waypoints[index].codigo == tappedWaypoint)
+                  ? mapController.markerIconTapped
+                  : mapController.markerIcon,
               visible: true,
               markerId: MarkerId(trilha.waypoints[index].codigo.toString()),
               position: trilha.waypoints[index].posicao,
               onTap: () {
+                print(mapController.followTrailWaypoints.length);
+                //teste
                 markers.clear();
                 state();
                 mapController.state();
@@ -90,16 +93,22 @@ abstract class _UsertrailsControllerBase with Store {
                 mapController.tappedWaypoint = trilha.waypoints[index].codigo;
                 for (var element in mapController.followTrailWaypoints) {
                   if (element.codwp == mapController.tappedWaypoint) {
+                    pressionando = true;
                     model = element;
                   }
                 }
                 print("-------------TAPPED WAYPOINT----------------");
-                print(mapController.tappedWaypoint);
+                 print(mapController.tappedWaypoint);
+                for (var element in mapController.followTrailWaypoints) {
+                  print(element.codwp);
+                }
                 print("-------------TAPPED WAYPOINT----------------");
                 bottomSheetTempWaypoint(
-                    trilha, scaffoldState, trilha.waypoints[index], model);
+                    trilha, scaffoldState, trilha.waypoints[index], model, state);
+                tappedWaypoint = mapController.tappedWaypoint;
                 state();
               },
+             
             ),
           ),
         );
