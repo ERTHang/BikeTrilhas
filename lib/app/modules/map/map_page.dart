@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:background_location/background_location.dart' as bglocation;
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
+import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -139,7 +143,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           ),
 
           //Botão para terminar a criação de trilhas
-          /*AnimatedPositioned(
+          AnimatedPositioned(
             bottom: 10,
             right: changeButton ? 145.0 : 10.0,
             duration: const Duration(seconds: 1),
@@ -178,10 +182,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               },
               child: Icon(Icons.stop),
             ),
-          ),*/
+          ),
 
           //Botão para pausar a criação de trilhas
-          /*AnimatedPositioned(
+          AnimatedPositioned(
             bottom: 10,
             right: changeButton ? 80.0 : 10.0,
             duration: const Duration(seconds: 1),
@@ -208,10 +212,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               },
               child: (!paused) ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             ),
-          ),*/
+          ),
 
           // Botão para criação de trilhas
-          /*Positioned(
+          Positioned(
             bottom: 10,
             right: 10,
             child: ElevatedButton(
@@ -274,7 +278,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 size: 30,
               ),
             ),
-          ),*/
+          ),
 
           // Container para o texto de origem e destino da rota
           Visibility(
@@ -391,7 +395,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           ),
 
           //Botão para tirar uma foto para um waypoint
-          /*Visibility(
+          Visibility(
             child: Positioned(
               bottom: 70,
               right: 10,
@@ -414,7 +418,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 ),
               ),
             ),
-          )*/
+          )
         ],
       ),
     );
