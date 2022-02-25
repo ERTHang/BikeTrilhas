@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:biketrilhas_modular/app/app_controller.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
@@ -12,11 +11,10 @@ import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 
 class EdicaoWaypoint extends StatefulWidget {
   final EditMode editMode;
@@ -146,6 +144,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
       ),
     );
   }
+
 //s
   saida(DadosWaypointModel m) async {
     var pos = await Geolocator.getCurrentPosition();
@@ -166,9 +165,9 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         //Tirando Foto sem Gravar
       } else if (await isOnline() == false &&
           mapController.followTrail == null) {
-          //AQUI
-        print("nesse ifff");
-          //TESTAR
+        //AQUI
+
+        //TESTAR
         mapController.followTrailWaypoints.add(m);
         mapController.followTrail =
             TrilhaModel(mapController.nextCodt(), 'MarkerOnly');
@@ -178,7 +177,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
         mapController.newWaypoint.codigo = m.codwp;
         mapController.createdTrails.last.waypoints
             .add(mapController.newWaypoint);
-        mapController.trilhaRepository.saveRecordedWaypoint(m);  
+        mapController.trilhaRepository.saveRecordedWaypoint(m);
         mapController.trilhaRepository
             .saveRecordedTrail(mapController.followTrail)
             .then((value) {

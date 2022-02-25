@@ -1,5 +1,4 @@
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/waipoint_dados_json.dart';
-import 'package:flutter/cupertino.dart';
 
 class DadosWaypointModel {
   int codwp;

@@ -1,6 +1,4 @@
 import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
@@ -41,7 +39,7 @@ abstract class _UsertrailsControllerBase with Store {
   
   //s
   bool pressionando = false;
-  
+
   getPolylines(context) async {
     polylines.clear();
     markers.clear();
@@ -60,12 +58,12 @@ abstract class _UsertrailsControllerBase with Store {
           consumeTapEvents: true,
           polylineId: PolylineId("rota $i " + trilha.codt.toString()),
           color: (trilha.codt == tappedTrilha) ? Colors.red : Colors.blue,
-          onTap: () {
+          onTap: () async {
             print('TRILHA TAPPED');
             tappedTrilha = trilha.codt;
             print(tappedTrilha);
             print(tappedTrilha);
-            state();
+            await state();
             bottomSheetTempTrail(trilha, scaffoldState, state);
           },
           points: trilha.polylineCoordinates[i],
@@ -89,7 +87,7 @@ abstract class _UsertrailsControllerBase with Store {
                 markers.clear();
                 state();
                 mapController.state();
-                 DadosWaypointModel model;    
+                DadosWaypointModel model;
                 mapController.tappedWaypoint = trilha.waypoints[index].codigo;
                 for (var element in mapController.followTrailWaypoints) {
                   if (element.codwp == mapController.tappedWaypoint) {

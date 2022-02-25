@@ -1,5 +1,8 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 ///Verifica se o usuário está online
 Future<bool> isOnline() async {
@@ -37,7 +40,8 @@ alert(BuildContext context, String mensagem, String titulo) {
 }
 
 alertaComEscolha(context, titulo, mensagem, String botao1text,
-    Function botao1func, String botao2text, Function botao2func, {Color corTitulo = Colors.black}) {
+    Function botao1func, String botao2text, Function botao2func,
+    {Color corTitulo = Colors.black}) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -47,9 +51,7 @@ alertaComEscolha(context, titulo, mensagem, String botao1text,
         child: AlertDialog(
           title: Text(
             titulo,
-            style: TextStyle(
-              color: corTitulo
-            ),
+            style: TextStyle(color: corTitulo),
           ),
           content: mensagem,
           actions: <Widget>[
@@ -69,6 +71,37 @@ alertaComEscolha(context, titulo, mensagem, String botao1text,
       );
     },
   );
+}
+
+locationPermissionPopUp(context) {
+  alertaComEscolha(
+      context,
+      'Location Permission',
+      Text(
+          'Bike Trilhas collects location data to enable map tracking even when the app is in background.'),
+      'CANCEL',
+      () {
+        Modular.to.pushReplacementNamed('/map');
+      },
+      'OK',
+      () async {
+        Navigator.pop(context);
+        LocationPermission _permissionGranted =
+            await Geolocator.requestPermission();
+        if (_permissionGranted != LocationPermission.denied) {
+          functionPermisionEnables(context);
+        } else {
+          return;
+        }
+      });
+}
+
+functionPermisionEnables(context) async {
+  Geolocator.getCurrentPosition().then((value) {
+    Modular.to.pushReplacementNamed('/map',
+        arguments: CameraPosition(
+            target: LatLng(value.latitude, value.longitude), zoom: 17));
+  });
 }
 
 ///Emite um alerta do tipo snack

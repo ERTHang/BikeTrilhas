@@ -5,6 +5,7 @@ import 'package:biketrilhas_modular/app/modules/userroutes/userroutes_module.dar
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_module.dart';
 import 'package:biketrilhas_modular/app/modules/waypoints/waypoints_module.dart';
+import 'package:biketrilhas_modular/app/pages/splash/permission_page.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/modules/photo/photo_module.dart';
 import 'package:biketrilhas_modular/app/app_controller.dart';
@@ -50,6 +51,7 @@ class AppModule extends Module {
     ModuleRoute('/usertrail', module: UsertrailsModule()),
     ModuleRoute('/waypoint', module: WaypointsModule()),
     ModuleRoute('/filter', module: FilterModule()),
-    ModuleRoute('/info', module: InfoModule())
+    ModuleRoute('/info', module: InfoModule()),
+    ChildRoute('/permission', child: (_, args) => PermissionPage())
   ];
 }

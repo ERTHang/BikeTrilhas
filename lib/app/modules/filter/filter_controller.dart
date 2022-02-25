@@ -78,6 +78,7 @@ abstract class _FilterControllerBase with Store {
     mapController.state();
 
     Modular.to.popUntil((route) => route.isFirst);
+
     drawerClassController.value = 0;
   }
 }

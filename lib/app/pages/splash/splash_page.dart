@@ -1,4 +1,5 @@
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,15 +20,18 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    disposer = autorun((_) {
+    disposer = autorun((_) async {
       final auth = Modular.get<AuthController>();
       if (auth.status == AuthStatus.login) {
-        auth.loginProcedure();
-        Geolocator.getCurrentPosition().then((value) {
-          Modular.to.pushReplacementNamed('/map',
-              arguments: CameraPosition(
-                  target: LatLng(value.latitude, value.longitude), zoom: 17));
-        });
+        //await auth.loginProcedure();
+        LocationPermission _permissionGranted =
+            await Geolocator.checkPermission();
+        if (_permissionGranted == LocationPermission.denied ||
+            _permissionGranted == LocationPermission.deniedForever) {
+          await locationPermissionPopUp(context);
+        } else {
+          await functionPermisionEnables(context);
+        }
       } else if (auth.status == AuthStatus.logoff) {
         Modular.to.pushReplacementNamed('/login');
       }

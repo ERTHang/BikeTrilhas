@@ -1,24 +1,23 @@
 import 'dart:io';
-import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
+import 'package:biketrilhas_modular/app/shared/auth/repositories/auth_repository_interface.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 
 final mapController = Modular.get<MapController>();
 final auth = Modular.get<IAuthRepository>();
@@ -278,7 +277,8 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       },
                     )),
                 Visibility(
-                  visible: admin == 1,
+                  visible:
+                      admin == 1 && !codigosTrilhasSalvas.contains(trilha.codt),
                   child: Positioned(
                     bottom: 44,
                     right: 10,
@@ -558,8 +558,9 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                               arguments: EditMode.UPDATE);
                         },
                       )),
-                  visible:
-                      admin == 1 || mapController.waypointsUser.contains(codwp),
+                  visible: (admin == 1 ||
+                          mapController.waypointsUser.contains(codwp)) &&
+                      !codigosTrilhasSalvas.contains(codt),
                 ),
                 Visibility(
                   child: Positioned(
@@ -610,8 +611,9 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                               corTitulo: Colors.red);
                         },
                       )),
-                  visible:
-                      admin == 1 || mapController.waypointsUser.contains(codwp),
+                  visible: (admin == 1 ||
+                          mapController.waypointsUser.contains(codwp)) &&
+                      !codigosTrilhasSalvas.contains(codt),
                 ),
               ]));
         } else {
@@ -820,18 +822,18 @@ bottomSheetWaypointOffline(int codwp) async {
                         });
                       },
                     )),
-                Positioned(
-                    bottom: 44,
-                    right: 10,
-                    child: IconButton(
-                      color: Colors.blue,
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Modular.to.pushNamed('/map/editorwaypoint',
-                            arguments: EditMode.UPDATE);
-                      },
-                    ))
+                // Positioned(
+                //     bottom: 44,
+                //     right: 10,
+                //     child: IconButton(
+                //       color: Colors.blue,
+                //       icon: Icon(Icons.edit),
+                //       onPressed: () {
+                //         Navigator.pop(context);
+                //         Modular.to.pushNamed('/map/editorwaypoint',
+                //             arguments: EditMode.UPDATE);
+                //       },
+                //     ))
               ]));
         } else {
           wid = ClipRRect(
@@ -928,7 +930,7 @@ bottomSheetTempTrail(
                       return;
                     },
                     'OK',
-                    () {
+                    () async {
                       if (trilha.codt >= 2000000) {
                         ////AQUI ESTA O PROBLEMA DE REMOVER WAYPOINT APENAS
                         mapController.createdTrails.remove(trilha);
@@ -938,7 +940,7 @@ bottomSheetTempTrail(
 
                         mapController.sheet.close();
                         mapController.sheet = null;
-                        state();
+                        await state();
                         Navigator.of(context).pop();
                       } else {
                         mapController.createdRoutes.remove(trilha);
@@ -947,7 +949,7 @@ bottomSheetTempTrail(
 
                         mapController.sheet.close();
                         mapController.sheet = null;
-                        state();
+                        await state();
                         Navigator.of(context).pop();
                       }
                     });
@@ -1030,14 +1032,14 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
               children: <Widget>[
                 modifiedText('Nome: ', followTrailWaypoints.nome),
                 Visibility(
-                  visible: followTrailWaypoints.categorias.length > 0,
-                  child: modifiedText('Categoria: ',
-                      (followTrailWaypoints.categorias.join(', '))),
-                ),
-                Visibility(
                   visible: followTrailWaypoints.descricao.isNotEmpty,
                   child: modifiedText(
                       'Descrição: ', followTrailWaypoints.descricao.toString()),
+                ),
+                Visibility(
+                  visible: followTrailWaypoints.categorias.length > 0,
+                  child: modifiedText('Categoria: ',
+                      (followTrailWaypoints.categorias.join(', '))),
                 ),
                 Visibility(
                   visible: followTrailWaypoints.imagens.length > 0,
@@ -1156,7 +1158,7 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     context,
                     'Remover',
                     Text(
-                        'Deseja remover o waypoint ${mapController.followTrailWaypoints[0].nome} ?'),
+                        'Deseja remover o waypoint ${followTrailWaypoints.nome}?'),
                     'VOLTAR',
                     () {
                       Navigator.pop(context);
@@ -1171,26 +1173,9 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     },
                     'OK',
                     () async {
-                      for (int i = 0;i<mapController.followTrailWaypoints.length;i++){                        
-                        if (mapController.followTrailWaypoints.elementAt(i).codwp == followTrailWaypoints.codwp){
-                            print("achei");
-                            mapController.followTrailWaypoints.removeAt(i);
-                        }
-                      }
-                      
-                       print("Apagando1");
-                       mapController.trilhaRepository
-                           .deleteRecordedWaypoint(followTrailWaypoints.codwp);
-                            print("Apagando2");
-                      mapController.trilhaRepository
-                          .deleteRecordedTrail(trilha.codt);
-                          
-                        mapController.sheet.close();
-                        mapController.sheet = null;
-                        state();
-                        Navigator.pop(context);                  
-                       Modular.to.popUntil((route) => route.isFirst);
-
+                      onClickRemoverTempWaypoint(
+                          context, trilha, waypoint, state);
+                      return;
                     });
 
                     
@@ -1322,4 +1307,27 @@ checkUpload(context, trilha) async {
     UsertrailsController usertrailsController = Modular.get();
     usertrailsController.uploadTrilha(context, trilha);
   }
+}
+
+onClickRemoverTempWaypoint(context, trilha, waypoint, state) async {
+  for (int i = 0; i < trilha.waypoints.length; i++) {
+    if (trilha.waypoints[i] == waypoint) {
+      trilha.waypoints.removeAt(i);
+    }
+  }
+
+  for (int i = 0; i < mapController.followTrailWaypoints.length; i++) {
+    if (mapController.followTrailWaypoints.elementAt(i).codwp ==
+        waypoint.codigo) {
+      mapController.followTrailWaypoints.removeAt(i);
+    }
+  }
+
+  mapController.trilhaRepository.deleteRecordedTrail(trilha.codt);
+  await mapController.trilhaRepository.saveRecordedTrail(trilha);
+
+  mapController.sheet.close();
+  mapController.sheet = null;
+  await state();
+  Navigator.of(context).pop();
 }

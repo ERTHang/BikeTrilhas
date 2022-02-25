@@ -1,14 +1,8 @@
 import 'dart:async';
-
-import 'package:background_location/background_location.dart' as bglocation;
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
-import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -58,21 +52,25 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                showSearch(
-                        context: context, delegate: CustomSearchDelegate(store))
-                    .then((value) {
-                  store.getPolylines();
-                  setState(() {
-                    store.tappedTrilha = value.codt;
-                    bottomSheetTrilha(value);
+          Visibility(
+            child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(
+                          context: context,
+                          delegate: CustomSearchDelegate(store))
+                      .then((value) {
+                    store.getPolylines();
+                    setState(() {
+                      store.tappedTrilha = value.codt;
+                      bottomSheetTrilha(value);
+                    });
+                    mapController.animateCamera(CameraUpdate.newLatLng(
+                        value.polylineCoordinates[0][0]));
                   });
-                  mapController.animateCamera(
-                      CameraUpdate.newLatLng(value.polylineCoordinates[0][0]));
-                });
-              }),
+                }),
+            visible: (widget.position != null),
+          ),
           Visibility(
             child: IconButton(
                 icon: Icon(Icons.delete_sweep, color: Colors.red),
@@ -101,8 +99,18 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           Observer(
             builder: (context) {
               if (widget.position == null) {
-                return Center(
-                  child: Text("error getting position"),
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Text("Erro ao obter localização"),
+                    ),
+                    Center(
+                      child: Text("Consulte as configurações"),
+                    ),
+                    SizedBox(height: 20),
+                    CircularProgressIndicator(),
+                  ],
                 );
               }
 
@@ -131,7 +139,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           ),
 
           //Botão para terminar a criação de trilhas
-          AnimatedPositioned(
+          /*AnimatedPositioned(
             bottom: 10,
             right: changeButton ? 145.0 : 10.0,
             duration: const Duration(seconds: 1),
@@ -170,10 +178,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               },
               child: Icon(Icons.stop),
             ),
-          ),
+          ),*/
 
           //Botão para pausar a criação de trilhas
-          AnimatedPositioned(
+          /*AnimatedPositioned(
             bottom: 10,
             right: changeButton ? 80.0 : 10.0,
             duration: const Duration(seconds: 1),
@@ -200,10 +208,10 @@ class _MapPageState extends ModularState<MapPage, MapController> {
               },
               child: (!paused) ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             ),
-          ),
+          ),*/
 
           // Botão para criação de trilhas
-          Positioned(
+          /*Positioned(
             bottom: 10,
             right: 10,
             child: ElevatedButton(
@@ -215,7 +223,6 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                     borderRadius: BorderRadius.circular(360))),
               ),
               onPressed: () {
-                
                 if (tracking) {
                   setState(() {
                     changeButton = !changeButton;
@@ -267,7 +274,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 size: 30,
               ),
             ),
-          ),
+          ),*/
 
           // Container para o texto de origem e destino da rota
           Visibility(
@@ -384,7 +391,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           ),
 
           //Botão para tirar uma foto para um waypoint
-          Visibility(
+          /*Visibility(
             child: Positioned(
               bottom: 70,
               right: 10,
@@ -407,7 +414,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 ),
               ),
             ),
-          )
+          )*/
         ],
       ),
     );
