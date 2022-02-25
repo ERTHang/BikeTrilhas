@@ -1,13 +1,8 @@
 import 'dart:async';
-
-import 'package:background_location/background_location.dart' as bglocation;
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
-import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
-import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -57,21 +52,25 @@ class _MapPageState extends ModularState<MapPage, MapController> {
         ),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                showSearch(
-                        context: context, delegate: CustomSearchDelegate(store))
-                    .then((value) {
-                  store.getPolylines();
-                  setState(() {
-                    store.tappedTrilha = value.codt;
-                    bottomSheetTrilha(value);
+          Visibility(
+            child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(
+                          context: context,
+                          delegate: CustomSearchDelegate(store))
+                      .then((value) {
+                    store.getPolylines();
+                    setState(() {
+                      store.tappedTrilha = value.codt;
+                      bottomSheetTrilha(value);
+                    });
+                    mapController.animateCamera(CameraUpdate.newLatLng(
+                        value.polylineCoordinates[0][0]));
                   });
-                  mapController.animateCamera(
-                      CameraUpdate.newLatLng(value.polylineCoordinates[0][0]));
-                });
-              }),
+                }),
+            visible: (widget.position != null),
+          ),
           Visibility(
             child: IconButton(
                 icon: Icon(Icons.delete_sweep, color: Colors.red),
@@ -100,8 +99,18 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           Observer(
             builder: (context) {
               if (widget.position == null) {
-                return Center(
-                  child: Text("error getting position"),
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Text("Erro ao obter localização"),
+                    ),
+                    Center(
+                      child: Text("Consulte as configurações"),
+                    ),
+                    SizedBox(height: 20),
+                    CircularProgressIndicator(),
+                  ],
                 );
               }
 

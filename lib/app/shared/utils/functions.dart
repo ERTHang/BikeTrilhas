@@ -81,7 +81,7 @@ locationPermissionPopUp(context) {
           'Bike Trilhas collects location data to enable map tracking even when the app is in background.'),
       'CANCEL',
       () {
-        Modular.to.pushReplacementNamed('/permission');
+        Modular.to.pushReplacementNamed('/map');
       },
       'OK',
       () async {

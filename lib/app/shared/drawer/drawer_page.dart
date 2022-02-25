@@ -184,6 +184,32 @@ class _DrawerPageState extends State<DrawerPage> {
           ),
           ListTile(
             leading: Icon(
+              Icons.track_changes_rounded,
+              color: Colors.black,
+              size: 40,
+            ),
+            title: Observer(builder: (_) {
+              Color cor;
+              cor = (draw.value == 10) ? Colors.white : Colors.black;
+              return Text(
+                'Configurações',
+                style: TextStyle(
+                    height: 1.8,
+                    fontSize: 18,
+                    color: cor,
+                    fontWeight: FontWeight.bold),
+              );
+            }),
+            dense: true,
+            onTap: () {
+              if (draw.value != 10) {
+                Navigator.pop(context);
+                Modular.to.pushNamed("/permission");
+              }
+            },
+          ),
+          ListTile(
+            leading: Icon(
               Icons.launch,
               color: Colors.black,
               size: 40,

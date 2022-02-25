@@ -1,4 +1,6 @@
+import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
+import 'package:biketrilhas_modular/main.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mobx/mobx.dart';
@@ -94,11 +96,9 @@ class _PermissionPageState extends State<PermissionPage> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image(
-                    image: AssetImage("images/google_logo.png"), height: 35.0),
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: Text('Permission options',
+                  child: Text('Opções de permissão',
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.black,
