@@ -55,22 +55,12 @@ class _PermissionPageState extends State<PermissionPage> {
           height: 30,
         ),
         Text(
-          'BikeTrilhas utiliza o serviço de GPS para acompanhar em tempo real a geolocalização do usuário com o objetivo de ajudar na localização das partes das trilhas, facilitando a compreensão.\nOs dados de geolocalização só serão armazenados caso o usuário crie um novo waypoint ou uma nova trilha, ciclovia e cicloturismo',
+          'BikeTrilhas utiliza o serviço de localização para acompanhar em tempo real a geolocalização do usuário com o objetivo de localiza-lo na trilha.',
+          //s, facilitando a compreensão.\nOs dados de geolocalização só serão armazenados caso o usuário crie um novo waypoint ou uma nova trilha, ciclovia e cicloturismo
           style: TextStyle(fontSize: 16),
         ),
         SizedBox(
           height: 30,
-        ),
-        Text(
-          'Ativar Permissão',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        SizedBox(
-          height: 30,
-        ),
-        Text(
-          'Para gerir as permissões, abra\nconfigurações do app -> permissões -> localização\nOu então, clique no botão abaixo',
-          style: TextStyle(fontSize: 16),
         ),
         SizedBox(
           height: 30,
@@ -98,7 +88,7 @@ class _PermissionPageState extends State<PermissionPage> {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: Text('Opções de permissão',
+                  child: Text('Ativar Permissão',
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.black,
