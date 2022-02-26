@@ -103,20 +103,53 @@ class _MapPageState extends ModularState<MapPage, MapController> {
           Observer(
             builder: (context) {
               if (widget.position == null) {
-                return Column(
+                return Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("images/sc2.png"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Text("Erro ao obter localização",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        SizedBox(height: 5),
+                        Center(
+                          child: Text(
+                            "Abra o menu -> configurações para conceder permissões",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          // habilitar a localização
+                        ),
+                        SizedBox(height: 20),
+                        CircularProgressIndicator(),
+                      ],
+                    ),
+                  ],
+                );
+                /*return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Center(
                       child: Text("Erro ao obter localização"),
                     ),
+                    SizedBox(height: 5),
                     Center(
                       child: Text(
-                          "Abra o menu->configurações para habilitar a localização"),
+                          "Abra o menu -> configurações para conceder permissões"),
+                      // habilitar a localização
                     ),
                     SizedBox(height: 20),
                     CircularProgressIndicator(),
                   ],
-                );
+                );*/
               }
 
               if (store.trilhas.error != null) {
