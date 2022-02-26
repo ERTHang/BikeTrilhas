@@ -1,6 +1,4 @@
-import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
-import 'package:biketrilhas_modular/main.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mobx/mobx.dart';
@@ -62,18 +60,14 @@ class _PermissionPageState extends State<PermissionPage> {
         SizedBox(
           height: 30,
         ),
-        SizedBox(
-          height: 30,
-        ),
         OutlineButton(
           splashColor: Colors.grey,
           onPressed: () async {
             LocationPermission _permissionGranted =
                 await Geolocator.requestPermission();
-            if (_permissionGranted != LocationPermission.denied) {
+            if (_permissionGranted != LocationPermission.denied &&
+                _permissionGranted != LocationPermission.deniedForever) {
               functionPermisionEnables(context);
-            } else {
-              return;
             }
           },
           shape:

@@ -3,7 +3,6 @@ import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 
 class SplashPage extends StatefulWidget {

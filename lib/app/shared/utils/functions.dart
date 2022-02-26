@@ -108,7 +108,10 @@ functionPermisionEnables(context) async {
 snackAlert(context, text) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(text),
+      content: Text(
+        text,
+        textAlign: TextAlign.center,
+      ),
     ),
   );
 }
@@ -128,6 +131,17 @@ mostrarProgressoLinear(context, text) {
       );
     },
   );
+}
+
+// "true" caso o usuario concedeu algum tipo de permissão e "false" caso não
+Future<bool> permissao() async {
+  LocationPermission permissao = await Geolocator.checkPermission();
+  if (permissao != LocationPermission.denied &&
+      permissao != LocationPermission.deniedForever) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 enum EditMode { ADD, UPDATE }
