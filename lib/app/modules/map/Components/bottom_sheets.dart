@@ -904,6 +904,7 @@ bottomSheetTempTrail(
                   color: Colors.blue,
                 ),
                 onPressed: () {
+                  print("upload");
                   checkUpload(context, trilha);
                 },
               ),
@@ -1010,8 +1011,12 @@ bottomSheetTempTrail(
 }
 
 //1009
-bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
-    WaypointModel waypoint, DadosWaypointModel followTrailWaypoints, state) {
+bottomSheetTempWaypoint(
+    TrilhaModel trilha,
+    GlobalKey<ScaffoldState> keyState,
+    WaypointModel waypoint,
+    DadosWaypointModel followTrailWaypoints,
+    Function state) {
   mapController.modelTrilha = null;
   mapController.modelWaypoint = null;
   mapController.sheet = keyState.currentState.showBottomSheet((context) {
@@ -1138,8 +1143,10 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                   Icons.upload,
                   color: Colors.blue,
                 ),
-                onPressed: () async {
-                  await checkUploadWp(context, waypoint, followTrailWaypoints);
+                onPressed: () {
+                  print('Teste');
+                  checkUploadWp(
+                      context, waypoint, followTrailWaypoints, trilha);
                 }),
           ),
           Positioned(
@@ -1160,6 +1167,17 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     'VOLTAR',
                     () {
                       Navigator.pop(context);
+                      for (int i = 0;
+                          i < mapController.followTrailWaypoints.length;
+                          i++) {
+                        print("ELEMENTOS");
+                        print(mapController.followTrailWaypoints
+                            .elementAt(i)
+                            .codwp);
+                      }
+                      print("ELEMENTO Q EU QRO");
+                      print(followTrailWaypoints.codwp);
+
                       return;
                     },
                     'OK',
@@ -1275,13 +1293,17 @@ Future<Map<String, dynamic>> wayPointToJson(DadosWaypointModel waypoint) async {
   };
 }
 
-checkUploadWp(context, waypoint, followtrailwaypoint) async {
+checkUploadWp(context, waypoint, followtrailwaypoint, trilha) async {
   if (!await isOnline()) {
     alert(context, "Dispositivo Offline", 'Waypoint');
   } else {
+    print("checking codes trilha/wp");
+    print("Realizar upload");
+    print("excluir a trilha:");
+
     UsertrailsController usertrailsController = Modular.get();
-    await usertrailsController.uploadWaypoint(
-        context, waypoint, followtrailwaypoint);
+    usertrailsController.uploadWaypoint(
+        context, waypoint, followtrailwaypoint, trilha);
   }
 }
 

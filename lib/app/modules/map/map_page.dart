@@ -110,7 +110,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                       child: Text("Erro ao obter localização"),
                     ),
                     Center(
-                      child: Text("Consulte as configurações"),
+                      child: Text(
+                          "Abra o menu->configurações para habilitar a localização"),
                     ),
                     SizedBox(height: 20),
                     CircularProgressIndicator(),

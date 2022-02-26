@@ -323,13 +323,17 @@ class TrilhaRepository {
       }
     }
     sharedPrefs.remove('recorded waypoint $codigo');
+    print("deletando wp codigo");
+    print(codigo);
     for (var i = 0; i < recordedWaypoints.codes.length; i++) {
       if (recordedWaypoints.codes[i] == codigo) {
+        print("deletando wp codigo");
+        print(codigo);
         recordedWaypoints.codes.removeAt(i);
       }
     }
     sharedPrefs.remove('recordedWaypoints');
-    sharedPrefs.save('recordedWaypoints', recordedTrails);
+    sharedPrefs.save('recordedWaypoints', recordedWaypoints);
   }
 
 

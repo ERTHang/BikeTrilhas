@@ -184,7 +184,7 @@ class _DrawerPageState extends State<DrawerPage> {
           ),
           ListTile(
             leading: Icon(
-              Icons.track_changes_rounded,
+              Icons.app_settings_alt_rounded,
               color: Colors.black,
               size: 40,
             ),

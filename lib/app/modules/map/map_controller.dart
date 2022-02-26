@@ -24,6 +24,7 @@ part 'map_controller.g.dart';
 class MapController = _MapControllerBase with _$MapController;
 
 abstract class _MapControllerBase with Store {
+  
   final FilterRepository filterRepository;
   final TrilhaRepository trilhaRepository;
   final InfoRepository infoRepository;
@@ -54,6 +55,7 @@ abstract class _MapControllerBase with Store {
   PersistentBottomSheetController sheet;
   PersistentBottomSheetController nameSheet;
   TrilhaModel newTrail;
+  TrilhaModel trailAux;
   TrilhaModel followTrail;
   WaypointModel newWaypoint;
   List<DadosWaypointModel> followTrailWaypoints = [];
