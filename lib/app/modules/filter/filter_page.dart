@@ -432,12 +432,19 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         });
       },
       body: Column(
-        children: <Widget>[
-          tile(1, 0, 'Ciclovia'),
-          tile(1, 1, 'Ciclorrota'),
-          tile(1, 2, 'Compartilhada'),
-          tile(1, 3, 'Ciclofaixa'),
-        ],
+        children: store.value == 2
+            ? <Widget>[
+                tile(1, 0, 'Ciclovia'),
+                tile(1, 1, 'Ciclorrota'),
+                tile(1, 2, 'Compartilhada'),
+                tile(1, 3, 'Ciclofaixa'),
+              ]
+            : <Widget>[
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  child: Center(child: Text(" Não há Subtipos para xxxx")),
+                ),
+              ],
       ),
       isExpanded: _data[1].isExpanded,
     );
