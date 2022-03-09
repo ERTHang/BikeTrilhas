@@ -425,6 +425,20 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
   }
 
   ExpansionPanel subtipo() {
+    List<Widget> listaSubtipo = store.value == 2
+        ? <Widget>[
+            tile(1, 0, 'Ciclovia'),
+            tile(1, 1, 'Ciclorrota'),
+            tile(1, 2, 'Compartilhada'),
+            tile(1, 3, 'Ciclofaixa'),
+          ]
+        : <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height * 0.08,
+              child: Center(
+                  child: Text(" Não há Subtipos para ${_data[0].value}")),
+            ),
+          ];
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[1], onTap: (Item item) {
@@ -432,19 +446,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         });
       },
       body: Column(
-        children: store.value == 2
-            ? <Widget>[
-                tile(1, 0, 'Ciclovia'),
-                tile(1, 1, 'Ciclorrota'),
-                tile(1, 2, 'Compartilhada'),
-                tile(1, 3, 'Ciclofaixa'),
-              ]
-            : <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  child: Center(child: Text(" Não há Subtipos para xxxx")),
-                ),
-              ],
+        children: listaSubtipo,
       ),
       isExpanded: _data[1].isExpanded,
     );
