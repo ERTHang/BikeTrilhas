@@ -25,6 +25,8 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
             Image.asset('images/bike_logo_actionbar.png'),
             SizedBox(height: 100),
             _signInButton(context),
+            SizedBox(height: 20),
+            _signInButtonEmail(context),
           ],
         ),
       ),
@@ -50,6 +52,35 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: Text('Sign in with Google',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                  )),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget _signInButtonEmail(context) {
+    return OutlineButton(
+      splashColor: Colors.grey,
+      onPressed: () {
+        store.loginWithGoogle(context);
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      highlightElevation: 0,
+      borderSide: BorderSide(color: Colors.white),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image(image: AssetImage("images/email.png"), height: 35.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text('Sign in with Email',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white,
