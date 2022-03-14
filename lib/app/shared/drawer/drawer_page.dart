@@ -16,7 +16,6 @@ class DrawerPage extends StatefulWidget {
 
 class _DrawerPageState extends State<DrawerPage> {
   final auth = Modular.get<AuthController>();
-
   final draw = Modular.get<DrawerClassController>();
 
   @override
@@ -94,11 +93,12 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () async {
               if (draw.value != 1) {
-                if (await isOnline()) {
+                if (await isOnline() && await permissao()) {
                   Navigator.pop(context);
                   Modular.to.pushNamed('/filter');
                 } else {
-                  snackAlert(context, 'Filtro indisponível offline');
+                  Navigator.pop(context);
+                  snackAlert(context, 'Filtro indisponível');
                 }
               }
             },
@@ -122,10 +122,15 @@ class _DrawerPageState extends State<DrawerPage> {
               );
             }),
             dense: true,
-            onTap: () {
-              if (draw.value != 2) {
+            onTap: () async {
+              if (await permissao()) {
+                if (draw.value != 2) {
+                  Navigator.pop(context);
+                  Modular.to.pushNamed("/userroute");
+                }
+              } else {
                 Navigator.pop(context);
-                Modular.to.pushNamed("/userroute");
+                snackAlert(context, 'Rotas indisponíveis');
               }
             },
           ),
@@ -148,10 +153,41 @@ class _DrawerPageState extends State<DrawerPage> {
               );
             }),
             dense: true,
+            onTap: () async {
+              if (await permissao()) {
+                if (draw.value != 10) {
+                  Navigator.pop(context);
+                  Modular.to.pushNamed("/usertrail");
+                }
+              } else {
+                Navigator.pop(context);
+                snackAlert(context, 'Trilhas indisponíveis');
+              }
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.app_settings_alt_rounded,
+              color: Colors.black,
+              size: 40,
+            ),
+            title: Observer(builder: (_) {
+              Color cor;
+              cor = (draw.value == 10) ? Colors.white : Colors.black;
+              return Text(
+                'Configurações',
+                style: TextStyle(
+                    height: 1.8,
+                    fontSize: 18,
+                    color: cor,
+                    fontWeight: FontWeight.bold),
+              );
+            }),
+            dense: true,
             onTap: () {
               if (draw.value != 10) {
                 Navigator.pop(context);
-                Modular.to.pushNamed("/usertrail");
+                Modular.to.pushNamed("/permission");
               }
             },
           ),
@@ -179,32 +215,6 @@ class _DrawerPageState extends State<DrawerPage> {
                 draw.value = 3;
                 Navigator.pop(context);
                 Modular.to.pushNamed('/info');
-              }
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.track_changes_rounded,
-              color: Colors.black,
-              size: 40,
-            ),
-            title: Observer(builder: (_) {
-              Color cor;
-              cor = (draw.value == 10) ? Colors.white : Colors.black;
-              return Text(
-                'Configurações',
-                style: TextStyle(
-                    height: 1.8,
-                    fontSize: 18,
-                    color: cor,
-                    fontWeight: FontWeight.bold),
-              );
-            }),
-            dense: true,
-            onTap: () {
-              if (draw.value != 10) {
-                Navigator.pop(context);
-                Modular.to.pushNamed("/permission");
               }
             },
           ),

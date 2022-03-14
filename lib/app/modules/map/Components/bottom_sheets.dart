@@ -1011,8 +1011,12 @@ bottomSheetTempTrail(
 }
 
 //1009
-bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
-    WaypointModel waypoint, DadosWaypointModel followTrailWaypoints, Function state) {
+bottomSheetTempWaypoint(
+    TrilhaModel trilha,
+    GlobalKey<ScaffoldState> keyState,
+    WaypointModel waypoint,
+    DadosWaypointModel followTrailWaypoints,
+    Function state) {
   mapController.modelTrilha = null;
   mapController.modelWaypoint = null;
   mapController.sheet = keyState.currentState.showBottomSheet((context) {
@@ -1141,7 +1145,8 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                 ),
                 onPressed: () {
                   print('Teste');
-                  checkUploadWp(context, waypoint, followTrailWaypoints, trilha);
+                  checkUploadWp(
+                      context, waypoint, followTrailWaypoints, trilha);
                 }),
           ),
           Positioned(
@@ -1162,12 +1167,16 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                     'VOLTAR',
                     () {
                       Navigator.pop(context);
-                      for (int i = 0;i<mapController.followTrailWaypoints.length;i++){
+                      for (int i = 0;
+                          i < mapController.followTrailWaypoints.length;
+                          i++) {
                         print("ELEMENTOS");
-                        print(mapController.followTrailWaypoints.elementAt(i).codwp);
-                                            }
-                        print("ELEMENTO Q EU QRO");
-                        print(followTrailWaypoints.codwp);
+                        print(mapController.followTrailWaypoints
+                            .elementAt(i)
+                            .codwp);
+                      }
+                      print("ELEMENTO Q EU QRO");
+                      print(followTrailWaypoints.codwp);
 
                       return;
                     },
@@ -1177,8 +1186,6 @@ bottomSheetTempWaypoint(TrilhaModel trilha, GlobalKey<ScaffoldState> keyState,
                           context, trilha, waypoint, state);
                       return;
                     });
-
-                    
               },
             ),
           ),
@@ -1293,9 +1300,10 @@ checkUploadWp(context, waypoint, followtrailwaypoint, trilha) async {
     print("checking codes trilha/wp");
     print("Realizar upload");
     print("excluir a trilha:");
-    
+
     UsertrailsController usertrailsController = Modular.get();
-    usertrailsController.uploadWaypoint(context, waypoint, followtrailwaypoint, trilha);
+    usertrailsController.uploadWaypoint(
+        context, waypoint, followtrailwaypoint, trilha);
   }
 }
 
@@ -1303,7 +1311,6 @@ checkUpload(context, trilha) async {
   if (!await isOnline()) {
     alert(context, "Dispositivo Offline", 'Trilha');
   } else {
-    
     UsertrailsController usertrailsController = Modular.get();
     usertrailsController.uploadTrilha(context, trilha);
   }
