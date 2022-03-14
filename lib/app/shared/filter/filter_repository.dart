@@ -5,9 +5,14 @@ class FilterRepository {
 
   FilterRepository(this.dio);
 
-  Future<List<int>> getFiltered(List<int> tipo, List<int> dificuldade,
-      List<int> regiao, List<int> bairro, List<int> superficie, List<int> categoria, List<int> subtipo) async {
-
+  Future<List<int>> getFiltered(
+      List<int> tipo,
+      List<int> dificuldade,
+      List<int> regiao,
+      List<int> bairro,
+      List<int> superficie,
+      List<int> categoria,
+      List<int> subtipo) async {
     tipo = check(tipo);
     dificuldade = check(dificuldade);
     bairro = check(bairro);
@@ -18,7 +23,6 @@ class FilterRepository {
 
     List<int> result = [];
 
-
     var response = await dio.put('/server/trilha', data: {
       "tipo": tipo,
       "dificuldade": dificuldade,
@@ -28,7 +32,6 @@ class FilterRepository {
       "categoria": categoria,
       "subtipo": subtipo
     });
-
 
     for (var item in (response.data as List)) {
       result.add(item['cod']);
@@ -41,7 +44,7 @@ class FilterRepository {
     return result;
   }
 
-  List<int> check(List<int> value){
+  List<int> check(List<int> value) {
     if (value.isEmpty || value[0] == 0) {
       value = null;
     }
