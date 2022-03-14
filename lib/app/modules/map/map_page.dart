@@ -5,6 +5,7 @@ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dar
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_page.dart';
+import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
@@ -42,10 +43,11 @@ class _MapPageState extends ModularState<MapPage, MapController> {
   List<int> temp = [];
   int routeState = 0;
   int destinos = 0;
-
+  
   final AuthController auth = Modular.get();
 
   Widget build(BuildContext context) {
+    
     store.state = _func;
     store.position = widget.position;
     return Scaffold(
@@ -195,6 +197,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                       distanceFilter: 6);
                 }
                 setState(() {
+                 
                   paused = !paused;
                 });
               },
@@ -245,7 +248,8 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                             latitude: location.latitude));
                         setState(() {
                           store.followTrail.polylineCoordinates.last.add(
-                              LatLng(location.latitude, location.longitude));
+                          LatLng(location.latitude, location.longitude));
+
                         });
                       });
                     },

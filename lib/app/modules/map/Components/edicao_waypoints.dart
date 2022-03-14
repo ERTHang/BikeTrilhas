@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:biketrilhas_modular/app/app_controller.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
+import 'package:biketrilhas_modular/app/modules/map/map_page.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
@@ -148,6 +149,7 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
   }
 //s
   saida(DadosWaypointModel m) async {
+    
     var pos = await Geolocator.getCurrentPosition();
     //EDITAR
     if (widget.editMode == EditMode.UPDATE) {
@@ -158,9 +160,11 @@ class _EdicaoWaypointState extends State<EdicaoWaypoint> {
     } else { 
       //Se o waypoint esta sob gravação
       if (mapController.followTrail != null) {
+        m.codt = mapController.nextCodt();
         mapController.followTrailWaypoints.add(m);
         mapController.newWaypoint.codigo = m.codwp;
         mapController.followTrail.waypoints.add(mapController.newWaypoint);
+        mapController.trilhaRepository.saveRecordedWaypoint(m);  
         mapController.newWaypoint = null;
         Modular.to.popUntil((route) => route.isFirst);
         //Tirando Foto sem Gravar

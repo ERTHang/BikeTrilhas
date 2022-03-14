@@ -30,6 +30,7 @@ abstract class _MapControllerBase with Store {
   final InfoRepository infoRepository;
   DadosTrilhaModel modelTrilha;
   DadosWaypointModel modelWaypoint;
+  WaypointModel waypointAux;
   @observable
   ObservableFuture<bool> dataReady;
   @observable
@@ -58,6 +59,7 @@ abstract class _MapControllerBase with Store {
   TrilhaModel trailAux;
   TrilhaModel followTrail;
   WaypointModel newWaypoint;
+  List<WaypointModel> auxWaypointModels = [];
   List<DadosWaypointModel> followTrailWaypoints = [];
   bool update = false;
   int distanceValue = 1000;
@@ -199,6 +201,24 @@ abstract class _MapControllerBase with Store {
     }
   }
 
+  //Adicionar waypoint cuja foto foi tirada
+
+  addWaypoint(){
+      for (WaypointModel waypoint in mapController.auxWaypointModels) {
+        Marker mar = Marker(
+          zIndex: (tappedWaypoint == waypoint.codigo) ? 2 : 1,
+          markerId: MarkerId(waypoint.codigo.toString()),
+          position: waypoint.posicao,
+          icon: (waypoint.codigo == tappedWaypoint)
+              ? markerIconTapped
+              : markerIcon,
+          anchor: Offset(0.5, 0.5),
+        );
+        markers.add(mar);
+        state();
+      }
+  }
+
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
@@ -281,7 +301,7 @@ abstract class _MapControllerBase with Store {
     });
     return next;
   }
-
+  //BEM AQUI 
   Future<void> nomeTrilha(context) async {
     TextEditingController _nameController = TextEditingController();
     await showDialog(
@@ -296,6 +316,8 @@ abstract class _MapControllerBase with Store {
                   child: Text('Ok'),
                   onPressed: () {
                     createdTrails.add(followTrail);
+                    print("NUMERO DE WPS");
+                    print(followTrail.waypoints.length);
                     trilhaRepository
                         .saveRecordedTrail(followTrail)
                         .then((value) {

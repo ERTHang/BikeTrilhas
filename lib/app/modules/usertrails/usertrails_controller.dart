@@ -99,8 +99,10 @@ abstract class _UsertrailsControllerBase with Store {
                 }
                 print("-------------TAPPED WAYPOINT----------------");
                  print(mapController.tappedWaypoint);
+                
                 for (var element in mapController.followTrailWaypoints) {
-                  print(element.codwp);
+                  print(element.nome);
+                  print(element.codt);
                 }
                 print("-------------TAPPED WAYPOINT----------------");
                 bottomSheetTempWaypoint(
