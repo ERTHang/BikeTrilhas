@@ -37,11 +37,13 @@ abstract class _FilterControllerBase with Store {
       }
     }
 
+    /* 
     for (var i = 0; i < _data[3].booleans.length; i++) {
       if (_data[3].booleans[i]) {
         bairro.add(i + 1);
       }
     }
+    */
 
     for (var i = 0; i < _data[4].booleans.length; i++) {
       if (_data[4].booleans[i]) {
