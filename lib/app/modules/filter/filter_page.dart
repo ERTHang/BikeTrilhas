@@ -50,7 +50,8 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
           tipo(),
           subtipo(),
           regiao(),
-          bairro(),
+          // Sem necessidade uso de bairro no momento
+          // bairro(),
           superficie(),
           categoria(),
           dificuldade(),
@@ -303,6 +304,9 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
     );
   }
 
+  // NOTE - Como app esta operando em mais cidades, filtro por bairro so
+  //        tera utilizade quando tiver filtro por cidades
+  /*
   ExpansionPanel bairro() {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
@@ -402,6 +406,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
       isExpanded: _data[3].isExpanded,
     );
   }
+  */
 
   ExpansionPanel superficie() {
     return ExpansionPanel(
