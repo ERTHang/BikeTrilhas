@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:biketrilhas_modular/app/modules/filter/filter_page.dart';
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:background_location/background_location.dart' as bglocation;
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
@@ -14,6 +15,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_controller.dart';
+import 'package:biketrilhas_modular/app/shared/utils/session.dart';
 
 class MapPage extends StatefulWidget {
   final String title;
@@ -80,6 +82,7 @@ class _MapPageState extends ModularState<MapPage, MapController> {
                 icon: Icon(Icons.delete_sweep, color: Colors.red),
                 onPressed: () {
                   setState(() {
+                    filterDisposed = true;
                     store.filterClear = false;
                     store.trilhasFiltradas = store.typeFilter;
                     store.getPolylines();

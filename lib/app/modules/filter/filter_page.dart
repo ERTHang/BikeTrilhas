@@ -2,6 +2,7 @@ import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'filter_controller.dart';
+import 'package:biketrilhas_modular/app/shared/utils/session.dart';
 
 class FilterPage extends StatefulWidget {
   final String title;
@@ -11,9 +12,20 @@ class FilterPage extends StatefulWidget {
   _FilterPageState createState() => _FilterPageState();
 }
 
-class _FilterPageState extends ModularState<FilterPage, FilterController> {
-  List<Item> _data = generateItems();
+_colapseAll(List<Item> data) {
+  for (var i = 0; i < data.length; i++) {
+    data[i].isExpanded = false;
+  }
+}
 
+_generateNewData() {
+  filterDisposed = false;
+  filterData = generateItems();
+  return filterData;
+}
+
+class _FilterPageState extends ModularState<FilterPage, FilterController> {
+  List<Item> _data = filterDisposed ? _generateNewData() : filterData;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +40,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               mapController.tappedTrilha = null;
-
+              _colapseAll(_data);
               store.filtrar(_data, store, context);
             },
             label: Text('Filtrar')),
