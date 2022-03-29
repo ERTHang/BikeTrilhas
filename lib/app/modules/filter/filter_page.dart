@@ -1,7 +1,9 @@
 import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'filter_controller.dart';
+import 'package:biketrilhas_modular/app/shared/utils/session.dart';
 
 class FilterPage extends StatefulWidget {
   final String title;
@@ -13,7 +15,6 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends ModularState<FilterPage, FilterController> {
   List<Item> _data = generateItems();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +29,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               mapController.tappedTrilha = null;
-
+              _colapseAll(_data);
               store.filtrar(_data, store, context);
             },
             label: Text('Filtrar')),
@@ -87,6 +88,9 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
   }
 
   ExpansionPanel tipo() {
+    Map<int, String> tipos = {2: 'Ciclovia', 1: 'Trilha', 3: 'Cicloturismo'};
+    List<int> keys = tipos.keys.toList();
+
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[0], onTap: (Item item) {
@@ -95,89 +99,47 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         });
       },
       body: Column(
-        children: <Widget>[
-          ListTile(
+        children: List.generate(tipos.length, (int index) {
+          String title = tipos[keys[index]];
+          return ListTile(
             leading: Radio(
               groupValue: _data[0].value,
-              value: 'Ciclovia',
+              value: title,
               onChanged: (value) {
                 setState(() {
-                  store.value = 2;
-                  _data[0].modified = 2;
+                  store.value = keys[index];
+                  _data[0].modified = keys[index];
                   _data[0].value = value;
                   _data[0].modifiedValue.clear();
                   _data[0].modifiedValue.add(value);
                 });
               },
             ),
-            title: Text('Ciclovia'),
+            title: Text(title),
             onTap: () {
               setState(() {
-                store.value = 2;
-                _data[0].modified = 2;
-                _data[0].value = 'Ciclovia';
+                store.value = keys[index];
+                _data[0].modified = keys[index];
+                _data[0].value = title;
                 _data[0].modifiedValue.clear();
                 _data[0].modifiedValue.add(_data[0].value);
               });
             },
-          ),
-          ListTile(
-            leading: Radio(
-              groupValue: _data[0].value,
-              value: 'Trilha',
-              onChanged: (value) {
-                setState(() {
-                  store.value = 1;
-                  _data[0].modified = 1;
-                  _data[0].value = value;
-                  _data[0].modifiedValue.clear();
-                  _data[0].modifiedValue.add(value);
-                });
-              },
-            ),
-            title: Text('Trilha'),
-            onTap: () {
-              setState(() {
-                store.value = 1;
-                _data[0].modified = 1;
-                _data[0].value = 'Trilha';
-                _data[0].modifiedValue.clear();
-                _data[0].modifiedValue.add(_data[0].value);
-              });
-            },
-          ),
-          ListTile(
-            leading: Radio(
-              groupValue: _data[0].value,
-              value: 'Cicloturismo',
-              onChanged: (value) {
-                setState(() {
-                  store.value = 3;
-                  _data[0].modified = 3;
-                  _data[0].value = value;
-                  _data[0].modifiedValue.clear();
-                  _data[0].modifiedValue.add(value);
-                });
-              },
-            ),
-            title: Text('Cicloturismo'),
-            onTap: () {
-              setState(() {
-                store.value = 3;
-                _data[0].modified = 3;
-                _data[0].value = 'Cicloturismo';
-                _data[0].modifiedValue.clear();
-                _data[0].modifiedValue.add(_data[0].value);
-              });
-            },
-          ),
-        ],
+          );
+        }),
       ),
       isExpanded: _data[0].isExpanded,
     );
   }
 
   ExpansionPanel dificuldade() {
+    Map<int, String> dificuldades = {
+      1: 'Fácil',
+      2: 'Médio',
+      3: 'Difícil',
+      4: 'Muito difícil',
+    };
+
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[6], onTap: (Item item) {
@@ -185,100 +147,32 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
         });
       },
       body: Column(
-        children: <Widget>[
-          ListTile(
+        children: List.generate(dificuldades.length, (index) {
+          int count = index + 1;
+          return ListTile(
             leading: Radio(
               groupValue: _data[6].value,
-              value: 'Fácil',
+              value: dificuldades[count],
               onChanged: (value) {
                 setState(() {
-                  _data[6].modified = 1;
+                  _data[6].modified = count;
                   _data[6].value = value;
                   _data[6].modifiedValue.clear();
                   _data[6].modifiedValue.add(value);
                 });
               },
             ),
-            title: Text('Fácil'),
+            title: Text(dificuldades[count]),
             onTap: () {
               setState(() {
-                _data[6].modified = 1;
-                _data[6].value = 'Fácil';
+                _data[6].modified = count;
+                _data[6].value = dificuldades[count];
                 _data[6].modifiedValue.clear();
                 _data[6].modifiedValue.add(_data[6].value);
               });
             },
-          ),
-          ListTile(
-            leading: Radio(
-              groupValue: _data[6].value,
-              value: 'Médio',
-              onChanged: (value) {
-                setState(() {
-                  _data[6].modified = 2;
-                  _data[6].value = value;
-                  _data[6].modifiedValue.clear();
-                  _data[6].modifiedValue.add(_data[6].value);
-                });
-              },
-            ),
-            title: Text('Médio'),
-            onTap: () {
-              setState(() {
-                _data[6].modified = 2;
-                _data[6].value = 'Médio';
-                _data[6].modifiedValue.clear();
-                _data[6].modifiedValue.add(_data[6].value);
-              });
-            },
-          ),
-          ListTile(
-            leading: Radio(
-              groupValue: _data[6].value,
-              value: 'Difícil',
-              onChanged: (value) {
-                setState(() {
-                  _data[6].modified = 3;
-                  _data[6].value = value;
-                  _data[6].modifiedValue.clear();
-                  _data[6].modifiedValue.add(_data[6].value);
-                });
-              },
-            ),
-            title: Text('Difícil'),
-            onTap: () {
-              setState(() {
-                _data[6].modified = 3;
-                _data[6].value = 'Difícil';
-                _data[6].modifiedValue.clear();
-                _data[6].modifiedValue.add(_data[6].value);
-              });
-            },
-          ),
-          ListTile(
-            leading: Radio(
-              groupValue: _data[6].value,
-              value: 'Muito Difícil',
-              onChanged: (value) {
-                setState(() {
-                  _data[6].modified = 4;
-                  _data[6].value = value;
-                  _data[6].modifiedValue.clear();
-                  _data[6].modifiedValue.add(_data[6].value);
-                });
-              },
-            ),
-            title: Text('Muito Difícil'),
-            onTap: () {
-              setState(() {
-                _data[6].modified = 4;
-                _data[6].value = 'Muito Difícil';
-                _data[6].modifiedValue.clear();
-                _data[6].modifiedValue.add(_data[6].value);
-              });
-            },
-          ),
-        ],
+          );
+        }),
       ),
       isExpanded: _data[6].isExpanded,
     );
@@ -288,155 +182,55 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[2], onTap: (Item item) {
-          item.booleans = [false, false, false, false, false];
+          item.booleans = List.filled(5, false);
         });
       },
       body: Column(
-        children: <Widget>[
-          tile(2, 0, 'Centro'),
-          tile(2, 1, 'Norte'),
-          tile(2, 2, 'Sul'),
-          tile(2, 3, 'Leste'),
-          tile(2, 4, 'Oeste'),
-        ],
-      ),
+          children: List.generate(REGIOES.length, (index) {
+        return tile(2, index, REGIOES[index]);
+      })),
       isExpanded: _data[2].isExpanded,
     );
   }
 
   // NOTE - Como app esta operando em mais cidades, filtro por bairro so
   //        tera utilizade quando tiver filtro por cidades
-  /*
-  ExpansionPanel bairro() {
-    return ExpansionPanel(
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return header(_data[3], onTap: (Item item) {
-          item.booleans = [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-          ];
-        });
-      },
-      body: Column(
-        children: <Widget>[
-          tile(3, 0, 'Adhemar Garcia'),
-          tile(3, 1, 'America'),
-          tile(3, 2, 'Anita Garibaldi'),
-          tile(3, 3, 'Atiradores'),
-          tile(3, 4, 'Aventureiro'),
-          tile(3, 5, 'Boa Vista'),
-          tile(3, 6, 'Boehmerwald'),
-          tile(3, 7, 'Bom Retiro'),
-          tile(3, 8, 'Bucarein'),
-          tile(3, 9, 'Centro'),
-          tile(3, 10, 'Comasa'),
-          tile(3, 11, 'Costa e Silva'),
-          tile(3, 12, 'Dona Francisca'),
-          tile(3, 13, 'Espinheiros'),
-          tile(3, 14, 'Fatima'),
-          tile(3, 15, 'Floresta'),
-          tile(3, 16, 'Gloria'),
-          tile(3, 17, 'Guanabara'),
-          tile(3, 18, 'Iririu'),
-          tile(3, 19, 'Itaum'),
-          tile(3, 20, 'Itinga'),
-          tile(3, 21, 'Jardim Iririu'),
-          tile(3, 22, 'Jardim Paraiso'),
-          tile(3, 23, 'Jardim Sofia'),
-          tile(3, 24, 'Jarivatuba'),
-          tile(3, 25, 'Joao Costa'),
-          tile(3, 26, 'Morro do Meio'),
-          tile(3, 27, 'Nova Brasilia'),
-          tile(3, 28, 'Paranaguamirim'),
-          tile(3, 29, 'Parque Guarani'),
-          tile(3, 30, 'Petropolis'),
-          tile(3, 31, 'Pirabeiraba'),
-          tile(3, 32, 'Rio Bonito'),
-          tile(3, 33, 'Saguaçu'),
-          tile(3, 34, 'Santa Catarina'),
-          tile(3, 35, 'Santo Antonio'),
-          tile(3, 36, 'Sao Marcos'),
-          tile(3, 37, 'Ulysses Guimaraes'),
-          tile(3, 38, 'Vila Cubatao'),
-          tile(3, 39, 'Vila Nova'),
-          tile(3, 40, 'Zona Industrial Norte'),
-          tile(3, 41, 'Zona Industrial Tupy'),
-        ],
-      ),
-      isExpanded: _data[3].isExpanded,
-    );
-  }
-  */
+  // ExpansionPanel bairro() {
+  //   return ExpansionPanel(
+  //     headerBuilder: (BuildContext context, bool isExpanded) {
+  //       return header(_data[3], onTap: (Item item) {
+  //         item.booleans = List.generate(42, (_) => false);
+  //       });
+  //     },
+  //     body: Column(
+  //       children: List.generate(BAIRROS.length, (index) {
+  //         return tile(3, index, BAIRROS[index]);
+  //       }),
+  //     ),
+  //     isExpanded: _data[3].isExpanded,
+  //   );
+  // }
 
   ExpansionPanel superficie() {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[4], onTap: (Item item) {
-          item.booleans = [false, false, false, false, false, false];
+          item.booleans = List.filled(6, false);
         });
       },
       body: Column(
-        children: <Widget>[
-          tile(4, 0, 'Asfalto'),
-          tile(4, 1, 'Cimento'),
-          tile(4, 2, 'Chao Batido'),
-          tile(4, 3, 'Areia'),
-          tile(4, 4, 'Cascalho'),
-          tile(4, 5, 'Single Track'),
-        ],
-      ),
+          children: List.generate(SUPERFICIES.length, (index) {
+        return tile(4, index, SUPERFICIES[index]);
+      })),
       isExpanded: _data[4].isExpanded,
     );
   }
 
   ExpansionPanel subtipo() {
     List<Widget> listaSubtipo = store.value == 2
-        ? <Widget>[
-            tile(1, 0, 'Ciclovia'),
-            tile(1, 1, 'Ciclorrota'),
-            tile(1, 2, 'Compartilhada'),
-            tile(1, 3, 'Ciclofaixa'),
-          ]
+        ? List.generate(SUBTIPOS.length, (index) {
+            return tile(1, index, SUBTIPOS[index]);
+          })
         : <Widget>[
             Container(
               height: MediaQuery.of(context).size.height * 0.08,
@@ -447,7 +241,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[1], onTap: (Item item) {
-          item.booleans = [false, false, false, false];
+          item.booleans = List.filled(4, false);
         });
       },
       body: Column(
@@ -461,29 +255,13 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[5], onTap: (Item item) {
-          item.booleans = [false, false, false, false, false, false];
+          item.booleans = List.filled(6, false);
         });
       },
       body: Column(
-        children: <Widget>[
-          tile(5, 0, 'Ausencia de Sinalizacao'),
-          tile(5, 1, 'Bicicletario'),
-          tile(5, 2, 'Buraco ou Falha'),
-          tile(5, 3, 'Continuacao/Retomada'),
-          tile(5, 4, 'Curva'),
-          tile(5, 5, 'Obstaculo na pista'),
-          tile(5, 6, 'Parada/Interrupcao'),
-          tile(5, 7, 'Sujeira na pista'),
-          tile(5, 8, 'Inicio Ciclovia/Trilha'),
-          tile(5, 9, 'Fim Ciclovia/Trilha'),
-          tile(5, 10, 'Faixa de Seguranca'),
-          tile(5, 11, 'Ponto de Onibus'),
-          tile(5, 12, 'Ponte'),
-          tile(5, 13, 'Mudanca de Lado'),
-          tile(5, 14, 'Sinalização'),
-          tile(5, 15, 'Subida Íngreme'),
-          tile(5, 16, 'Descida Íngreme'),
-        ],
+        children: List.generate(CATEGORIAS.length, (index) {
+          return tile(5, index, CATEGORIAS[index]);
+        }),
       ),
       isExpanded: _data[5].isExpanded,
     );
@@ -546,104 +324,51 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
   }
 }
 
+void _colapseAll(List<Item> data) {
+  for (var i = 0; i < data.length; i++) {
+    data[i].isExpanded = false;
+  }
+}
+
 List<Item> generateItems() {
   FilterController controller = Modular.get<FilterController>();
-  return <Item>[
-    Item(
-        expandedValue: 'Tipo',
-        value: (controller.value == 1)
-            ? 'Trilha'
-            : (controller.value == 2)
-                ? 'Ciclovia'
-                : (controller.value == 3)
-                    ? 'Cicloturismo'
-                    : '',
-        modified: controller.value,
-        modifiedValue: [
-          (controller.value == 1)
-              ? 'Trilha'
-              : (controller.value == 2)
-                  ? 'Ciclovia'
-                  : 'Cicloturismo'
-        ]),
-    Item(
-        expandedValue: 'Subtipos',
-        modifiedValue: [],
-        booleans: [false, false, false, false]),
-    Item(
-        expandedValue: 'Regiões',
-        modifiedValue: [],
-        booleans: [false, false, false, false, false]),
-    Item(expandedValue: 'Bairros', modifiedValue: [], booleans: [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    ]),
-    Item(
-        expandedValue: 'Superfícies',
-        modifiedValue: [],
-        booleans: [false, false, false, false, false, false]),
-    Item(expandedValue: 'Categorias', modifiedValue: [], booleans: [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    ]),
-    Item(expandedValue: 'Dificuldade', modifiedValue: []),
-    Item(expandedValue: 'Distancia', modifiedValue: []),
-  ];
+  Map<int, String> typeValues = {1: 'Trilha', 2: 'Ciclovia', 3: 'Cicloturismo'};
+  String type = typeValues.containsKey(controller.value)
+      ? typeValues[controller.value]
+      : '';
+  if (filterDisposed == true || filterData == null) {
+    filterDisposed = false;
+    filterData = <Item>[
+      Item(
+          expandedValue: 'Tipo',
+          value: type,
+          modified: controller.value,
+          modifiedValue: [type]),
+      Item(
+          expandedValue: 'Subtipos',
+          modifiedValue: [],
+          booleans: List.generate(4, (_) => false)),
+      Item(
+          expandedValue: 'Regiões',
+          modifiedValue: [],
+          booleans: List.generate(5, (_) => false)),
+      Item(
+          expandedValue: 'Bairros',
+          modifiedValue: [],
+          booleans: List.generate(42, (_) => false)),
+      Item(
+          expandedValue: 'Superfícies',
+          modifiedValue: [],
+          booleans: List.generate(6, (_) => false)),
+      Item(
+          expandedValue: 'Categorias',
+          modifiedValue: [],
+          booleans: List.generate(17, (_) => false)),
+      Item(expandedValue: 'Dificuldade', modifiedValue: []),
+      Item(expandedValue: 'Distancia', modifiedValue: []),
+    ];
+  }
+  return filterData;
 }
 
 class Item {
