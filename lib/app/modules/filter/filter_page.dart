@@ -255,7 +255,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
     return ExpansionPanel(
       headerBuilder: (BuildContext context, bool isExpanded) {
         return header(_data[5], onTap: (Item item) {
-          item.booleans = List.filled(6, false);
+          item.booleans = List.filled(17, false);
         });
       },
       body: Column(
