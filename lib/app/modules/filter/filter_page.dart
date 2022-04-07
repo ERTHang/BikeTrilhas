@@ -54,7 +54,7 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
           // Sem necessidade uso de bairro no momento
           // bairro(),
           superficie(),
-          categoria(),
+          // categoria(),
           dificuldade(),
           distancia()
         ]);
@@ -251,21 +251,21 @@ class _FilterPageState extends ModularState<FilterPage, FilterController> {
     );
   }
 
-  ExpansionPanel categoria() {
-    return ExpansionPanel(
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return header(_data[5], onTap: (Item item) {
-          item.booleans = List.filled(17, false);
-        });
-      },
-      body: Column(
-        children: List.generate(CATEGORIAS.length, (index) {
-          return tile(5, index, CATEGORIAS[index]);
-        }),
-      ),
-      isExpanded: _data[5].isExpanded,
-    );
-  }
+  // ExpansionPanel categoria() {
+  //   return ExpansionPanel(
+  //     headerBuilder: (BuildContext context, bool isExpanded) {
+  //       return header(_data[5], onTap: (Item item) {
+  //         item.booleans = List.filled(17, false);
+  //       });
+  //     },
+  //     body: Column(
+  //       children: List.generate(CATEGORIAS.length, (index) {
+  //         return tile(5, index, CATEGORIAS[index]);
+  //       }),
+  //     ),
+  //     isExpanded: _data[5].isExpanded,
+  //   );
+  // }
 
   CheckboxListTile tile(int bigindex, int index, String title) {
     return CheckboxListTile(
