@@ -1,16 +1,17 @@
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+import 'package:biketrilhas_modular/app/shared/controller/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/models.dart';
+import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../utils/constants.dart';
-import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 
 var connectivityResult;
 
@@ -267,8 +268,8 @@ class InfoRepository {
 
   Future<bool> uploadWaypoint(
       WaypointModel wp, DadosWaypointModel dadoswp, int codt) async {
-      //-------------------------------------------
-      //-------------------------------------------
+    //-------------------------------------------
+    //-------------------------------------------
     var auth = Modular.get<AuthController>();
     FormData formData = FormData.fromMap({
       "codt": codt,
@@ -285,14 +286,14 @@ class InfoRepository {
     var response = (await dio.post('/server/waypoint', data: formData));
     updateDadosWaypoint(response.data, codt, dadoswp.descricao, dadoswp.nome,
         dadoswp.categorias);
-      mapController.followTrailWaypoints
-          .removeWhere((element) => element.codwp == mapController.newWaypoint.codigo);
-      mapController.createdTrails
-          .removeWhere((element) => element.codt == mapController.trailAux.codt);
-      TrilhaRepository trilhaRepository = Modular.get();
-      trilhaRepository.deleteRecordedWaypoint(mapController.newWaypoint.codigo);
-      trilhaRepository.deleteRecordedTrail(mapController.trailAux.codt);
-      
+    mapController.followTrailWaypoints.removeWhere(
+        (element) => element.codwp == mapController.newWaypoint.codigo);
+    mapController.createdTrails
+        .removeWhere((element) => element.codt == mapController.trailAux.codt);
+    TrilhaRepository trilhaRepository = Modular.get();
+    trilhaRepository.deleteRecordedWaypoint(mapController.newWaypoint.codigo);
+    trilhaRepository.deleteRecordedTrail(mapController.trailAux.codt);
+
     return response.data != -1;
   }
 

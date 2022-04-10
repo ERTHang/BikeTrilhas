@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/modules/map/Components/bottomsheets/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/filter/filter_repository.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
@@ -19,12 +19,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:ui' as ui;
 
+import 'Components/bottomsheets/bottomsheet_trilha.dart';
+import 'Components/bottomsheets/bottomsheet_waypoint.dart';
+
 part 'map_controller.g.dart';
 
 class MapController = _MapControllerBase with _$MapController;
 
 abstract class _MapControllerBase with Store {
-  
   final FilterRepository filterRepository;
   final TrilhaRepository trilhaRepository;
   final InfoRepository infoRepository;
@@ -152,7 +154,6 @@ abstract class _MapControllerBase with Store {
                       ? Colors.green
                       : Colors.blue,
           onTap: () {
-            print('Teste');
             tappedWaypoint = null;
             tappedTrilha = trilha.codt;
             state();

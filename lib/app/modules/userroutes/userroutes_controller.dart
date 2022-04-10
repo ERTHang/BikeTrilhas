@@ -1,4 +1,5 @@
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/modules/map/Components/bottomsheets/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/modules/map/Components/bottomsheets/bottomsheet_temp.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/drawer/drawer_controller.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';

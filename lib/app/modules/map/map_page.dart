@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:biketrilhas_modular/app/modules/filter/filter_page.dart';
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/modules/map/Components/bottomsheets/bottom_sheets.dart';
 import 'package:background_location/background_location.dart' as bglocation;
 import 'package:biketrilhas_modular/app/modules/map/Components/custom_search_delegate.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
@@ -14,6 +14,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'Components/bottomsheets/bottomsheet_trilha.dart';
 import 'map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/utils/session.dart';
 

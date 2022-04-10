@@ -1,9 +1,11 @@
 import 'dart:async';
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+
+import 'package:biketrilhas_modular/app/shared/controller/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'usertrails_controller.dart';
 
 class UsertrailsPage extends StatefulWidget {
