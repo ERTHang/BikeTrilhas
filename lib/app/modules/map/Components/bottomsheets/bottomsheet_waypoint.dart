@@ -21,7 +21,6 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
     return FutureBuilder(
       future: actions.getDataWaypoint(codwp),
       builder: (context, snapshot) {
-        Widget wid;
         if (snapshot.hasData) {
           String categorias = '';
           if (mapController.modelWaypoint.categorias.isNotEmpty) {
@@ -32,7 +31,7 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
               categorias += ', ' + mapController.modelWaypoint.categorias[i];
             }
           }
-          wid = ClipRRect(
+          return ClipRRect(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               child: Stack(children: <Widget>[
@@ -327,22 +326,8 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                 ),
               ]));
         } else {
-          wid = ClipRRect(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20), topLeft: Radius.circular(20)),
-              child: Container(
-                color: Colors.white,
-                height:
-                    MediaQuery.of(mapController.scaffoldState.currentContext)
-                            .size
-                            .height *
-                        0.1,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ));
+          return bottomsheetSkeleton(mapController, 0.1);
         }
-        return wid;
       },
     );
   }, backgroundColor: Colors.transparent);
@@ -370,7 +355,6 @@ bottomSheetWaypointOffline(int codwp) async {
     return FutureBuilder(
       future: actions.getDataWaypoint(codwp),
       builder: (context, snapshot) {
-        Widget wid;
         if (snapshot.hasData) {
           String categorias = '';
           if (mapController.modelWaypoint.categorias.isNotEmpty) {
@@ -381,7 +365,7 @@ bottomSheetWaypointOffline(int codwp) async {
               categorias += ', ' + mapController.modelWaypoint.categorias[i];
             }
           }
-          wid = ClipRRect(
+          return ClipRRect(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               child: Stack(children: <Widget>[
@@ -547,22 +531,8 @@ bottomSheetWaypointOffline(int codwp) async {
                 //     ))
               ]));
         } else {
-          wid = ClipRRect(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20), topLeft: Radius.circular(20)),
-              child: Container(
-                color: Colors.white,
-                height:
-                    MediaQuery.of(mapController.scaffoldState.currentContext)
-                            .size
-                            .height *
-                        0.1,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ));
+          return bottomsheetSkeleton(mapController, 0.1);
         }
-        return wid;
       },
     );
   }, backgroundColor: Colors.transparent);

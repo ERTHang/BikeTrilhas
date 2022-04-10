@@ -17,7 +17,6 @@ bottomSheetTrilha(TrilhaModel trilha) async {
       return FutureBuilder(
         future: actions.getDataTrilha(trilha.codt),
         builder: (context, snapshot) {
-          Widget wid;
           if (snapshot.hasData) {
             String bairros;
             String regioes;
@@ -53,7 +52,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
             }
             getPref();
 
-            wid = ClipRRect(
+            return ClipRRect(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               child: Stack(children: <Widget>[
@@ -163,23 +162,8 @@ bottomSheetTrilha(TrilhaModel trilha) async {
               ]),
             );
           } else {
-            wid = ClipRRect(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20), topLeft: Radius.circular(20)),
-              child: Container(
-                color: Colors.white,
-                height:
-                    MediaQuery.of(mapController.scaffoldState.currentContext)
-                            .size
-                            .height *
-                        0.2,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
+            return bottomsheetSkeleton(mapController, 0.2);
           }
-          return wid;
         },
       );
     },
