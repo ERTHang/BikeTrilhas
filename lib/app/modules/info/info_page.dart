@@ -1,3 +1,4 @@
+import 'package:biketrilhas_modular/app/shared/utils/breakpoints.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -6,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'info_controller.dart';
 
 Row _renderRowAbout(double width) {
-  bool isTablet = width > 600;
+  bool isTablet = width > MOBILE_BREAKPOINT;
   List<int> proportions = isTablet ? [3, 1] : [1, 0];
   List<Widget> itens = [
     Expanded(
@@ -24,7 +25,7 @@ Row _renderRowAbout(double width) {
       ]),
     )
   ];
-  if (width > 600) {
+  if (isTablet) {
     itens.add(
       Expanded(
           flex: proportions[1],
@@ -38,7 +39,7 @@ Row _renderRowAbout(double width) {
   );
 }
 
-List<Widget> renderText(String title, String text) {
+List<Widget> _renderText(String title, String text) {
   return [
     Text(
       title,
@@ -53,7 +54,7 @@ List<Widget> renderText(String title, String text) {
   ];
 }
 
-Icon renderIcon(IconData customIcon) {
+Icon _renderIcon(IconData customIcon) {
   return Icon(
     customIcon,
     color: Colors.blue,
@@ -62,19 +63,20 @@ Icon renderIcon(IconData customIcon) {
 }
 
 List<Widget> _renderContactRow(width) {
+  bool isTablet = width > MOBILE_BREAKPOINT;
   List<Expanded> itens = [
     Expanded(
       flex: 1,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [renderIcon(FontAwesomeIcons.chrome)],
+        children: [_renderIcon(FontAwesomeIcons.chrome)],
       ),
     ),
     Expanded(
       flex: 3,
       child: Column(
-        children: renderText('Website', APP_WEBSITE),
+        children: _renderText('Website', APP_WEBSITE),
       ),
     ),
     Expanded(
@@ -82,13 +84,13 @@ List<Widget> _renderContactRow(width) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [renderIcon(Icons.mail)],
+        children: [_renderIcon(Icons.mail)],
       ),
     ),
     Expanded(
       flex: 3,
       child: Column(
-        children: renderText('Email', APP_EMAIL),
+        children: _renderText('Email', APP_EMAIL),
       ),
     ),
     Expanded(
@@ -96,53 +98,48 @@ List<Widget> _renderContactRow(width) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [renderIcon(FontAwesomeIcons.instagram)],
+        children: [_renderIcon(FontAwesomeIcons.instagram)],
       ),
     ),
     Expanded(
       flex: 3,
       child: Column(
-        children: renderText('Instagram', APP_INSTAGRAM),
+        children: _renderText('Instagram', APP_INSTAGRAM),
       ),
     )
   ];
 
-  if (width > 600) {
+  if (isTablet) {
     return [
       Row(
         children: [
           Expanded(
             child: Column(
               children: [
-                renderIcon(FontAwesomeIcons.chrome),
-                ...renderText('Website', APP_WEBSITE)
+                _renderIcon(FontAwesomeIcons.chrome),
+                ..._renderText('Website', APP_WEBSITE)
               ],
             ),
           ),
           Expanded(
             child: Column(
               children: [
-                renderIcon(Icons.mail),
-                ...renderText('Email', APP_EMAIL)
+                _renderIcon(Icons.mail),
+                ..._renderText('Email', APP_EMAIL)
               ],
             ),
           ),
           Expanded(
             child: Column(
               children: [
-                renderIcon(FontAwesomeIcons.instagram),
-                ...renderText('Instagram', APP_INSTAGRAM)
+                _renderIcon(FontAwesomeIcons.instagram),
+                ..._renderText('Instagram', APP_INSTAGRAM)
               ],
             ),
           )
         ],
       ),
       SizedBox(height: 24),
-      // Row(
-      //   children: Column(
-      //     children: [itens[4], itens[5]],
-      //   ),
-      // ),
     ];
   } else {
     return [
@@ -160,9 +157,6 @@ List<Widget> _renderContactRow(width) {
       SizedBox(height: 24),
     ];
   }
-  // return Row(
-  //   children: ,
-  // );
 }
 
 class InfoPage extends StatefulWidget {
@@ -179,8 +173,7 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
   @override
   Widget build(BuildContext context) {
     var shortestSide = MediaQuery.of(context).size.shortestSide;
-    bool isTablet = shortestSide > 600;
-    // final bool isTablet = shortestSide > 600;
+    bool isTablet = shortestSide > MOBILE_BREAKPOINT;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -195,12 +188,8 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
         interactive: true,
         child: Center(
           child: Container(
-            // adding margin
-
             padding: EdgeInsets.all(isTablet ? 32.0 : 24.0),
             margin: EdgeInsets.all(24.0),
-            // adding padding
-
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -234,7 +223,7 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
                             // CONTENT ROW
                             SizedBox(height: isTablet ? 42 : 24),
                             _renderRowAbout(shortestSide),
-                            // ANOTHER ROW
+                            // CONTACT ROW
                             SizedBox(height: isTablet ? 60 : 36),
                             ..._renderContactRow(shortestSide)
                                 .map((e) => e)

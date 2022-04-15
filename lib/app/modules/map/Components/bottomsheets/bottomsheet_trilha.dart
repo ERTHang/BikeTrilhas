@@ -3,6 +3,7 @@ import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/bottomsheet.dart';
+import 'package:biketrilhas_modular/app/shared/utils/breakpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -17,6 +18,8 @@ bottomSheetTrilha(TrilhaModel trilha) async {
       return FutureBuilder(
         future: actions.getDataTrilha(trilha.codt),
         builder: (context, snapshot) {
+          var shortestSide = MediaQuery.of(context).size.shortestSide;
+          bool isTablet = shortestSide > MOBILE_BREAKPOINT;
           if (snapshot.hasData) {
             String bairros;
             String regioes;
@@ -69,7 +72,11 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                       Row(children: [
                         Expanded(
                           child: Center(
-                              child: title(mapController.modelTrilha.nome)),
+                            child: title(
+                              mapController.modelTrilha.nome,
+                              isTablet,
+                            ),
+                          ),
                         )
                       ]),
                       // ANCHOR ROW Description
@@ -82,7 +89,9 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                               visible: mapController
                                   .modelTrilha.descricao.isNotEmpty,
                               child: description(
-                                  mapController.modelTrilha.descricao),
+                                mapController.modelTrilha.descricao,
+                                isTablet,
+                              ),
                             ),
                           ),
                         )),
@@ -92,14 +101,19 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                         padding: EdgeInsets.only(bottom: 5),
                         child: Row(children: <Widget>[
                           Expanded(
-                              child: modifiedText(
-                                  'Comprimento: ',
-                                  mapController.modelTrilha.comprimento
-                                          .toString() +
-                                      ' KM')),
+                            child: modifiedText(
+                              'Comprimento: ',
+                              mapController.modelTrilha.comprimento.toString() +
+                                  ' KM',
+                              isTablet,
+                            ),
+                          ),
                           Expanded(
-                              child: modifiedText('Dificuldade: ',
-                                  mapController.modelTrilha.dificuldade)),
+                              child: modifiedText(
+                            'Dificuldade: ',
+                            mapController.modelTrilha.dificuldade,
+                            isTablet,
+                          )),
                         ]),
                       ),
 
@@ -111,14 +125,20 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                             children: <Widget>[
                               Expanded(
                                 child: modifiedText(
-                                    'Tipo: ', mapController.modelTrilha.tipo),
+                                  'Tipo: ',
+                                  mapController.modelTrilha.tipo,
+                                  isTablet,
+                                ),
                               ),
                               Expanded(
                                   child: Visibility(
                                 visible: mapController
                                     .modelTrilha.subtipo.isNotEmpty,
-                                child: modifiedText('Subtipo: ',
-                                    mapController.modelTrilha.subtipo),
+                                child: modifiedText(
+                                  'Subtipo: ',
+                                  mapController.modelTrilha.subtipo,
+                                  isTablet,
+                                ),
                               )),
                             ]),
                       ),
@@ -129,10 +149,11 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                             // crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
                               Expanded(
-                                  child: modifiedText('Regioes: ', regioes)),
+                                  child: modifiedText(
+                                      'Regioes: ', regioes, isTablet)),
                               Expanded(
                                   child: modifiedText(
-                                      'Superficies: ', superficies)),
+                                      'Superficies: ', superficies, isTablet)),
                             ]),
                       ),
                       // ANCHOR ROW 4
@@ -140,9 +161,11 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                           child: Row(
                         children: [
                           modifiedText(
-                              'Desnivel: ',
-                              mapController.modelTrilha.desnivel.toString() +
-                                  ' m'),
+                            'Desnivel: ',
+                            mapController.modelTrilha.desnivel.toString() +
+                                ' m',
+                            isTablet,
+                          ),
                         ],
                       ))
                     ],

@@ -88,6 +88,7 @@ const List<String> BAIRROS = [
   'Zona Industrial Tupy'
 ];
 
+// Text constants
 const String ABOUT_US_P1 =
     'Este aplicativo é um produto gratuito desenvolvido pelo' +
         ' Núcleo de Estudos sobre Mobilidade Sustentável - NEMOBIS. ';

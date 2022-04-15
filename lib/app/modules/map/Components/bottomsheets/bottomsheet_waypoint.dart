@@ -5,12 +5,120 @@ import 'package:biketrilhas_modular/app/shared/controller/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/save_trilha.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_repository.dart';
 import 'package:biketrilhas_modular/app/shared/utils/bottomsheet.dart';
+import 'package:biketrilhas_modular/app/shared/utils/breakpoints.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:photo_view/photo_view.dart';
+
+Positioned _renderCloseIcon(BuildContext context, bool isTablet) {
+  return Positioned(
+    top: 0,
+    right: isTablet ? 40 : 5,
+    child: IconButton(
+        icon: Icon(
+          FontAwesomeIcons.circleXmark,
+          size: isTablet ? 50 : 25,
+          color: Colors.red,
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        }),
+  );
+}
+
+Positioned _renderColapse(BuildContext context, int codwp) {
+  return Positioned(
+    bottom: 10,
+    right: 10,
+    child: IconButton(
+      icon: Icon(Icons.arrow_downward),
+      color: Colors.blue,
+      onPressed: () {
+        mapController.sheet = null;
+        Navigator.pop(context);
+        mapController.nameSheet =
+            mapController.scaffoldState.currentState.showBottomSheet((context) {
+          return ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              child: Container(
+                color: Colors.white,
+                width: MediaQuery.of(mapController.scaffoldState.currentContext)
+                        .size
+                        .width *
+                    0.8,
+                child: ListTile(
+                  title: Text(mapController.modelWaypoint.nome),
+                  onTap: () {
+                    mapController.nameSheet = null;
+                    bottomSheetWaypoint(codwp);
+                  },
+                ),
+              ));
+        });
+      },
+    ),
+  );
+}
+
+GestureDetector _renderImageContainer(
+    BuildContext context, String e, bool isTablet) {
+  return GestureDetector(
+    child: Hero(
+      tag: e,
+      child: CachedNetworkImage(
+        imageUrl: e,
+        height: isTablet ? 240 : 80,
+        width: isTablet ? 240 : 80,
+      ),
+    ),
+    onTap: () {
+      showDialog(
+          context: mapController.scaffoldState.currentContext,
+          builder: (_) {
+            return SimpleDialog(
+              contentPadding: EdgeInsets.all(0),
+              children: <Widget>[
+                Container(
+                  child: Stack(
+                    children: <Widget>[
+                      PhotoView(
+                        disableGestures: true,
+                        imageProvider: CachedNetworkImageProvider(e),
+                        minScale: PhotoViewComputedScale.covered,
+                      ),
+                      _renderCloseIcon(context, isTablet),
+                      GestureDetector(onVerticalDragEnd: (details) {
+                        double velocity =
+                            details.velocity.pixelsPerSecond.distance;
+                        if (velocity > 100) {
+                          Navigator.pop(context);
+                        }
+                      })
+                    ],
+                    fit: StackFit.expand,
+                  ),
+                  height:
+                      MediaQuery.of(mapController.scaffoldState.currentContext)
+                              .size
+                              .height *
+                          0.7,
+                  width:
+                      MediaQuery.of(mapController.scaffoldState.currentContext)
+                              .size
+                              .width *
+                          0.7,
+                ),
+              ],
+            );
+          });
+    },
+  );
+}
 
 bottomSheetWaypoint(int codwp, {int codt}) async {
   BottomsheetActions actions = BottomsheetActions(mapController: mapController);
@@ -21,6 +129,8 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
     return FutureBuilder(
       future: actions.getDataWaypoint(codwp),
       builder: (context, snapshot) {
+        var shortestSide = MediaQuery.of(context).size.shortestSide;
+        bool isTablet = shortestSide > MOBILE_BREAKPOINT;
         if (snapshot.hasData) {
           String categorias = '';
           if (mapController.modelWaypoint.categorias.isNotEmpty) {
@@ -38,7 +148,7 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                 Container(
                   color: Colors.white,
                   width: MediaQuery.of(context).size.width,
-                  height: 190,
+                  height: isTablet ? 380 : 190,
                   padding: EdgeInsets.fromLTRB(8, 10, 50, 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -49,7 +159,8 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                       Row(children: [
                         Expanded(
                           child: Center(
-                              child: title(mapController.modelWaypoint.nome)),
+                              child: title(
+                                  mapController.modelWaypoint.nome, isTablet)),
                         )
                       ]),
                       // ANCHOR ROW Description
@@ -62,26 +173,35 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                               visible: mapController
                                   .modelWaypoint.descricao.isNotEmpty,
                               child: description(
-                                  mapController.modelWaypoint.descricao),
+                                mapController.modelWaypoint.descricao,
+                                isTablet,
+                              ),
                             ),
                           ),
                         )),
                       ]),
                       Visibility(
                         visible: categorias.isNotEmpty,
-                        child: modifiedText('Categoria: ', categorias),
+                        child: modifiedText(
+                          'Categoria: ',
+                          categorias,
+                          isTablet,
+                        ),
                       ),
-                      Visibility(
-                        visible: mapController.modelWaypoint.imagens.isNotEmpty,
-                        child: RichText(
-                            text: TextSpan(
-                          text: mapController.modelWaypoint.imagens.length == 1
-                              ? 'Imagem: '
-                              : 'Imagens: ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.black),
-                        )),
-                      ),
+                      SizedBox(height: isTablet ? 12 : 8),
+                      // Visibility(
+                      //   visible: mapController.modelWaypoint.imagens.isNotEmpty,
+                      //   child: RichText(
+                      //       text: TextSpan(
+                      //     text: mapController.modelWaypoint.imagens.length == 1
+                      //         ? 'Imagem: '
+                      //         : 'Imagens: ',
+                      //     style: TextStyle(
+                      //       fontWeight: FontWeight.bold,
+                      //       color: Colors.black,
+                      //     ),
+                      //   )),
+                      // ),
                       Visibility(
                           visible:
                               mapController.modelWaypoint.imagens.length >= 1,
@@ -90,170 +210,16 @@ bottomSheetWaypoint(int codwp, {int codt}) async {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                                 children: mapController.modelWaypoint.imagens
-                                    .map((e) => GestureDetector(
-                                          child: Hero(
-                                            tag: e,
-                                            child: CachedNetworkImage(
-                                              imageUrl: e,
-                                              height: 80,
-                                              width: 80,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            showDialog(
-                                                context: mapController
-                                                    .scaffoldState
-                                                    .currentContext,
-                                                builder: (_) {
-                                                  return SimpleDialog(
-                                                    contentPadding:
-                                                        EdgeInsets.all(0),
-                                                    children: <Widget>[
-                                                      Container(
-                                                        child: Stack(
-                                                          children: <Widget>[
-                                                            PhotoView(
-                                                              disableGestures:
-                                                                  true,
-                                                              imageProvider:
-                                                                  CachedNetworkImageProvider(
-                                                                      e),
-                                                              minScale:
-                                                                  PhotoViewComputedScale
-                                                                      .covered,
-                                                            ),
-                                                            Positioned(
-                                                              top: 5,
-                                                              right: 5,
-                                                              child: IconButton(
-                                                                  icon: Icon(
-                                                                    Icons.close,
-                                                                    color: Colors
-                                                                        .red,
-                                                                  ),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  }),
-                                                            ),
-                                                            GestureDetector(
-                                                                onVerticalDragEnd:
-                                                                    (details) {
-                                                              double velocity =
-                                                                  details
-                                                                      .velocity
-                                                                      .pixelsPerSecond
-                                                                      .distance;
-                                                              if (velocity >
-                                                                  100) {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              }
-                                                            })
-                                                          ],
-                                                          fit: StackFit.expand,
-                                                        ),
-                                                        height: MediaQuery.of(
-                                                                    mapController
-                                                                        .scaffoldState
-                                                                        .currentContext)
-                                                                .size
-                                                                .height *
-                                                            0.7,
-                                                        width: MediaQuery.of(
-                                                                    mapController
-                                                                        .scaffoldState
-                                                                        .currentContext)
-                                                                .size
-                                                                .width *
-                                                            0.7,
-                                                      ),
-                                                    ],
-                                                  );
-                                                });
-                                          },
-                                        ))
+                                    .map(
+                                      (e) => _renderImageContainer(
+                                          context, e, isTablet),
+                                    )
                                     .toList()),
                           )),
                     ],
                   ),
                 ),
-
-                //Botão para remover do servidor
-
-                // Visibility(
-                //   child: Positioned(
-                //     top: 5,
-                //     right: 50,
-                //     child: IconButton(
-                //       color: Colors.red,
-                //       icon: Icon(Icons.delete_outline_outlined),
-                //       iconSize: 25,
-                //       onPressed: () async {
-                //         alertaComEscolha(
-                //             context,
-                //             'Remover',
-                //             Text('Deseja remover o waypoint ${mapController.modelWaypoint.nome} ?'),
-                //             'VOLTAR',
-                //             () {
-                //               Navigator.pop(context);
-                //               return;
-                //             },
-                //             'OK',
-                //             () async {
-                //               Navigator.pop(context);
-                //               if (await trilhaRepository.deleteWaypointUser(
-                //                   codwp, codt)) {
-                //                 mapController.trilhas.value.removeWhere(
-                //                     (element) => element.codt == codt);
-                //                 mapController.getPolylines();
-                //                 mapController.state();
-                //                 alert(
-                //                     context, "Trilha foi excluída.", "Sucesso");
-                //               } else {
-                //                 alert(context, "Ocorreu um erro.", "Erro");
-                //               }
-                //             });
-                //       },
-                //     ),
-                //   ),
-                //   visible: mapController.trilhasUser.contains(codt),
-                // ),
-                Positioned(
-                    bottom: 10,
-                    right: 10,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_downward),
-                      color: Colors.blue,
-                      onPressed: () {
-                        mapController.sheet = null;
-                        Navigator.pop(context);
-                        mapController.nameSheet = mapController
-                            .scaffoldState.currentState
-                            .showBottomSheet((context) {
-                          return ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20)),
-                              child: Container(
-                                color: Colors.white,
-                                width: MediaQuery.of(mapController
-                                            .scaffoldState.currentContext)
-                                        .size
-                                        .width *
-                                    0.8,
-                                child: ListTile(
-                                  title: Text(mapController.modelWaypoint.nome),
-                                  onTap: () {
-                                    mapController.nameSheet = null;
-                                    bottomSheetWaypoint(codwp);
-                                  },
-                                ),
-                              ));
-                        });
-                      },
-                    )),
+                _renderColapse(context, codwp),
                 Visibility(
                   child: Positioned(
                       bottom: 44,
@@ -355,6 +321,8 @@ bottomSheetWaypointOffline(int codwp) async {
     return FutureBuilder(
       future: actions.getDataWaypoint(codwp),
       builder: (context, snapshot) {
+        var shortestSide = MediaQuery.of(context).size.shortestSide;
+        bool isTablet = shortestSide > MOBILE_BREAKPOINT;
         if (snapshot.hasData) {
           String categorias = '';
           if (mapController.modelWaypoint.categorias.isNotEmpty) {
@@ -378,28 +346,39 @@ bottomSheetWaypointOffline(int codwp) async {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      modifiedText('Nome: ', mapController.modelWaypoint.nome),
+                      modifiedText(
+                        'Nome: ',
+                        mapController.modelWaypoint.nome,
+                        isTablet,
+                      ),
                       Visibility(
                         visible:
                             mapController.modelWaypoint.descricao.isNotEmpty,
-                        child: modifiedText('Descricao: ',
-                            mapController.modelWaypoint.descricao),
+                        child: modifiedText(
+                          'Descricao: ',
+                          mapController.modelWaypoint.descricao,
+                          isTablet,
+                        ),
                       ),
                       Visibility(
                         visible: categorias.isNotEmpty,
-                        child: modifiedText('Categorias: ', categorias),
+                        child: modifiedText(
+                          'Categorias: ',
+                          categorias,
+                          isTablet,
+                        ),
                       ),
-                      Visibility(
-                        visible: mapController.modelWaypoint.imagens.isNotEmpty,
-                        child: RichText(
-                            text: TextSpan(
-                          text: mapController.modelWaypoint.imagens.length == 1
-                              ? 'Imagem: '
-                              : 'Imagens: ',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.black),
-                        )),
-                      ),
+                      // Visibility(
+                      //   visible: mapController.modelWaypoint.imagens.isNotEmpty,
+                      //   child: RichText(
+                      //       text: TextSpan(
+                      //     text: mapController.modelWaypoint.imagens.length == 1
+                      //         ? 'Imagem: '
+                      //         : 'Imagens: ',
+                      //     style: TextStyle(
+                      //         fontWeight: FontWeight.bold, color: Colors.black),
+                      //   )),
+                      // ),
                       Visibility(
                           visible:
                               mapController.modelWaypoint.imagens.length >= 1,
@@ -408,115 +387,16 @@ bottomSheetWaypointOffline(int codwp) async {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                                 children: mapController.modelWaypoint.imagens
-                                    .map((e) => GestureDetector(
-                                          child: Hero(
-                                            tag: e,
-                                            child: Image.file(
-                                              File(mapController
-                                                  .modelWaypoint.imagens[0]),
-                                              height: 80,
-                                              width: 80,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            showDialog(
-                                                context: mapController
-                                                    .scaffoldState
-                                                    .currentContext,
-                                                builder: (_) {
-                                                  return SimpleDialog(
-                                                    contentPadding:
-                                                        EdgeInsets.all(0),
-                                                    children: <Widget>[
-                                                      Container(
-                                                        child: Stack(
-                                                          children: <Widget>[
-                                                            PhotoView(
-                                                              imageProvider: FileImage(
-                                                                  File(mapController
-                                                                      .modelWaypoint
-                                                                      .imagens[0])),
-                                                              minScale:
-                                                                  PhotoViewComputedScale
-                                                                      .covered,
-                                                            ),
-                                                            Positioned(
-                                                              top: 5,
-                                                              right: 5,
-                                                              child: IconButton(
-                                                                  icon: Icon(
-                                                                    Icons.close,
-                                                                    color: Colors
-                                                                        .red,
-                                                                  ),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  }),
-                                                            ),
-                                                          ],
-                                                          fit: StackFit.expand,
-                                                        ),
-                                                        height: MediaQuery.of(
-                                                                    mapController
-                                                                        .scaffoldState
-                                                                        .currentContext)
-                                                                .size
-                                                                .height *
-                                                            0.7,
-                                                        width: MediaQuery.of(
-                                                                    mapController
-                                                                        .scaffoldState
-                                                                        .currentContext)
-                                                                .size
-                                                                .width *
-                                                            0.7,
-                                                      ),
-                                                    ],
-                                                  );
-                                                });
-                                          },
-                                        ))
+                                    .map(
+                                      (e) => _renderImageContainer(
+                                          context, e, isTablet),
+                                    )
                                     .toList()),
                           )),
                     ],
                   ),
                 ),
-                Positioned(
-                    bottom: 10,
-                    right: 10,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_downward),
-                      color: Colors.blue,
-                      onPressed: () {
-                        mapController.sheet = null;
-                        Navigator.pop(context);
-                        mapController.nameSheet = mapController
-                            .scaffoldState.currentState
-                            .showBottomSheet((context) {
-                          return ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20)),
-                              child: Container(
-                                color: Colors.white,
-                                width: MediaQuery.of(mapController
-                                            .scaffoldState.currentContext)
-                                        .size
-                                        .width *
-                                    0.8,
-                                child: ListTile(
-                                  title: Text(mapController.modelWaypoint.nome),
-                                  onTap: () {
-                                    mapController.nameSheet = null;
-                                    bottomSheetWaypoint(codwp);
-                                  },
-                                ),
-                              ));
-                        });
-                      },
-                    )),
+                _renderColapse(context, codwp),
                 // Positioned(
                 //     bottom: 44,
                 //     right: 10,

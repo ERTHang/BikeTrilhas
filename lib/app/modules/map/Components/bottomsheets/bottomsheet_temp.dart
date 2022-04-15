@@ -6,6 +6,7 @@ import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/utils/bottomsheet.dart';
+import 'package:biketrilhas_modular/app/shared/utils/breakpoints.dart';
 import 'package:biketrilhas_modular/app/shared/utils/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -16,6 +17,8 @@ bottomSheetTempTrail(
   mapController.modelTrilha = null;
   mapController.modelWaypoint = null;
   mapController.sheet = keyState.currentState.showBottomSheet((context) {
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+    bool isTablet = shortestSide > MOBILE_BREAKPOINT;
     return ClipRRect(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -30,7 +33,11 @@ bottomSheetTempTrail(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                modifiedText('Nome: ', trilha.nome),
+                modifiedText(
+                  'Nome: ',
+                  trilha.nome,
+                  isTablet,
+                ),
               ],
             ),
           ),
@@ -159,6 +166,8 @@ bottomSheetTempWaypoint(
   mapController.modelTrilha = null;
   mapController.modelWaypoint = null;
   mapController.sheet = keyState.currentState.showBottomSheet((context) {
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+    bool isTablet = shortestSide > MOBILE_BREAKPOINT;
     return ClipRRect(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -173,16 +182,26 @@ bottomSheetTempWaypoint(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                modifiedText('Nome: ', followTrailWaypoints.nome),
+                modifiedText(
+                  'Nome: ',
+                  followTrailWaypoints.nome,
+                  isTablet,
+                ),
                 Visibility(
                   visible: followTrailWaypoints.descricao.isNotEmpty,
                   child: modifiedText(
-                      'Descrição: ', followTrailWaypoints.descricao.toString()),
+                    'Descrição: ',
+                    followTrailWaypoints.descricao.toString(),
+                    isTablet,
+                  ),
                 ),
                 Visibility(
                   visible: followTrailWaypoints.categorias.length > 0,
-                  child: modifiedText('Categoria: ',
-                      (followTrailWaypoints.categorias.join(', '))),
+                  child: modifiedText(
+                    'Categoria: ',
+                    (followTrailWaypoints.categorias.join(', ')),
+                    isTablet,
+                  ),
                 ),
                 Visibility(
                   visible: followTrailWaypoints.imagens.length > 0,

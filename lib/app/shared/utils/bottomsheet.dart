@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 
 // final auth = Modular.get<IAuthRepository>();
 
-Widget title(text) {
+Widget title(String text, bool isTablet) {
   return RichText(
       text: TextSpan(
     text: text,
     style: TextStyle(
-        fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+        fontSize: isTablet ? 36 : 20),
   ));
 }
 
-Widget description(text) {
+Widget description(String text, bool isTablet) {
   return RichText(
       text: TextSpan(
     text: text,
@@ -20,15 +22,18 @@ Widget description(text) {
         fontWeight: FontWeight.normal,
         fontStyle: FontStyle.italic,
         color: Colors.black87,
-        fontSize: 14),
+        fontSize: isTablet ? 20 : 14),
   ));
 }
 
-Widget modifiedText(titulo, valor) {
+Widget modifiedText(String titulo, String valor, bool isTablet) {
   return RichText(
       text: TextSpan(
           text: titulo,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontSize: isTablet ? 20 : 14),
           children: <TextSpan>[
         TextSpan(text: valor, style: TextStyle(fontWeight: FontWeight.normal))
       ]));
