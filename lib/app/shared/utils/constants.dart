@@ -88,12 +88,16 @@ const List<String> BAIRROS = [
   'Zona Industrial Tupy'
 ];
 
-const String ABOUT_US = 'Este aplicativo é um produto gratuito desenvolvido pelo' +
-    ' Núcleo de Estudos sobre Mobilidade Sustentável - NEMOBIS. ' +
+const String ABOUT_US_P1 =
+    'Este aplicativo é um produto gratuito desenvolvido pelo' +
+        ' Núcleo de Estudos sobre Mobilidade Sustentável - NEMOBIS. ';
+
+const String ABOUT_US_P2 =
     'O NEMOBIS é um programa de extensão universitária desenvolvido pela ' +
-    'Universidade do Estado de Santa Catarina - UDESC, em seu campus na cidade de Joinville/SC. ' +
-    'Ele tem por objetivo a promoção de ações que visem incentivar o uso de modos sustentáveis de transporte, ' +
-    'tais como a bicicleta.';
+        'Universidade do Estado de Santa Catarina - UDESC, em seu campus na cidade de Joinville/SC. ' +
+        'Ele tem por objetivo a promoção de ações que visem incentivar o uso de modos sustentáveis de transporte, ' +
+        'tais como a bicicleta.';
 
 const String APP_WEBSITE = 'https://www.udesc.br';
 const String APP_EMAIL = 'nemobis.udesc@gmail.com';
+const String APP_INSTAGRAM = '@nemobis.udesc';
