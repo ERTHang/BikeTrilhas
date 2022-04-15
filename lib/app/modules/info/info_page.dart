@@ -102,7 +102,7 @@ List<Widget> _renderContactRow(width) {
       Row(
         children: [itens[0], itens[1]],
       ),
-      SizedBox(height: 36),
+      SizedBox(height: 24),
       Row(
         children: [itens[2], itens[3]],
       ),
@@ -138,88 +138,70 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
         ),
         body: Center(
           child: Container(
-              padding: EdgeInsets.all(32.0),
-              margin: EdgeInsets.all(32.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0, 3),
-                      blurRadius: 5)
-                ],
-              ),
-              child: Container(
-                constraints: BoxConstraints(maxWidth: 600),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        children: [
-                          // IMAGE BANNER ROW
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Image.asset(
-                                "images/about_logo.png",
-                                width: 150,
-                              ))
-                            ],
-                          ),
-                          // CONTENT ROW
-                          SizedBox(height: 24),
-                          _renderRowAbout(shortestSide),
-                          // ANOTHER ROW
-                          SizedBox(height: 36),
-                          ..._renderContactRow(shortestSide)
-                              .map((e) => e)
-                              .toList(),
-                        ],
+            // adding margin
+
+            padding: EdgeInsets.all(24.0),
+            margin: EdgeInsets.all(24.0),
+            // adding padding
+
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black12, offset: Offset(0, 3), blurRadius: 5)
+              ],
+            ),
+            // SingleChildScrollView should be
+            // wrapped in an Expanded Widget
+            child: Expanded(
+              //contains a single child which is scrollable
+              child: SingleChildScrollView(
+                //for horizontal scrolling
+                scrollDirection: Axis.vertical,
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 600, maxHeight: 600),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          children: [
+                            // IMAGE BANNER ROW
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Image.asset(
+                                  "images/about_logo.png",
+                                  width: 150,
+                                ))
+                              ],
+                            ),
+                            // CONTENT ROW
+                            SizedBox(height: 24),
+                            _renderRowAbout(shortestSide),
+                            // ANOTHER ROW
+                            SizedBox(height: 36),
+                            ..._renderContactRow(shortestSide)
+                                .map((e) => e)
+                                .toList(),
+                          ],
+                        ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                            child: Image.asset(
-                          "images/h_udesc_logo.jpg",
-                          width: 150,
-                        ))
-                      ],
-                    )
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //         flex: 1,
-                    //         child: Icon(
-                    //           Icons.phone,
-                    //           size: 50,
-                    //           color: Colors.blue,
-                    //         )),
-                    //     Expanded(
-                    //       flex: 3,
-                    //       child: Column(
-                    //         children: [
-                    //           Text(
-                    //             'Contato',
-                    //             style: TextStyle(fontSize: 16),
-                    //           ),
-                    //           Text(
-                    //             '(47) 3304-4200',
-                    //             style: TextStyle(fontSize: 16),
-                    //           ),
-                    //           Text(
-                    //             '(47) 5555-5555',
-                    //             style: TextStyle(fontSize: 16),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                  ],
+                      Row(
+                        children: [
+                          Expanded(
+                              child: Image.asset(
+                            "images/h_udesc_logo.jpg",
+                            width: 150,
+                          ))
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              )),
+              ),
+            ),
+          ),
         ));
   }
 }

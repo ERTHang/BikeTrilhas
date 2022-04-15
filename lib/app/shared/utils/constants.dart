@@ -95,5 +95,5 @@ const String ABOUT_US = 'Este aplicativo é um produto gratuito desenvolvido pel
     'Ele tem por objetivo a promoção de ações que visem incentivar o uso de modos sustentáveis de transporte, ' +
     'tais como a bicicleta.';
 
-const String APP_WEBSITE = 'http://www.udesc.br';
+const String APP_WEBSITE = 'https://www.udesc.br';
 const String APP_EMAIL = 'nemobis.udesc@gmail.com';
