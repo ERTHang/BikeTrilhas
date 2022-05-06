@@ -1,6 +1,6 @@
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/modules/map/map_controller.dart';
 import 'package:biketrilhas_modular/app/modules/usertrails/usertrails_controller.dart';
+import 'package:biketrilhas_modular/app/shared/controller/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/info/info_repository.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
@@ -198,7 +198,7 @@ class _EdicaoTrilhasState extends State<EdicaoTrilhas> {
                     maxLines: 3,
                     onTap: () {
                       _showSupDialog();
-                    }, 
+                    },
                     readOnly: true,
                     decoration: InputDecoration(
                       labelText: 'Superfícies',

@@ -1,13 +1,13 @@
 import 'dart:math';
 
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
 import 'package:biketrilhas_modular/app/shared/auth/auth_controller.dart';
+import 'package:biketrilhas_modular/app/shared/controller/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/info/dados_waypoint_model.dart';
 import 'package:biketrilhas_modular/app/shared/storage/shared_prefs.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_waypoint.dart';
-import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_routes.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_trilhas.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/saved_waypoint.dart';
+import 'package:biketrilhas_modular/app/shared/trilhas/Components/trilha_model_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/Components/waipoint_dados_json.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/trilha_model.dart';
 import 'package:biketrilhas_modular/app/shared/trilhas/waypoint_model.dart';
@@ -142,7 +142,9 @@ class TrilhaRepository {
       savedCods.add(trilha.codt);
     }
 
-    await Future.delayed(Duration(seconds: 2)); //-> resolve problema do mapa cinza mas não é a melhor solução
+    await Future.delayed(Duration(
+        seconds:
+            2)); //-> resolve problema do mapa cinza mas não é a melhor solução
     return trilhas;
   }
 
@@ -267,8 +269,9 @@ class TrilhaRepository {
     } catch (e) {}
     sharedPrefs.save('recordedTrails', recordedTrails);
   }
+
 //s
-    Future saveRecordedWaypoint(DadosWaypointModel model) async {
+  Future saveRecordedWaypoint(DadosWaypointModel model) async {
     if (recordedWaypoints == null) {
       try {
         print("cai no if null");
@@ -288,10 +291,10 @@ class TrilhaRepository {
     sharedPrefs.save('recordedWaypoints', recordedWaypoints);
   }
 
-    Future<List<DadosWaypointModel>> getRecordedWaypoint() async {
+  Future<List<DadosWaypointModel>> getRecordedWaypoint() async {
     List<DadosWaypointModel> waypoints = [];
     print("GETTING RECORDED WAYPOINTS");
-    if (recordedWaypoints== null) {
+    if (recordedWaypoints == null) {
       try {
         recordedWaypoints =
             SavedWaypoint.fromJson(await sharedPrefs.read('recordedWaypoints'));
@@ -300,8 +303,8 @@ class TrilhaRepository {
       }
     }
     for (var i = 0; i < recordedWaypoints.codes.length; i++) {
-      var json =
-          await sharedPrefs.read('recorded waypoint ${recordedWaypoints.codes[i]}');
+      var json = await sharedPrefs
+          .read('recorded waypoint ${recordedWaypoints.codes[i]}');
       DadosWaypointModel waypoint = DadosWaypointModel();
       var aux = DadosWaypointJson.fromJson(json);
       waypoint.fromJson(aux);
@@ -309,11 +312,11 @@ class TrilhaRepository {
       print(aux.nome);
       waypoints.add(waypoint);
     }
-    
+
     return waypoints;
   }
 
-    void deleteRecordedWaypoint(int codigo) async {
+  void deleteRecordedWaypoint(int codigo) async {
     if (recordedWaypoints == null) {
       try {
         recordedWaypoints =
@@ -335,7 +338,6 @@ class TrilhaRepository {
     sharedPrefs.remove('recordedWaypoints');
     sharedPrefs.save('recordedWaypoints', recordedWaypoints);
   }
-
 
   Future saveRoute(TrilhaModel model) async {
     if (savedRoutes == null) {

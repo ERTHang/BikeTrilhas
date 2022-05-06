@@ -1,9 +1,10 @@
-import 'package:biketrilhas_modular/app/modules/map/Components/bottom_sheets.dart';
+import 'package:biketrilhas_modular/app/shared/controller/map_controller.dart';
 import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
+import 'package:biketrilhas_modular/app/shared/utils/session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+
 import 'filter_controller.dart';
-import 'package:biketrilhas_modular/app/shared/utils/session.dart';
 
 class FilterPage extends StatefulWidget {
   final String title;

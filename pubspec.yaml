@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
+  font_awesome_flutter: 10.1.0
   background_location:
   location: ^4.1.1
   flutter_polyline_points: ^0.2.1
