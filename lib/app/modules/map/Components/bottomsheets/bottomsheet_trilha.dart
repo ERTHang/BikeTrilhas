@@ -150,7 +150,7 @@ bottomSheetTrilha(TrilhaModel trilha) async {
                             children: <Widget>[
                               Expanded(
                                   child: modifiedText(
-                                      'Regioes: ', regioes, isTablet)),
+                                      'Regiões: ', regioes, isTablet)),
                               Expanded(
                                   child: modifiedText(
                                       'Superficies: ', superficies, isTablet)),

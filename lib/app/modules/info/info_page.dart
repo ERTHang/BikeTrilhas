@@ -198,7 +198,7 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
                     color: Colors.black12, offset: Offset(0, 3), blurRadius: 5)
               ],
             ),
-            child: Expanded(
+            child: Container(
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Container(

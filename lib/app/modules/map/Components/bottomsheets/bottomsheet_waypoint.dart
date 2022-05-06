@@ -355,7 +355,7 @@ bottomSheetWaypointOffline(int codwp) async {
                         visible:
                             mapController.modelWaypoint.descricao.isNotEmpty,
                         child: modifiedText(
-                          'Descricao: ',
+                          'Descrição: ',
                           mapController.modelWaypoint.descricao,
                           isTablet,
                         ),
