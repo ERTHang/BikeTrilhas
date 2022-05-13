@@ -87,7 +87,7 @@ GestureDetector _renderImageContainer(
                   child: Stack(
                     children: <Widget>[
                       PhotoView(
-                        disableGestures: true,
+                        disableGestures: false,
                         imageProvider: CachedNetworkImageProvider(e),
                         minScale: PhotoViewComputedScale.covered,
                       ),
