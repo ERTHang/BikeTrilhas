@@ -3,8 +3,26 @@ import 'package:biketrilhas_modular/app/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'info_controller.dart';
+
+void _launchURL(String url) async {
+  if (!await launch(url)) throw 'Could not launch $url';
+}
+
+void _launchMailto(String app_email_url) async {
+  final mailtoLink = Mailto(
+    to: ['nemobis.udesc@gmail.com'],
+    // subject: 'mailto example subject',
+    // body: 'mailto example body',
+  );
+  // Convert the Mailto instance into a string.
+  // Use either Dart's string interpolation
+  // or the toString() method.
+  await launch('$mailtoLink');
+}
 
 Row _renderRowAbout(double width) {
   bool isTablet = width > MOBILE_BREAKPOINT;
@@ -28,10 +46,16 @@ Row _renderRowAbout(double width) {
   if (isTablet) {
     itens.add(
       Expanded(
-          flex: proportions[1],
+        flex: proportions[1],
+        child: InkWell(
           child: Image.asset(
             "images/udesc_logo.jpg",
-          )),
+          ),
+          onTap: () {
+            _launchURL(APP_WEBSITE);
+          },
+        ),
+      ),
     );
   }
   return Row(
@@ -114,27 +138,36 @@ List<Widget> _renderContactRow(width) {
       Row(
         children: [
           Expanded(
-            child: Column(
-              children: [
-                _renderIcon(FontAwesomeIcons.chrome),
-                ..._renderText('Website', APP_WEBSITE)
-              ],
+            child: InkWell(
+              child: Column(
+                children: [
+                  _renderIcon(FontAwesomeIcons.chrome),
+                  ..._renderText('Website', APP_WEBSITE)
+                ],
+              ),
+              onTap: () => _launchURL(APP_WEBSITE),
             ),
           ),
           Expanded(
-            child: Column(
-              children: [
-                _renderIcon(Icons.mail),
-                ..._renderText('Email', APP_EMAIL)
-              ],
+            child: InkWell(
+              child: Column(
+                children: [
+                  _renderIcon(Icons.mail),
+                  ..._renderText('Email', APP_EMAIL)
+                ],
+              ),
+              onTap: () => _launchMailto(APP_EMAIL_URL),
             ),
           ),
           Expanded(
-            child: Column(
-              children: [
-                _renderIcon(FontAwesomeIcons.instagram),
-                ..._renderText('Instagram', APP_INSTAGRAM)
-              ],
+            child: InkWell(
+              child: Column(
+                children: [
+                  _renderIcon(FontAwesomeIcons.instagram),
+                  ..._renderText('Instagram', APP_INSTAGRAM)
+                ],
+              ),
+              onTap: () => _launchURL(APP_INSTAGRAM_URL),
             ),
           )
         ],
@@ -143,16 +176,25 @@ List<Widget> _renderContactRow(width) {
     ];
   } else {
     return [
-      Row(
-        children: [itens[0], itens[1]],
+      InkWell(
+        child: Row(
+          children: [itens[0], itens[1]],
+        ),
+        onTap: () => _launchURL(APP_WEBSITE),
       ),
       SizedBox(height: 24),
-      Row(
-        children: [itens[2], itens[3]],
+      InkWell(
+        child: Row(
+          children: [itens[2], itens[3]],
+        ),
+        onTap: () => _launchMailto(APP_EMAIL_URL),
       ),
       SizedBox(height: 24),
-      Row(
-        children: [itens[4], itens[5]],
+      InkWell(
+        child: Row(
+          children: [itens[4], itens[5]],
+        ),
+        onTap: () => _launchURL(APP_INSTAGRAM_URL),
       ),
       SizedBox(height: 24),
     ];
@@ -214,10 +256,14 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
                             Row(
                               children: [
                                 Expanded(
+                                  child: InkWell(
                                     child: Image.asset(
-                                  "images/about_logo.png",
-                                  width: 150,
-                                ))
+                                      "images/about_logo.png",
+                                      width: 150,
+                                    ),
+                                    onTap: () => _launchURL(APP_WEBSITE),
+                                  ),
+                                )
                               ],
                             ),
                             // CONTENT ROW
@@ -234,10 +280,14 @@ class _InfoPageState extends ModularState<InfoPage, InfoController> {
                       Row(
                         children: [
                           Expanded(
+                            child: InkWell(
                               child: Image.asset(
-                            "images/h_udesc_logo.jpg",
-                            width: 150,
-                          ))
+                                "images/h_udesc_logo.jpg",
+                                width: 150,
+                              ),
+                              onTap: () => _launchURL(APP_WEBSITE),
+                            ),
+                          )
                         ],
                       )
                     ],

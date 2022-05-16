@@ -212,7 +212,7 @@ class _DrawerPageState extends State<DrawerPage> {
             dense: true,
             onTap: () {
               if (draw.value != 3) {
-                draw.value = 3;
+                // draw.value = 3;
                 Navigator.pop(context);
                 Modular.to.pushNamed('/info');
               }

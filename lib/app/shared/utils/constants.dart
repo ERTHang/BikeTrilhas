@@ -101,4 +101,6 @@ const String ABOUT_US_P2 =
 
 const String APP_WEBSITE = 'https://www.udesc.br';
 const String APP_EMAIL = 'nemobis.udesc@gmail.com';
+const String APP_EMAIL_URL = 'mailto:nemobis.udesc@gmail.com';
 const String APP_INSTAGRAM = '@nemobis.udesc';
+const String APP_INSTAGRAM_URL = 'http://instagram.com/_u/nemobis.udesc/';
